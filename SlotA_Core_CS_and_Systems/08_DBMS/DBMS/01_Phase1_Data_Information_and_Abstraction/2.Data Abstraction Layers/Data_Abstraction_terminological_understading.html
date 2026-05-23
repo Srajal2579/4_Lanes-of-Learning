@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Data Abstraction terminological understading</title>
+  <style>
+  @import url("https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.9.0-alpha2/katex.min.css");
+
+  body {
+    font-family: Georgia, Cambria, serif;
+    font-size: 14px;
+    line-height: 1.7;
+    color: #373D49;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 2rem;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    font-family: "Source Sans Pro", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-weight: 600;
+    margin-top: 1.5em;
+    margin-bottom: 0.5em;
+  }
+  h1 { font-size: 2em; }
+  h2 { font-size: 1.5em; }
+  h3 { font-size: 1.25em; }
+  a { color: #35D7BB; text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  code {
+    font-family: "Ubuntu Mono", Monaco, monospace;
+    background: #F5F7FA;
+    padding: 0.2em 0.4em;
+    border-radius: 3px;
+  }
+  pre {
+    background: #F5F7FA;
+    padding: 1em;
+    border-radius: 3px;
+    overflow-x: auto;
+  }
+  .hljs {
+    display: block;
+    overflow-x: auto;
+    padding: 0;
+    color: #333;
+  }
+  pre code { background: none; padding: 0; }
+  blockquote {
+    border-left: 3px solid #A0AABF;
+    padding-left: 1em;
+    margin-left: 0;
+    font-style: italic;
+    color: #666;
+  }
+  table {
+    border-collapse: collapse;
+    width: 100%;
+  }
+  th, td {
+    border: 1px solid #E8E8E8;
+    padding: 0.5em;
+    text-align: left;
+  }
+  th {
+    background: #F5F7FA;
+    font-weight: 600;
+  }
+  #preview .table {
+    width: auto;
+  }
+  img {
+    max-width: 100%;
+    height: auto;
+  }
+  .katex-display {
+    overflow-x: auto;
+    overflow-y: hidden;
+  }
+</style>
+</head>
+<body id="preview">
+<h1 class="code-line has-line-data" data-line-start="0" data-line-end="1"><a id="COMPLETE_TERMINOLOGICAL_UNDERSTANDING_0"></a>📘 COMPLETE TERMINOLOGICAL UNDERSTANDING</h1>
+<h1 class="code-line has-line-data" data-line-start="1" data-line-end="2"><a id="Data_Abstraction_ANSISPARC_Schema_vs_Instance_1"></a>Data Abstraction + ANSI/SPARC + Schema vs Instance</h1>
+<hr>
+<h1 class="code-line has-line-data" data-line-start="5" data-line-end="6"><a id="1_Database_DB_5"></a>1. Database (DB)</h1>
+<h2 class="code-line has-line-data" data-line-start="7" data-line-end="8"><a id="Meaning_7"></a>Meaning</h2>
+<p class="has-line-data" data-line-start="8" data-line-end="9">An organized collection of related data stored electronically.</p>
+<h2 class="code-line has-line-data" data-line-start="10" data-line-end="11"><a id="Purpose_10"></a>Purpose</h2>
+<ul>
+<li class="has-line-data" data-line-start="11" data-line-end="12">Store data</li>
+<li class="has-line-data" data-line-start="12" data-line-end="13">Retrieve data</li>
+<li class="has-line-data" data-line-start="13" data-line-end="14">Modify data</li>
+<li class="has-line-data" data-line-start="14" data-line-end="16">Manage information efficiently</li>
+</ul>
+<h2 class="code-line has-line-data" data-line-start="16" data-line-end="17"><a id="Example_16"></a>Example</h2>
+<pre><code class="has-line-data language-text" data-line-start="18" data-line-end="23">Customers
+Accounts
+Transactions
+Loans
+</code></pre>
+<hr>
+<h1 class="code-line has-line-data" data-line-start="26" data-line-end="27"><a id="2_DBMS_Database_Management_System_26"></a>2. DBMS (Database Management System)</h1>
+<h2 class="code-line has-line-data" data-line-start="28" data-line-end="29"><a id="Meaning_28"></a>Meaning</h2>
+<p class="has-line-data" data-line-start="29" data-line-end="30">Software that manages databases.</p>
+<h2 class="code-line has-line-data" data-line-start="31" data-line-end="32"><a id="Responsibilities_31"></a>Responsibilities</h2>
+<ul>
+<li class="has-line-data" data-line-start="32" data-line-end="33">Data storage</li>
+<li class="has-line-data" data-line-start="33" data-line-end="34">Query processing</li>
+<li class="has-line-data" data-line-start="34" data-line-end="35">Security</li>
+<li class="has-line-data" data-line-start="35" data-line-end="36">Concurrency control</li>
+<li class="has-line-data" data-line-start="36" data-line-end="37">Backup and recovery</li>
+<li class="has-line-data" data-line-start="37" data-line-end="39">Integrity enforcement</li>
+</ul>
+<h2 class="code-line has-line-data" data-line-start="39" data-line-end="40"><a id="Examples_39"></a>Examples</h2>
+<ul>
+<li class="has-line-data" data-line-start="40" data-line-end="41">MySQL</li>
+<li class="has-line-data" data-line-start="41" data-line-end="42">PostgreSQL</li>
+<li class="has-line-data" data-line-start="42" data-line-end="43">Oracle Database</li>
+<li class="has-line-data" data-line-start="43" data-line-end="45">MongoDB</li>
+</ul>
+<hr>
+<h1 class="code-line has-line-data" data-line-start="47" data-line-end="48"><a id="3_Data_Abstraction_47"></a>3. Data Abstraction</h1>
+<h2 class="code-line has-line-data" data-line-start="49" data-line-end="50"><a id="Meaning_49"></a>Meaning</h2>
+<p class="has-line-data" data-line-start="50" data-line-end="51">Technique of hiding unnecessary internal complexity while exposing essential information.</p>
+<h2 class="code-line has-line-data" data-line-start="52" data-line-end="53"><a id="User_Sees_52"></a>User Sees</h2>
+<ul>
+<li class="has-line-data" data-line-start="53" data-line-end="54">SQL</li>
+<li class="has-line-data" data-line-start="54" data-line-end="55">Tables</li>
+<li class="has-line-data" data-line-start="55" data-line-end="57">Views</li>
+</ul>
+<h2 class="code-line has-line-data" data-line-start="57" data-line-end="58"><a id="User_Does_NOT_See_57"></a>User Does NOT See</h2>
+<ul>
+<li class="has-line-data" data-line-start="58" data-line-end="59">Disk sectors</li>
+<li class="has-line-data" data-line-start="59" data-line-end="60">Memory pages</li>
+<li class="has-line-data" data-line-start="60" data-line-end="61">Buffer algorithms</li>
+<li class="has-line-data" data-line-start="61" data-line-end="63">Storage offsets</li>
+</ul>
+<h2 class="code-line has-line-data" data-line-start="63" data-line-end="64"><a id="Purpose_63"></a>Purpose</h2>
+<ul>
+<li class="has-line-data" data-line-start="64" data-line-end="65">Simplicity</li>
+<li class="has-line-data" data-line-start="65" data-line-end="66">Security</li>
+<li class="has-line-data" data-line-start="66" data-line-end="67">Flexibility</li>
+<li class="has-line-data" data-line-start="67" data-line-end="69">Maintainability</li>
+</ul>
+<hr>
+<h1 class="code-line has-line-data" data-line-start="71" data-line-end="72"><a id="4_ANSISPARC_Architecture_71"></a>4. ANSI/SPARC Architecture</h1>
+<h2 class="code-line has-line-data" data-line-start="73" data-line-end="74"><a id="Meaning_73"></a>Meaning</h2>
+<p class="has-line-data" data-line-start="74" data-line-end="75">Formal 3-level DBMS architecture separating:</p>
+<ul>
+<li class="has-line-data" data-line-start="75" data-line-end="76">User views</li>
+<li class="has-line-data" data-line-start="76" data-line-end="77">Logical structure</li>
+<li class="has-line-data" data-line-start="77" data-line-end="79">Physical storage</li>
+</ul>
+<h2 class="code-line has-line-data" data-line-start="79" data-line-end="80"><a id="Goal_79"></a>Goal</h2>
+<p class="has-line-data" data-line-start="80" data-line-end="81">Changes in one level should not affect others.</p>
+<hr>
+<h1 class="code-line has-line-data" data-line-start="84" data-line-end="85"><a id="5_External_Level_View_Level_84"></a>5. External Level (View Level)</h1>
+<h2 class="code-line has-line-data" data-line-start="86" data-line-end="87"><a id="Meaning_86"></a>Meaning</h2>
+<p class="has-line-data" data-line-start="87" data-line-end="88">Highest abstraction layer visible to users.</p>
+<h2 class="code-line has-line-data" data-line-start="89" data-line-end="90"><a id="Contains_89"></a>Contains</h2>
+<ul>
+<li class="has-line-data" data-line-start="90" data-line-end="91">Views</li>
+<li class="has-line-data" data-line-start="91" data-line-end="92">SQL queries</li>
+<li class="has-line-data" data-line-start="92" data-line-end="94">User-specific representations</li>
+</ul>
+<h2 class="code-line has-line-data" data-line-start="94" data-line-end="95"><a id="Focus_94"></a>Focus</h2>
+<p class="has-line-data" data-line-start="95" data-line-end="96">“What data should THIS user see?”</p>
+<h2 class="code-line has-line-data" data-line-start="97" data-line-end="98"><a id="Characteristics_97"></a>Characteristics</h2>
+<ul>
+<li class="has-line-data" data-line-start="98" data-line-end="99">Multiple external views possible</li>
+<li class="has-line-data" data-line-start="99" data-line-end="100">Security-oriented</li>
+<li class="has-line-data" data-line-start="100" data-line-end="102">Simplified representation</li>
+</ul>
+<hr>
+<h1 class="code-line has-line-data" data-line-start="104" data-line-end="105"><a id="6_External_Schema_View_Schema_Subschema_104"></a>6. External Schema / View Schema / Subschema</h1>
+<h2 class="code-line has-line-data" data-line-start="106" data-line-end="107"><a id="Meaning_106"></a>Meaning</h2>
+<p class="has-line-data" data-line-start="107" data-line-end="108">Structure of a specific user view.</p>
+<h2 class="code-line has-line-data" data-line-start="109" data-line-end="110"><a id="Example_109"></a>Example</h2>
+<pre><code class="has-line-data language-sql" data-line-start="111" data-line-end="114"><span class="hljs-keyword">CREATE</span> <span class="hljs-keyword">VIEW</span> HR_View <span class="hljs-keyword">AS</span>
+<span class="hljs-keyword">SELECT</span> Name, Salary <span class="hljs-keyword">FROM</span> Employee;
+</code></pre>
+<hr>
+<h1 class="code-line has-line-data" data-line-start="117" data-line-end="118"><a id="7_View_117"></a>7. View</h1>
+<h2 class="code-line has-line-data" data-line-start="119" data-line-end="120"><a id="Meaning_119"></a>Meaning</h2>
+<p class="has-line-data" data-line-start="120" data-line-end="121">Virtual table generated from query results.</p>
+<h2 class="code-line has-line-data" data-line-start="122" data-line-end="123"><a id="Purpose_122"></a>Purpose</h2>
+<ul>
+<li class="has-line-data" data-line-start="123" data-line-end="124">Security</li>
+<li class="has-line-data" data-line-start="124" data-line-end="125">Simplification</li>
+<li class="has-line-data" data-line-start="125" data-line-end="126">Data hiding</li>
+<li class="has-line-data" data-line-start="126" data-line-end="128">Abstraction</li>
+</ul>
+<h2 class="code-line has-line-data" data-line-start="128" data-line-end="129"><a id="Types_128"></a>Types</h2>
+<table class="table table-striped table-bordered">
+<thead>
+<tr>
+<th>Type</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Virtual View</td>
+<td>Generated dynamically</td>
+</tr>
+<tr>
+<td>Materialized View</td>
+<td>Physically stored result</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h1 class="code-line has-line-data" data-line-start="136" data-line-end="137"><a id="8_Conceptual_Level_Logical_Level_136"></a>8. Conceptual Level (Logical Level)</h1>
+<h2 class="code-line has-line-data" data-line-start="138" data-line-end="139"><a id="Meaning_138"></a>Meaning</h2>
+<p class="has-line-data" data-line-start="139" data-line-end="140">Middle abstraction layer describing complete logical database structure.</p>
+<h2 class="code-line has-line-data" data-line-start="141" data-line-end="142"><a id="Focus_141"></a>Focus</h2>
+<p class="has-line-data" data-line-start="142" data-line-end="143">“What data exists and how does it relate?”</p>
+<h2 class="code-line has-line-data" data-line-start="144" data-line-end="145"><a id="Contains_144"></a>Contains</h2>
+<ul>
+<li class="has-line-data" data-line-start="145" data-line-end="146">Tables</li>
+<li class="has-line-data" data-line-start="146" data-line-end="147">Relationships</li>
+<li class="has-line-data" data-line-start="147" data-line-end="148">Constraints</li>
+<li class="has-line-data" data-line-start="148" data-line-end="150">Business rules</li>
+</ul>
+<hr>
+<h1 class="code-line has-line-data" data-line-start="152" data-line-end="153"><a id="9_Conceptual_Schema_Logical_Schema_152"></a>9. Conceptual Schema / Logical Schema</h1>
+<h2 class="code-line has-line-data" data-line-start="154" data-line-end="155"><a id="Meaning_154"></a>Meaning</h2>
+<p class="has-line-data" data-line-start="155" data-line-end="156">Complete blueprint of database.</p>
+<h2 class="code-line has-line-data" data-line-start="157" data-line-end="158"><a id="Defines_157"></a>Defines</h2>
+<ul>
+<li class="has-line-data" data-line-start="158" data-line-end="159">Entities</li>
+<li class="has-line-data" data-line-start="159" data-line-end="160">Attributes</li>
+<li class="has-line-data" data-line-start="160" data-line-end="161">Relationships</li>
+<li class="has-line-data" data-line-start="161" data-line-end="162">Constraints</li>
+<li class="has-line-data" data-line-start="162" data-line-end="164">Domains</li>
+</ul>
+<hr>
+<h1 class="code-line has-line-data" data-line-start="166" data-line-end="167"><a id="10_Internal_Level_Physical_Level_166"></a>10. Internal Level (Physical Level)</h1>
+<h2 class="code-line has-line-data" data-line-start="168" data-line-end="169"><a id="Meaning_168"></a>Meaning</h2>
+<p class="has-line-data" data-line-start="169" data-line-end="170">Lowest abstraction layer describing physical storage details.</p>
+<h2 class="code-line has-line-data" data-line-start="171" data-line-end="172"><a id="Focus_171"></a>Focus</h2>
+<p class="has-line-data" data-line-start="172" data-line-end="173">“How is data physically stored?”</p>
+<h2 class="code-line has-line-data" data-line-start="174" data-line-end="175"><a id="Contains_174"></a>Contains</h2>
+<ul>
+<li class="has-line-data" data-line-start="175" data-line-end="176">Files</li>
+<li class="has-line-data" data-line-start="176" data-line-end="177">Pages</li>
+<li class="has-line-data" data-line-start="177" data-line-end="178">Blocks</li>
+<li class="has-line-data" data-line-start="178" data-line-end="179">Indexes</li>
+<li class="has-line-data" data-line-start="179" data-line-end="180">Compression</li>
+<li class="has-line-data" data-line-start="180" data-line-end="182">Encryption</li>
+</ul>
+<hr>
+<h1 class="code-line has-line-data" data-line-start="184" data-line-end="185"><a id="11_Physical_Schema_Storage_Schema_184"></a>11. Physical Schema / Storage Schema</h1>
+<h2 class="code-line has-line-data" data-line-start="186" data-line-end="187"><a id="Meaning_186"></a>Meaning</h2>
+<p class="has-line-data" data-line-start="187" data-line-end="188">Specification of physical storage organization.</p>
+<h2 class="code-line has-line-data" data-line-start="189" data-line-end="190"><a id="Includes_189"></a>Includes</h2>
+<ul>
+<li class="has-line-data" data-line-start="190" data-line-end="191">File structures</li>
+<li class="has-line-data" data-line-start="191" data-line-end="192">Access paths</li>
+<li class="has-line-data" data-line-start="192" data-line-end="193">Index structures</li>
+<li class="has-line-data" data-line-start="193" data-line-end="195">Page layouts</li>
+</ul>
+<hr>
+<h1 class="code-line has-line-data" data-line-start="197" data-line-end="198"><a id="12_Data_Independence_197"></a>12. Data Independence</h1>
+<h2 class="code-line has-line-data" data-line-start="199" data-line-end="200"><a id="Meaning_199"></a>Meaning</h2>
+<p class="has-line-data" data-line-start="200" data-line-end="201">Ability to modify one schema level without affecting higher levels.</p>
+<hr>
+<h1 class="code-line has-line-data" data-line-start="204" data-line-end="205"><a id="13_Physical_Data_Independence_204"></a>13. Physical Data Independence</h1>
+<h2 class="code-line has-line-data" data-line-start="206" data-line-end="207"><a id="Meaning_206"></a>Meaning</h2>
+<p class="has-line-data" data-line-start="207" data-line-end="208">Change physical storage without affecting logical schema.</p>
+<h2 class="code-line has-line-data" data-line-start="209" data-line-end="210"><a id="Examples_209"></a>Examples</h2>
+<ul>
+<li class="has-line-data" data-line-start="210" data-line-end="211">HDD → SSD</li>
+<li class="has-line-data" data-line-start="211" data-line-end="212">B+ Tree → Hash Index</li>
+<li class="has-line-data" data-line-start="212" data-line-end="214">Compression enabled</li>
+</ul>
+<hr>
+<h1 class="code-line has-line-data" data-line-start="216" data-line-end="217"><a id="14_Logical_Data_Independence_216"></a>14. Logical Data Independence</h1>
+<h2 class="code-line has-line-data" data-line-start="218" data-line-end="219"><a id="Meaning_218"></a>Meaning</h2>
+<p class="has-line-data" data-line-start="219" data-line-end="220">Change logical schema without affecting external views.</p>
+<h2 class="code-line has-line-data" data-line-start="221" data-line-end="222"><a id="Examples_221"></a>Examples</h2>
+<ul>
+<li class="has-line-data" data-line-start="222" data-line-end="223">Add columns</li>
+<li class="has-line-data" data-line-start="223" data-line-end="224">Split tables</li>
+<li class="has-line-data" data-line-start="224" data-line-end="226">Add relationships</li>
+</ul>
+<hr>
+<h1 class="code-line has-line-data" data-line-start="228" data-line-end="229"><a id="15_Schema_228"></a>15. Schema</h1>
+<h2 class="code-line has-line-data" data-line-start="230" data-line-end="231"><a id="Meaning_230"></a>Meaning</h2>
+<p class="has-line-data" data-line-start="231" data-line-end="232">Blueprint/definition of database structure.</p>
+<h2 class="code-line has-line-data" data-line-start="233" data-line-end="234"><a id="Defines_233"></a>Defines</h2>
+<ul>
+<li class="has-line-data" data-line-start="234" data-line-end="235">Tables</li>
+<li class="has-line-data" data-line-start="235" data-line-end="236">Attributes</li>
+<li class="has-line-data" data-line-start="236" data-line-end="237">Constraints</li>
+<li class="has-line-data" data-line-start="237" data-line-end="238">Data types</li>
+<li class="has-line-data" data-line-start="238" data-line-end="240">Relationships</li>
+</ul>
+<h2 class="code-line has-line-data" data-line-start="240" data-line-end="241"><a id="Nature_240"></a>Nature</h2>
+<ul>
+<li class="has-line-data" data-line-start="241" data-line-end="242">Static</li>
+<li class="has-line-data" data-line-start="242" data-line-end="243">Structural</li>
+<li class="has-line-data" data-line-start="243" data-line-end="245">Declarative</li>
+</ul>
+<hr>
+<h1 class="code-line has-line-data" data-line-start="247" data-line-end="248"><a id="16_Instance_Database_State_247"></a>16. Instance (Database State)</h1>
+<h2 class="code-line has-line-data" data-line-start="249" data-line-end="250"><a id="Meaning_249"></a>Meaning</h2>
+<p class="has-line-data" data-line-start="250" data-line-end="251">Actual data stored in database at a specific time.</p>
+<h2 class="code-line has-line-data" data-line-start="252" data-line-end="253"><a id="Nature_252"></a>Nature</h2>
+<ul>
+<li class="has-line-data" data-line-start="253" data-line-end="254">Dynamic</li>
+<li class="has-line-data" data-line-start="254" data-line-end="255">Time-dependent</li>
+<li class="has-line-data" data-line-start="255" data-line-end="257">Changes frequently</li>
+</ul>
+<hr>
+<h1 class="code-line has-line-data" data-line-start="259" data-line-end="260"><a id="17_Intension_259"></a>17. Intension</h1>
+<h2 class="code-line has-line-data" data-line-start="261" data-line-end="262"><a id="Meaning_261"></a>Meaning</h2>
+<p class="has-line-data" data-line-start="262" data-line-end="263">Definition/rules of database.</p>
+<h2 class="code-line has-line-data" data-line-start="264" data-line-end="265"><a id="Equivalent_To_264"></a>Equivalent To</h2>
+<p class="has-line-data" data-line-start="265" data-line-end="266">Schema</p>
+<hr>
+<h1 class="code-line has-line-data" data-line-start="269" data-line-end="270"><a id="18_Extension_269"></a>18. Extension</h1>
+<h2 class="code-line has-line-data" data-line-start="271" data-line-end="272"><a id="Meaning_271"></a>Meaning</h2>
+<p class="has-line-data" data-line-start="272" data-line-end="273">Actual set of stored tuples.</p>
+<h2 class="code-line has-line-data" data-line-start="274" data-line-end="275"><a id="Equivalent_To_274"></a>Equivalent To</h2>
+<p class="has-line-data" data-line-start="275" data-line-end="276">Instance</p>
+<hr>
+<h1 class="code-line has-line-data" data-line-start="279" data-line-end="280"><a id="19_Relation_279"></a>19. Relation</h1>
+<h2 class="code-line has-line-data" data-line-start="281" data-line-end="282"><a id="Meaning_281"></a>Meaning</h2>
+<p class="has-line-data" data-line-start="282" data-line-end="283">Table in relational model.</p>
+<h2 class="code-line has-line-data" data-line-start="284" data-line-end="285"><a id="Components_284"></a>Components</h2>
+<ul>
+<li class="has-line-data" data-line-start="285" data-line-end="286">Tuples (rows)</li>
+<li class="has-line-data" data-line-start="286" data-line-end="288">Attributes (columns)</li>
+</ul>
+<hr>
+<h1 class="code-line has-line-data" data-line-start="290" data-line-end="291"><a id="20_Relation_Schema_290"></a>20. Relation Schema</h1>
+<h2 class="code-line has-line-data" data-line-start="292" data-line-end="293"><a id="Meaning_292"></a>Meaning</h2>
+<p class="has-line-data" data-line-start="293" data-line-end="294">Structure/definition of relation.</p>
+<h2 class="code-line has-line-data" data-line-start="295" data-line-end="296"><a id="Example_295"></a>Example</h2>
+<pre><code class="has-line-data language-text" data-line-start="297" data-line-end="299">Student(ID:int, Name:varchar)
+</code></pre>
+<hr>
+<h1 class="code-line has-line-data" data-line-start="302" data-line-end="303"><a id="21_Relation_Instance_302"></a>21. Relation Instance</h1>
+<h2 class="code-line has-line-data" data-line-start="304" data-line-end="305"><a id="Meaning_304"></a>Meaning</h2>
+<p class="has-line-data" data-line-start="305" data-line-end="306">Current set of tuples inside relation.</p>
+<hr>
+<h1 class="code-line has-line-data" data-line-start="309" data-line-end="310"><a id="22_Tuple_309"></a>22. Tuple</h1>
+<h2 class="code-line has-line-data" data-line-start="311" data-line-end="312"><a id="Meaning_311"></a>Meaning</h2>
+<p class="has-line-data" data-line-start="312" data-line-end="313">Single row in relation.</p>
+<h2 class="code-line has-line-data" data-line-start="314" data-line-end="315"><a id="Example_314"></a>Example</h2>
+<pre><code class="has-line-data language-text" data-line-start="316" data-line-end="318">(101, &quot;Alice&quot;, &quot;CS&quot;)
+</code></pre>
+<hr>
+<h1 class="code-line has-line-data" data-line-start="321" data-line-end="322"><a id="23_Attribute_321"></a>23. Attribute</h1>
+<h2 class="code-line has-line-data" data-line-start="323" data-line-end="324"><a id="Meaning_323"></a>Meaning</h2>
+<p class="has-line-data" data-line-start="324" data-line-end="325">Column/property of relation.</p>
+<h2 class="code-line has-line-data" data-line-start="326" data-line-end="327"><a id="Example_326"></a>Example</h2>
+<pre><code class="has-line-data language-text" data-line-start="328" data-line-end="330">Student.Name
+</code></pre>
+<hr>
+<h1 class="code-line has-line-data" data-line-start="333" data-line-end="334"><a id="24_Domain_333"></a>24. Domain</h1>
+<h2 class="code-line has-line-data" data-line-start="335" data-line-end="336"><a id="Meaning_335"></a>Meaning</h2>
+<p class="has-line-data" data-line-start="336" data-line-end="337">Set of valid values allowed for an attribute.</p>
+<h2 class="code-line has-line-data" data-line-start="338" data-line-end="339"><a id="Example_338"></a>Example</h2>
+<pre><code class="has-line-data language-sql" data-line-start="340" data-line-end="342">Age <span class="hljs-type">INT</span> <span class="hljs-keyword">CHECK</span>(Age <span class="hljs-operator">&gt;=</span> <span class="hljs-number">18</span>)
+</code></pre>
+<hr>
+<h1 class="code-line has-line-data" data-line-start="345" data-line-end="346"><a id="25_Constraint_345"></a>25. Constraint</h1>
+<h2 class="code-line has-line-data" data-line-start="347" data-line-end="348"><a id="Meaning_347"></a>Meaning</h2>
+<p class="has-line-data" data-line-start="348" data-line-end="349">Rule enforced by DBMS to maintain correctness and integrity.</p>
+<hr>
+<h1 class="code-line has-line-data" data-line-start="352" data-line-end="353"><a id="26_Integrity_Constraint_352"></a>26. Integrity Constraint</h1>
+<h2 class="code-line has-line-data" data-line-start="354" data-line-end="355"><a id="Meaning_354"></a>Meaning</h2>
+<p class="has-line-data" data-line-start="355" data-line-end="356">Rule ensuring database remains valid and consistent.</p>
+<hr>
+<h1 class="code-line has-line-data" data-line-start="359" data-line-end="360"><a id="27_Entity_359"></a>27. Entity</h1>
+<h2 class="code-line has-line-data" data-line-start="361" data-line-end="362"><a id="Meaning_361"></a>Meaning</h2>
+<p class="has-line-data" data-line-start="362" data-line-end="363">Real-world object represented in database.</p>
+<h2 class="code-line has-line-data" data-line-start="364" data-line-end="365"><a id="Examples_364"></a>Examples</h2>
+<ul>
+<li class="has-line-data" data-line-start="365" data-line-end="366">Student</li>
+<li class="has-line-data" data-line-start="366" data-line-end="367">Employee</li>
+<li class="has-line-data" data-line-start="367" data-line-end="369">Product</li>
+</ul>
+<hr>
+<h1 class="code-line has-line-data" data-line-start="371" data-line-end="372"><a id="28_Relationship_371"></a>28. Relationship</h1>
+<h2 class="code-line has-line-data" data-line-start="373" data-line-end="374"><a id="Meaning_373"></a>Meaning</h2>
+<p class="has-line-data" data-line-start="374" data-line-end="375">Association between entities/tables.</p>
+<h2 class="code-line has-line-data" data-line-start="376" data-line-end="377"><a id="Example_376"></a>Example</h2>
+<pre><code class="has-line-data language-text" data-line-start="378" data-line-end="380">Order.Customer_ID → Customer.ID
+</code></pre>
+<hr>
+<h1 class="code-line has-line-data" data-line-start="383" data-line-end="384"><a id="29_Primary_Key_383"></a>29. Primary Key</h1>
+<h2 class="code-line has-line-data" data-line-start="385" data-line-end="386"><a id="Meaning_385"></a>Meaning</h2>
+<p class="has-line-data" data-line-start="386" data-line-end="387">Attribute uniquely identifying each tuple.</p>
+<h2 class="code-line has-line-data" data-line-start="388" data-line-end="389"><a id="Properties_388"></a>Properties</h2>
+<ul>
+<li class="has-line-data" data-line-start="389" data-line-end="390">Unique</li>
+<li class="has-line-data" data-line-start="390" data-line-end="392">Not NULL</li>
+</ul>
+<hr>
+<h1 class="code-line has-line-data" data-line-start="394" data-line-end="395"><a id="30_Foreign_Key_394"></a>30. Foreign Key</h1>
+<h2 class="code-line has-line-data" data-line-start="396" data-line-end="397"><a id="Meaning_396"></a>Meaning</h2>
+<p class="has-line-data" data-line-start="397" data-line-end="398">Attribute referencing primary key of another relation.</p>
+<h2 class="code-line has-line-data" data-line-start="399" data-line-end="400"><a id="Purpose_399"></a>Purpose</h2>
+<p class="has-line-data" data-line-start="400" data-line-end="401">Maintain referential integrity.</p>
+<hr>
+<h1 class="code-line has-line-data" data-line-start="404" data-line-end="405"><a id="31_Referential_Integrity_404"></a>31. Referential Integrity</h1>
+<h2 class="code-line has-line-data" data-line-start="406" data-line-end="407"><a id="Meaning_406"></a>Meaning</h2>
+<p class="has-line-data" data-line-start="407" data-line-end="408">Foreign key must reference existing tuple.</p>
+<hr>
+<h1 class="code-line has-line-data" data-line-start="411" data-line-end="412"><a id="32_Candidate_Key_411"></a>32. Candidate Key</h1>
+<h2 class="code-line has-line-data" data-line-start="413" data-line-end="414"><a id="Meaning_413"></a>Meaning</h2>
+<p class="has-line-data" data-line-start="414" data-line-end="415">Any attribute set capable of uniquely identifying tuples.</p>
+<hr>
+<h1 class="code-line has-line-data" data-line-start="418" data-line-end="419"><a id="33_Super_Key_418"></a>33. Super Key</h1>
+<h2 class="code-line has-line-data" data-line-start="420" data-line-end="421"><a id="Meaning_420"></a>Meaning</h2>
+<p class="has-line-data" data-line-start="421" data-line-end="422">Any attribute combination uniquely identifying tuples.</p>
+<hr>
+<h1 class="code-line has-line-data" data-line-start="425" data-line-end="426"><a id="34_Composite_Key_425"></a>34. Composite Key</h1>
+<h2 class="code-line has-line-data" data-line-start="427" data-line-end="428"><a id="Meaning_427"></a>Meaning</h2>
+<p class="has-line-data" data-line-start="428" data-line-end="429">Primary key made of multiple attributes.</p>
+<hr>
+<h1 class="code-line has-line-data" data-line-start="432" data-line-end="433"><a id="35_UNIQUE_Constraint_432"></a>35. UNIQUE Constraint</h1>
+<h2 class="code-line has-line-data" data-line-start="434" data-line-end="435"><a id="Meaning_434"></a>Meaning</h2>
+<p class="has-line-data" data-line-start="435" data-line-end="436">Prevents duplicate values.</p>
+<hr>
+<h1 class="code-line has-line-data" data-line-start="439" data-line-end="440"><a id="36_NOT_NULL_Constraint_439"></a>36. NOT NULL Constraint</h1>
+<h2 class="code-line has-line-data" data-line-start="441" data-line-end="442"><a id="Meaning_441"></a>Meaning</h2>
+<p class="has-line-data" data-line-start="442" data-line-end="443">Attribute cannot contain NULL.</p>
+<hr>
+<h1 class="code-line has-line-data" data-line-start="446" data-line-end="447"><a id="37_CHECK_Constraint_446"></a>37. CHECK Constraint</h1>
+<h2 class="code-line has-line-data" data-line-start="448" data-line-end="449"><a id="Meaning_448"></a>Meaning</h2>
+<p class="has-line-data" data-line-start="449" data-line-end="450">Validates conditions before insertion/update.</p>
+<h2 class="code-line has-line-data" data-line-start="451" data-line-end="452"><a id="Example_451"></a>Example</h2>
+<pre><code class="has-line-data language-sql" data-line-start="453" data-line-end="455"><span class="hljs-keyword">CHECK</span> (Salary <span class="hljs-operator">&gt;</span> <span class="hljs-number">0</span>)
+</code></pre>
+<hr>
+<h1 class="code-line has-line-data" data-line-start="458" data-line-end="459"><a id="38_Query_458"></a>38. Query</h1>
+<h2 class="code-line has-line-data" data-line-start="460" data-line-end="461"><a id="Meaning_460"></a>Meaning</h2>
+<p class="has-line-data" data-line-start="461" data-line-end="462">Request for data or operations in DBMS.</p>
+<h2 class="code-line has-line-data" data-line-start="463" data-line-end="464"><a id="Example_463"></a>Example</h2>
+<pre><code class="has-line-data language-sql" data-line-start="465" data-line-end="467"><span class="hljs-keyword">SELECT</span> <span class="hljs-operator">*</span> <span class="hljs-keyword">FROM</span> Student;
+</code></pre>
+<hr>
+<h1 class="code-line has-line-data" data-line-start="470" data-line-end="471"><a id="39_SQL_Structured_Query_Language_470"></a>39. SQL (Structured Query Language)</h1>
+<h2 class="code-line has-line-data" data-line-start="472" data-line-end="473"><a id="Meaning_472"></a>Meaning</h2>
+<p class="has-line-data" data-line-start="473" data-line-end="474">Language used to communicate with relational DBMS.</p>
+<h2 class="code-line has-line-data" data-line-start="475" data-line-end="476"><a id="Categories_475"></a>Categories</h2>
+<table class="table table-striped table-bordered">
+<thead>
+<tr>
+<th>Type</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>DDL</td>
+<td>Schema definition</td>
+</tr>
+<tr>
+<td>DML</td>
+<td>Data manipulation</td>
+</tr>
+<tr>
+<td>DCL</td>
+<td>Access control</td>
+</tr>
+<tr>
+<td>TCL</td>
+<td>Transaction control</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h1 class="code-line has-line-data" data-line-start="486" data-line-end="487"><a id="40_DDL_Data_Definition_Language_486"></a>40. DDL (Data Definition Language)</h1>
+<h2 class="code-line has-line-data" data-line-start="488" data-line-end="489"><a id="Meaning_488"></a>Meaning</h2>
+<p class="has-line-data" data-line-start="489" data-line-end="490">Commands defining database structure.</p>
+<h2 class="code-line has-line-data" data-line-start="491" data-line-end="492"><a id="Examples_491"></a>Examples</h2>
+<pre><code class="has-line-data language-sql" data-line-start="493" data-line-end="497"><span class="hljs-keyword">CREATE</span>
+<span class="hljs-keyword">ALTER</span>
+<span class="hljs-keyword">DROP</span>
+</code></pre>
+<hr>
+<h1 class="code-line has-line-data" data-line-start="500" data-line-end="501"><a id="41_DML_Data_Manipulation_Language_500"></a>41. DML (Data Manipulation Language)</h1>
+<h2 class="code-line has-line-data" data-line-start="502" data-line-end="503"><a id="Meaning_502"></a>Meaning</h2>
+<p class="has-line-data" data-line-start="503" data-line-end="504">Commands manipulating data.</p>
+<h2 class="code-line has-line-data" data-line-start="505" data-line-end="506"><a id="Examples_505"></a>Examples</h2>
+<pre><code class="has-line-data language-sql" data-line-start="507" data-line-end="512"><span class="hljs-keyword">INSERT</span>
+<span class="hljs-keyword">UPDATE</span>
+<span class="hljs-keyword">DELETE</span>
+<span class="hljs-keyword">SELECT</span>
+</code></pre>
+<hr>
+<h1 class="code-line has-line-data" data-line-start="515" data-line-end="516"><a id="42_Query_Optimizer_515"></a>42. Query Optimizer</h1>
+<h2 class="code-line has-line-data" data-line-start="517" data-line-end="518"><a id="Meaning_517"></a>Meaning</h2>
+<p class="has-line-data" data-line-start="518" data-line-end="519">Component choosing most efficient execution plan.</p>
+<h2 class="code-line has-line-data" data-line-start="520" data-line-end="521"><a id="Goal_520"></a>Goal</h2>
+<p class="has-line-data" data-line-start="521" data-line-end="522">Minimize:</p>
+<ul>
+<li class="has-line-data" data-line-start="522" data-line-end="523">CPU cost</li>
+<li class="has-line-data" data-line-start="523" data-line-end="524">Disk I/O</li>
+<li class="has-line-data" data-line-start="524" data-line-end="526">Memory usage</li>
+</ul>
+<hr>
+<h1 class="code-line has-line-data" data-line-start="528" data-line-end="529"><a id="43_Execution_Plan_528"></a>43. Execution Plan</h1>
+<h2 class="code-line has-line-data" data-line-start="530" data-line-end="531"><a id="Meaning_530"></a>Meaning</h2>
+<p class="has-line-data" data-line-start="531" data-line-end="532">Strategy chosen by optimizer to execute query.</p>
+<hr>
+<h1 class="code-line has-line-data" data-line-start="535" data-line-end="536"><a id="44_Sequential_Scan_Full_Table_Scan_535"></a>44. Sequential Scan (Full Table Scan)</h1>
+<h2 class="code-line has-line-data" data-line-start="537" data-line-end="538"><a id="Meaning_537"></a>Meaning</h2>
+<p class="has-line-data" data-line-start="538" data-line-end="539">Reading every row in table.</p>
+<hr>
+<h1 class="code-line has-line-data" data-line-start="542" data-line-end="543"><a id="45_Index_Scan_542"></a>45. Index Scan</h1>
+<h2 class="code-line has-line-data" data-line-start="544" data-line-end="545"><a id="Meaning_544"></a>Meaning</h2>
+<p class="has-line-data" data-line-start="545" data-line-end="546">Using index structure for faster retrieval.</p>
+<hr>
+<h1 class="code-line has-line-data" data-line-start="549" data-line-end="550"><a id="46_Index_549"></a>46. Index</h1>
+<h2 class="code-line has-line-data" data-line-start="551" data-line-end="552"><a id="Meaning_551"></a>Meaning</h2>
+<p class="has-line-data" data-line-start="552" data-line-end="553">Auxiliary data structure accelerating searches.</p>
+<h2 class="code-line has-line-data" data-line-start="554" data-line-end="555"><a id="Examples_554"></a>Examples</h2>
+<ul>
+<li class="has-line-data" data-line-start="555" data-line-end="556">B+ Tree</li>
+<li class="has-line-data" data-line-start="556" data-line-end="557">Hash Index</li>
+<li class="has-line-data" data-line-start="557" data-line-end="559">Bitmap Index</li>
+</ul>
+<hr>
+<h1 class="code-line has-line-data" data-line-start="561" data-line-end="562"><a id="47_B_Tree_561"></a>47. B+ Tree</h1>
+<h2 class="code-line has-line-data" data-line-start="563" data-line-end="564"><a id="Meaning_563"></a>Meaning</h2>
+<p class="has-line-data" data-line-start="564" data-line-end="565">Balanced tree indexing structure optimized for disk systems.</p>
+<h2 class="code-line has-line-data" data-line-start="566" data-line-end="567"><a id="Features_566"></a>Features</h2>
+<ul>
+<li class="has-line-data" data-line-start="567" data-line-end="568">Sorted keys</li>
+<li class="has-line-data" data-line-start="568" data-line-end="569">Fast range queries</li>
+<li class="has-line-data" data-line-start="569" data-line-end="571">Logarithmic search</li>
+</ul>
+<hr>
+<h1 class="code-line has-line-data" data-line-start="573" data-line-end="574"><a id="48_Hash_Index_573"></a>48. Hash Index</h1>
+<h2 class="code-line has-line-data" data-line-start="575" data-line-end="576"><a id="Meaning_575"></a>Meaning</h2>
+<p class="has-line-data" data-line-start="576" data-line-end="577">Index using hash function for exact-match lookups.</p>
+<hr>
+<h1 class="code-line has-line-data" data-line-start="580" data-line-end="581"><a id="49_Buffer_Manager_580"></a>49. Buffer Manager</h1>
+<h2 class="code-line has-line-data" data-line-start="582" data-line-end="583"><a id="Meaning_582"></a>Meaning</h2>
+<p class="has-line-data" data-line-start="583" data-line-end="584">Component managing movement of pages between RAM and disk.</p>
+<hr>
+<h1 class="code-line has-line-data" data-line-start="587" data-line-end="588"><a id="50_Buffer_Pool_587"></a>50. Buffer Pool</h1>
+<h2 class="code-line has-line-data" data-line-start="589" data-line-end="590"><a id="Meaning_589"></a>Meaning</h2>
+<p class="has-line-data" data-line-start="590" data-line-end="591">Memory cache storing disk pages temporarily.</p>
+<hr>
+<h1 class="code-line has-line-data" data-line-start="594" data-line-end="595"><a id="51_File_Manager_594"></a>51. File Manager</h1>
+<h2 class="code-line has-line-data" data-line-start="596" data-line-end="597"><a id="Meaning_596"></a>Meaning</h2>
+<p class="has-line-data" data-line-start="597" data-line-end="598">Handles reading/writing raw bytes to disk.</p>
+<hr>
+<h1 class="code-line has-line-data" data-line-start="601" data-line-end="602"><a id="52_Storage_Manager_601"></a>52. Storage Manager</h1>
+<h2 class="code-line has-line-data" data-line-start="603" data-line-end="604"><a id="Meaning_603"></a>Meaning</h2>
+<p class="has-line-data" data-line-start="604" data-line-end="605">Maps logical tables to physical storage.</p>
+<hr>
+<h1 class="code-line has-line-data" data-line-start="608" data-line-end="609"><a id="53_Transaction_608"></a>53. Transaction</h1>
+<h2 class="code-line has-line-data" data-line-start="610" data-line-end="611"><a id="Meaning_610"></a>Meaning</h2>
+<p class="has-line-data" data-line-start="611" data-line-end="612">Logical unit of work executed atomically.</p>
+<hr>
+<h1 class="code-line has-line-data" data-line-start="615" data-line-end="616"><a id="54_Transaction_Manager_615"></a>54. Transaction Manager</h1>
+<h2 class="code-line has-line-data" data-line-start="617" data-line-end="618"><a id="Meaning_617"></a>Meaning</h2>
+<p class="has-line-data" data-line-start="618" data-line-end="619">Controls transactions and maintains consistency.</p>
+<hr>
+<h1 class="code-line has-line-data" data-line-start="622" data-line-end="623"><a id="55_ACID_Properties_622"></a>55. ACID Properties</h1>
+<table class="table table-striped table-bordered">
+<thead>
+<tr>
+<th>Property</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Atomicity</td>
+<td>All-or-nothing execution</td>
+</tr>
+<tr>
+<td>Consistency</td>
+<td>Rules preserved</td>
+</tr>
+<tr>
+<td>Isolation</td>
+<td>Transactions independent</td>
+</tr>
+<tr>
+<td>Durability</td>
+<td>Changes survive crashes</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h1 class="code-line has-line-data" data-line-start="633" data-line-end="634"><a id="56_Concurrency_Control_633"></a>56. Concurrency Control</h1>
+<h2 class="code-line has-line-data" data-line-start="635" data-line-end="636"><a id="Meaning_635"></a>Meaning</h2>
+<p class="has-line-data" data-line-start="636" data-line-end="637">Managing simultaneous transactions safely.</p>
+<hr>
+<h1 class="code-line has-line-data" data-line-start="640" data-line-end="641"><a id="57_Locking_640"></a>57. Locking</h1>
+<h2 class="code-line has-line-data" data-line-start="642" data-line-end="643"><a id="Meaning_642"></a>Meaning</h2>
+<p class="has-line-data" data-line-start="643" data-line-end="644">Restricting concurrent access to data.</p>
+<hr>
+<h1 class="code-line has-line-data" data-line-start="647" data-line-end="648"><a id="58_Recovery_System_647"></a>58. Recovery System</h1>
+<h2 class="code-line has-line-data" data-line-start="649" data-line-end="650"><a id="Meaning_649"></a>Meaning</h2>
+<p class="has-line-data" data-line-start="650" data-line-end="651">Mechanism restoring database after failures.</p>
+<hr>
+<h1 class="code-line has-line-data" data-line-start="654" data-line-end="655"><a id="59_Query_Parsing_654"></a>59. Query Parsing</h1>
+<h2 class="code-line has-line-data" data-line-start="656" data-line-end="657"><a id="Meaning_656"></a>Meaning</h2>
+<p class="has-line-data" data-line-start="657" data-line-end="658">Analyzing SQL syntax and semantics.</p>
+<hr>
+<h1 class="code-line has-line-data" data-line-start="661" data-line-end="662"><a id="60_Query_Execution_Engine_661"></a>60. Query Execution Engine</h1>
+<h2 class="code-line has-line-data" data-line-start="663" data-line-end="664"><a id="Meaning_663"></a>Meaning</h2>
+<p class="has-line-data" data-line-start="664" data-line-end="665">Component executing optimized query plans.</p>
+<hr>
+<h1 class="code-line has-line-data" data-line-start="668" data-line-end="669"><a id="61_Data_Block_Page_668"></a>61. Data Block / Page</h1>
+<h2 class="code-line has-line-data" data-line-start="670" data-line-end="671"><a id="Meaning_670"></a>Meaning</h2>
+<p class="has-line-data" data-line-start="671" data-line-end="672">Fixed-size unit of disk I/O.</p>
+<h2 class="code-line has-line-data" data-line-start="673" data-line-end="674"><a id="Typical_Size_673"></a>Typical Size</h2>
+<p class="has-line-data" data-line-start="674" data-line-end="675">4KB–16KB</p>
+<hr>
+<h1 class="code-line has-line-data" data-line-start="678" data-line-end="679"><a id="62_File_Organization_678"></a>62. File Organization</h1>
+<h2 class="code-line has-line-data" data-line-start="680" data-line-end="681"><a id="Meaning_680"></a>Meaning</h2>
+<p class="has-line-data" data-line-start="681" data-line-end="682">Method of arranging records physically.</p>
+<h2 class="code-line has-line-data" data-line-start="683" data-line-end="684"><a id="Types_683"></a>Types</h2>
+<ul>
+<li class="has-line-data" data-line-start="684" data-line-end="685">Heap File</li>
+<li class="has-line-data" data-line-start="685" data-line-end="686">Sorted File</li>
+<li class="has-line-data" data-line-start="686" data-line-end="688">Hash File</li>
+</ul>
+<hr>
+<h1 class="code-line has-line-data" data-line-start="690" data-line-end="691"><a id="63_Compression_690"></a>63. Compression</h1>
+<h2 class="code-line has-line-data" data-line-start="692" data-line-end="693"><a id="Meaning_692"></a>Meaning</h2>
+<p class="has-line-data" data-line-start="693" data-line-end="694">Reducing storage space usage.</p>
+<hr>
+<h1 class="code-line has-line-data" data-line-start="697" data-line-end="698"><a id="64_Encryption_697"></a>64. Encryption</h1>
+<h2 class="code-line has-line-data" data-line-start="699" data-line-end="700"><a id="Meaning_699"></a>Meaning</h2>
+<p class="has-line-data" data-line-start="700" data-line-end="701">Protecting stored data from unauthorized access.</p>
+<hr>
+<h1 class="code-line has-line-data" data-line-start="704" data-line-end="705"><a id="65_Tablespace_704"></a>65. Tablespace</h1>
+<h2 class="code-line has-line-data" data-line-start="706" data-line-end="707"><a id="Meaning_706"></a>Meaning</h2>
+<p class="has-line-data" data-line-start="707" data-line-end="708">Logical storage unit mapping data to physical files.</p>
+<hr>
+<h1 class="code-line has-line-data" data-line-start="711" data-line-end="712"><a id="66_RAID_711"></a>66. RAID</h1>
+<h2 class="code-line has-line-data" data-line-start="713" data-line-end="714"><a id="Meaning_713"></a>Meaning</h2>
+<p class="has-line-data" data-line-start="714" data-line-end="715">Multiple-disk organization for performance/reliability.</p>
+<hr>
+<h1 class="code-line has-line-data" data-line-start="718" data-line-end="719"><a id="67_Normalization_718"></a>67. Normalization</h1>
+<h2 class="code-line has-line-data" data-line-start="720" data-line-end="721"><a id="Meaning_720"></a>Meaning</h2>
+<p class="has-line-data" data-line-start="721" data-line-end="722">Process of reducing redundancy and anomalies.</p>
+<hr>
+<h1 class="code-line has-line-data" data-line-start="725" data-line-end="726"><a id="68_Redundancy_725"></a>68. Redundancy</h1>
+<h2 class="code-line has-line-data" data-line-start="727" data-line-end="728"><a id="Meaning_727"></a>Meaning</h2>
+<p class="has-line-data" data-line-start="728" data-line-end="729">Duplicate unnecessary data storage.</p>
+<hr>
+<h1 class="code-line has-line-data" data-line-start="732" data-line-end="733"><a id="69_Data_Integrity_732"></a>69. Data Integrity</h1>
+<h2 class="code-line has-line-data" data-line-start="734" data-line-end="735"><a id="Meaning_734"></a>Meaning</h2>
+<p class="has-line-data" data-line-start="735" data-line-end="736">Correctness and consistency of database data.</p>
+<hr>
+<h1 class="code-line has-line-data" data-line-start="739" data-line-end="740"><a id="70_Separation_of_Concerns_739"></a>70. Separation of Concerns</h1>
+<h2 class="code-line has-line-data" data-line-start="741" data-line-end="742"><a id="Meaning_741"></a>Meaning</h2>
+<p class="has-line-data" data-line-start="742" data-line-end="743">Each DBMS layer has one responsibility.</p>
+<hr>
+<h1 class="code-line has-line-data" data-line-start="746" data-line-end="747"><a id="71_Mapping_746"></a>71. Mapping</h1>
+<h2 class="code-line has-line-data" data-line-start="748" data-line-end="749"><a id="Meaning_748"></a>Meaning</h2>
+<p class="has-line-data" data-line-start="749" data-line-end="750">Translation between abstraction levels.</p>
+<hr>
+<h1 class="code-line has-line-data" data-line-start="753" data-line-end="754"><a id="72_View_Updatability_753"></a>72. View Updatability</h1>
+<h2 class="code-line has-line-data" data-line-start="755" data-line-end="756"><a id="Meaning_755"></a>Meaning</h2>
+<p class="has-line-data" data-line-start="756" data-line-end="757">Whether DBMS can update underlying tables through a view.</p>
+<hr>
+<h1 class="code-line has-line-data" data-line-start="760" data-line-end="761"><a id="73_ORM_Object_Relational_Mapping_760"></a>73. ORM (Object Relational Mapping)</h1>
+<h2 class="code-line has-line-data" data-line-start="762" data-line-end="763"><a id="Meaning_762"></a>Meaning</h2>
+<p class="has-line-data" data-line-start="763" data-line-end="764">Technique mapping objects to relational tables.</p>
+<h2 class="code-line has-line-data" data-line-start="765" data-line-end="766"><a id="Examples_765"></a>Examples</h2>
+<ul>
+<li class="has-line-data" data-line-start="766" data-line-end="767">Hibernate</li>
+<li class="has-line-data" data-line-start="767" data-line-end="769">SQLAlchemy</li>
+</ul>
+<hr>
+<h1 class="code-line has-line-data" data-line-start="771" data-line-end="772"><a id="74_Impedance_Mismatch_771"></a>74. Impedance Mismatch</h1>
+<h2 class="code-line has-line-data" data-line-start="773" data-line-end="774"><a id="Meaning_773"></a>Meaning</h2>
+<p class="has-line-data" data-line-start="774" data-line-end="775">Conflict between object-oriented models and relational models.</p>
+<hr>
+<h1 class="code-line has-line-data" data-line-start="778" data-line-end="779"><a id="75_NoSQL_778"></a>75. NoSQL</h1>
+<h2 class="code-line has-line-data" data-line-start="780" data-line-end="781"><a id="Meaning_780"></a>Meaning</h2>
+<p class="has-line-data" data-line-start="781" data-line-end="782">Non-relational database systems.</p>
+<h2 class="code-line has-line-data" data-line-start="783" data-line-end="784"><a id="Examples_783"></a>Examples</h2>
+<ul>
+<li class="has-line-data" data-line-start="784" data-line-end="785">Document DB</li>
+<li class="has-line-data" data-line-start="785" data-line-end="786">Graph DB</li>
+<li class="has-line-data" data-line-start="786" data-line-end="788">Key-value DB</li>
+</ul>
+<hr>
+<h1 class="code-line has-line-data" data-line-start="790" data-line-end="791"><a id="76_NewSQL_790"></a>76. NewSQL</h1>
+<h2 class="code-line has-line-data" data-line-start="792" data-line-end="793"><a id="Meaning_792"></a>Meaning</h2>
+<p class="has-line-data" data-line-start="793" data-line-end="794">Modern systems combining:</p>
+<ul>
+<li class="has-line-data" data-line-start="794" data-line-end="795">SQL abstraction</li>
+<li class="has-line-data" data-line-start="795" data-line-end="797">Distributed scalability</li>
+</ul>
+<h2 class="code-line has-line-data" data-line-start="797" data-line-end="798"><a id="Examples_797"></a>Examples</h2>
+<ul>
+<li class="has-line-data" data-line-start="798" data-line-end="799">CockroachDB</li>
+<li class="has-line-data" data-line-start="799" data-line-end="801">YugabyteDB</li>
+</ul>
+<hr>
+<h1 class="code-line has-line-data" data-line-start="803" data-line-end="804"><a id="77_Cloud_Database_803"></a>77. Cloud Database</h1>
+<h2 class="code-line has-line-data" data-line-start="805" data-line-end="806"><a id="Meaning_805"></a>Meaning</h2>
+<p class="has-line-data" data-line-start="806" data-line-end="807">Database managed over cloud infrastructure.</p>
+<h2 class="code-line has-line-data" data-line-start="808" data-line-end="809"><a id="Examples_808"></a>Examples</h2>
+<ul>
+<li class="has-line-data" data-line-start="809" data-line-end="810">Amazon RDS</li>
+<li class="has-line-data" data-line-start="810" data-line-end="812">Google BigQuery</li>
+</ul>
+<hr>
+<h1 class="code-line has-line-data" data-line-start="814" data-line-end="815"><a id="78_Inference_Attack_814"></a>78. Inference Attack</h1>
+<h2 class="code-line has-line-data" data-line-start="816" data-line-end="817"><a id="Meaning_816"></a>Meaning</h2>
+<p class="has-line-data" data-line-start="817" data-line-end="818">Deriving hidden information indirectly from accessible data.</p>
+<hr>
+<h1 class="code-line has-line-data" data-line-start="821" data-line-end="822"><a id="79_RowLevel_Security_821"></a>79. Row-Level Security</h1>
+<h2 class="code-line has-line-data" data-line-start="823" data-line-end="824"><a id="Meaning_823"></a>Meaning</h2>
+<p class="has-line-data" data-line-start="824" data-line-end="825">Restricting access to specific rows based on user identity.</p>
+<hr>
+<h1 class="code-line has-line-data" data-line-start="828" data-line-end="829"><a id="80_Computed_Column_828"></a>80. Computed Column</h1>
+<h2 class="code-line has-line-data" data-line-start="830" data-line-end="831"><a id="Meaning_830"></a>Meaning</h2>
+<p class="has-line-data" data-line-start="831" data-line-end="832">Derived value calculated dynamically.</p>
+<hr>
+<h1 class="code-line has-line-data" data-line-start="835" data-line-end="836"><a id="81_Aggregation_835"></a>81. Aggregation</h1>
+<h2 class="code-line has-line-data" data-line-start="837" data-line-end="838"><a id="Meaning_837"></a>Meaning</h2>
+<p class="has-line-data" data-line-start="838" data-line-end="839">Summarizing data using functions:</p>
+<ul>
+<li class="has-line-data" data-line-start="839" data-line-end="840">SUM</li>
+<li class="has-line-data" data-line-start="840" data-line-end="841">AVG</li>
+<li class="has-line-data" data-line-start="841" data-line-end="842">COUNT</li>
+<li class="has-line-data" data-line-start="842" data-line-end="843">MAX</li>
+<li class="has-line-data" data-line-start="843" data-line-end="844">MIN</li>
+</ul>
+
+</body>
+</html>

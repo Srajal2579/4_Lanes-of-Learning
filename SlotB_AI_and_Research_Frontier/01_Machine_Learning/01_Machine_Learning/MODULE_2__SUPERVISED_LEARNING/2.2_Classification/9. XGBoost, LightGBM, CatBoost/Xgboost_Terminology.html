@@ -1,0 +1,1304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Xgboost Terminology</title>
+  <style>
+  @import url("https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.9.0-alpha2/katex.min.css");
+
+  body {
+    font-family: Georgia, Cambria, serif;
+    font-size: 14px;
+    line-height: 1.7;
+    color: #373D49;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 2rem;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    font-family: "Source Sans Pro", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-weight: 600;
+    margin-top: 1.5em;
+    margin-bottom: 0.5em;
+  }
+  h1 { font-size: 2em; }
+  h2 { font-size: 1.5em; }
+  h3 { font-size: 1.25em; }
+  a { color: #35D7BB; text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  code {
+    font-family: "Ubuntu Mono", Monaco, monospace;
+    background: #F5F7FA;
+    padding: 0.2em 0.4em;
+    border-radius: 3px;
+  }
+  pre {
+    background: #F5F7FA;
+    padding: 1em;
+    border-radius: 3px;
+    overflow-x: auto;
+  }
+  .hljs {
+    display: block;
+    overflow-x: auto;
+    padding: 0;
+    color: #333;
+  }
+  pre code { background: none; padding: 0; }
+  blockquote {
+    border-left: 3px solid #A0AABF;
+    padding-left: 1em;
+    margin-left: 0;
+    font-style: italic;
+    color: #666;
+  }
+  table {
+    border-collapse: collapse;
+    width: 100%;
+  }
+  th, td {
+    border: 1px solid #E8E8E8;
+    padding: 0.5em;
+    text-align: left;
+  }
+  th {
+    background: #F5F7FA;
+    font-weight: 600;
+  }
+  #preview .table {
+    width: auto;
+  }
+  img {
+    max-width: 100%;
+    height: auto;
+  }
+  .katex-display {
+    overflow-x: auto;
+    overflow-y: hidden;
+  }
+</style>
+</head>
+<body id="preview">
+<hr>
+<h2 class="code-line has-line-data" data-line-start="4" data-line-end="5"><a id="SECTION_1_INTRODUCTION_TO_XGBOOST_4"></a>SECTION 1: INTRODUCTION TO XGBOOST</h2>
+<table class="table table-striped table-bordered">
+<thead>
+<tr>
+<th>Terminology</th>
+<th>Explanation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>XGBoost</strong></td>
+<td>eXtreme Gradient Boosting — a machine learning algorithm that builds a strong prediction model by combining many small, weak decision trees sequentially</td>
+</tr>
+<tr>
+<td><strong>Gradient Boosting</strong></td>
+<td>A method that builds models by adding weak learners, where each new learner corrects the errors of all previous ones combined</td>
+</tr>
+<tr>
+<td><strong>Additive Model</strong></td>
+<td>A model where the final prediction is the sum of multiple functions: F(x) = f₁(x) + f₂(x) + … + fₖ(x)</td>
+</tr>
+<tr>
+<td><strong>Weak Learner</strong></td>
+<td>A model only slightly better than random guessing (e.g., a shallow decision tree with depth 1-6)</td>
+</tr>
+<tr>
+<td><strong>Strong Learner</strong></td>
+<td>A model that combines many weak learners to make accurate predictions</td>
+</tr>
+<tr>
+<td><strong>Ensemble</strong></td>
+<td>A group of models working together to make predictions</td>
+</tr>
+<tr>
+<td><strong>Functional Gradient Descent</strong></td>
+<td>Optimization in “function space” rather than “parameter space” — adding entire functions (trees) instead of tweaking numerical weights</td>
+</tr>
+<tr>
+<td><strong>Second-Order Taylor Expansion</strong></td>
+<td>XGBoost’s mathematical upgrade that uses both gradient (first derivative) AND Hessian (second derivative) to determine step size and direction</td>
+</tr>
+<tr>
+<td><strong>Gradient (g)</strong></td>
+<td>First derivative of the loss function: tells us <em>which direction</em> to move to reduce error</td>
+</tr>
+<tr>
+<td><strong>Hessian (h)</strong></td>
+<td>Second derivative of the loss function: tells us <em>how far</em> to move based on curvature of the loss surface</td>
+</tr>
+<tr>
+<td><strong>Cache-Aware Data Structures</strong></td>
+<td>Data storage organized to match CPU cache lines, reducing memory access bottlenecks</td>
+</tr>
+<tr>
+<td><strong>Block Compression</strong></td>
+<td>Compressing data so more fits in memory, reducing disk reads</td>
+</tr>
+<tr>
+<td><strong>Parallel Split Finding</strong></td>
+<td>Using multiple CPU cores to check different features simultaneously when deciding where to split a tree</td>
+</tr>
+<tr>
+<td><strong>Out-of-Core Computing</strong></td>
+<td>Processing datasets larger than RAM by splitting into chunks, compressing, and loading from disk as needed</td>
+</tr>
+<tr>
+<td><strong>Regularization</strong></td>
+<td>Penalty terms added to the objective function to prevent overfitting by controlling model complexity</td>
+</tr>
+<tr>
+<td><strong>Sparse-Aware Split Finding</strong></td>
+<td>Algorithm that skips zero values and learns default directions for missing values</td>
+</tr>
+<tr>
+<td><strong>Bagging (Bootstrap Aggregating)</strong></td>
+<td>Training many models independently on random data subsets, then averaging predictions to reduce variance</td>
+</tr>
+<tr>
+<td><strong>Boosting</strong></td>
+<td>Training models sequentially where each new model focuses on errors of previous ones to reduce both bias and variance</td>
+</tr>
+<tr>
+<td><strong>Overfitting</strong></td>
+<td>When a model memorizes training data noise and fails on new, unseen data</td>
+</tr>
+<tr>
+<td><strong>Time Complexity O(N × D)</strong></td>
+<td>Computational cost: N = number of data rows, D = number of features</td>
+</tr>
+<tr>
+<td><strong>Functional Optimization</strong></td>
+<td>Optimizing entire functions rather than numerical parameters</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 class="code-line has-line-data" data-line-start="32" data-line-end="33"><a id="SECTION_2_THEORETICAL_FOUNDATIONS_32"></a>SECTION 2: THEORETICAL FOUNDATIONS</h2>
+<table class="table table-striped table-bordered">
+<thead>
+<tr>
+<th>Terminology</th>
+<th>Explanation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Additive Model Representation</strong></td>
+<td>The formal way of writing boosting: ŷᵢ = φ(xᵢ) = Σₖ₌₁ᴷ fₖ(xᵢ) — prediction is sum of all tree outputs</td>
+</tr>
+<tr>
+<td><strong>Loss Function</strong></td>
+<td>Measures “how wrong” predictions are; must be differentiable for gradient boosting to work</td>
+</tr>
+<tr>
+<td><strong>Mean Squared Error (MSE)</strong></td>
+<td>Regression loss: l(y, ŷ) = (y − ŷ)² — penalizes large errors quadratically</td>
+</tr>
+<tr>
+<td><strong>Log Loss (Binary Cross-Entropy)</strong></td>
+<td>Classification loss for binary outcomes: heavily penalizes confident wrong predictions</td>
+</tr>
+<tr>
+<td><strong>Residual</strong></td>
+<td>The difference between true value and prediction (y − ŷ); for MSE, proportional to negative gradient</td>
+</tr>
+<tr>
+<td><strong>Negative Gradient</strong></td>
+<td>−∂l/∂ŷ — the direction of steepest descent; what each new tree learns to predict</td>
+</tr>
+<tr>
+<td><strong>Learning Rate (η, eta)</strong></td>
+<td>A shrinkage factor (typically 0.01-0.3) that scales each tree’s contribution to prevent overshooting</td>
+</tr>
+<tr>
+<td><strong>Sequential Building</strong></td>
+<td>Trees must be built one after another because Tree k needs to know what Trees 1 through k−1 got wrong</td>
+</tr>
+<tr>
+<td><strong>Parameter Space</strong></td>
+<td>Traditional optimization where you tweak numerical weights (like in neural networks)</td>
+</tr>
+<tr>
+<td><strong>Function Space</strong></td>
+<td>Boosting’s optimization approach where you add entire functions (trees)</td>
+</tr>
+<tr>
+<td><strong>Hypothesis Space</strong></td>
+<td>The set of all possible functions your model could represent</td>
+</tr>
+<tr>
+<td><strong>Basis Function</strong></td>
+<td>Each tree acts as a building block; the model is a linear combination of these blocks</td>
+</tr>
+<tr>
+<td><strong>Sigmoid Function σ(ŷ)</strong></td>
+<td>1/(1+e^(−ŷ)) — converts raw scores to probabilities in classification</td>
+</tr>
+<tr>
+<td><strong>Raw Score (Log-odds)</strong></td>
+<td>ŷ in XGBoost classification — the unscaled output before applying sigmoid</td>
+</tr>
+<tr>
+<td><strong>Predicted Probability (p)</strong></td>
+<td>σ(ŷ) — the probability output after applying sigmoid to raw scores</td>
+</tr>
+<tr>
+<td><strong>Differentiable</strong></td>
+<td>A function whose derivative exists at every point; required for gradient-based optimization</td>
+</tr>
+<tr>
+<td><strong>Iterative Form</strong></td>
+<td>Fₜ(x) = Fₜ₋₁(x) + fₜ(x) — the model at step t equals previous model plus new correction</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 class="code-line has-line-data" data-line-start="56" data-line-end="57"><a id="KEY_DISTINCTIONS_FROM_THE_TUTORIAL_56"></a>KEY DISTINCTIONS FROM THE TUTORIAL</h2>
+<table class="table table-striped table-bordered">
+<thead>
+<tr>
+<th>Concept</th>
+<th>Clarification</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Residuals vs. Negative Gradients</strong></td>
+<td>For MSE: residuals ARE proportional to negative gradients. For Log Loss and other losses: negative gradients have different forms and are NOT simply (y − ŷ)</td>
+</tr>
+<tr>
+<td><strong>Tree Dependency</strong></td>
+<td>Trees in boosting are NOT independent — each tree depends on all previous trees’ errors</td>
+</tr>
+<tr>
+<td><strong>Gradient Boosting vs. Decision Trees</strong></td>
+<td>Gradient boosting is the ALGORITHM; decision trees are just the APPROXIMATOR (weak learner) used</td>
+</tr>
+<tr>
+<td><strong>First-Order vs. Second-Order</strong></td>
+<td>Traditional GBM uses only gradient (direction). XGBoost uses gradient + Hessian (direction + curvature/step size)</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 class="code-line has-line-data" data-line-start="67" data-line-end="68"><a id="REGULARIZATION_COMPONENTS_Preview_from_Section_1_Detailed_in_Later_Sections_67"></a>REGULARIZATION COMPONENTS (Preview from Section 1, Detailed in Later Sections)</h2>
+<table class="table table-striped table-bordered">
+<thead>
+<tr>
+<th>Term</th>
+<th>Symbol</th>
+<th>What It Penalizes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Gamma (γ)</strong></td>
+<td>γ</td>
+<td>Number of leaves (T) — complex tree structure</td>
+</tr>
+<tr>
+<td><strong>L2 Regularization (Lambda)</strong></td>
+<td>λ</td>
+<td>Large leaf weight values (squared penalty)</td>
+</tr>
+<tr>
+<td><strong>L1 Regularization (Alpha)</strong></td>
+<td>α</td>
+<td>Large leaf weight values (absolute penalty)</td>
+</tr>
+<tr>
+<td><strong>Objective Function</strong></td>
+<td>Obj = Loss + Ω(f)</td>
+<td>Total = training error + regularization penalty</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<hr>
+<h2 class="code-line has-line-data" data-line-start="81" data-line-end="82"><a id="SECTION_3_MATHEMATICAL_FORMULATION_OF_XGBOOST_81"></a>SECTION 3: MATHEMATICAL FORMULATION OF XGBOOST</h2>
+<table class="table table-striped table-bordered">
+<thead>
+<tr>
+<th>Terminology</th>
+<th>Explanation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Objective Function</strong></td>
+<td>The complete formula XGBoost minimizes: Obj = Σ L(yᵢ, ŷᵢ) + Ω(f) — combines training loss + regularization</td>
+</tr>
+<tr>
+<td><strong>Loss Function L(y, ŷ)</strong></td>
+<td>Measures prediction error (e.g., MSE for regression, Log Loss for classification)</td>
+</tr>
+<tr>
+<td><strong>Regularization Term Ω(f)</strong></td>
+<td>Penalty for model complexity: Ω(f) = γT + ½λΣwⱼ² — controls tree structure and leaf weights</td>
+</tr>
+<tr>
+<td><strong>Second-Order Taylor Expansion</strong></td>
+<td>Approximation: L(y, ŷ + f(x)) ≈ L(y, ŷ) + g·f(x) + ½h·f(x)² — enables closed-form optimization</td>
+</tr>
+<tr>
+<td><strong>Gradient (gᵢ)</strong></td>
+<td>First derivative ∂L/∂ŷᵢ — tells direction to move to reduce loss</td>
+</tr>
+<tr>
+<td><strong>Hessian (hᵢ)</strong></td>
+<td>Second derivative ∂²L/∂ŷᵢ² — tells how far to move based on curvature</td>
+</tr>
+<tr>
+<td><strong>Leaf Weight (wⱼ)</strong></td>
+<td>The output value assigned to leaf j in a decision tree</td>
+</tr>
+<tr>
+<td><strong>Number of Leaves (T)</strong></td>
+<td>Total terminal nodes in a tree; penalized by γ to control complexity</td>
+</tr>
+<tr>
+<td><strong>Optimal Leaf Weight</strong></td>
+<td>wⱼ* = −Σgᵢ / (Σhᵢ + λ) — closed-form solution derived from Taylor expansion</td>
+</tr>
+<tr>
+<td><strong>Split Gain Formula</strong></td>
+<td>Gain = ½[(Σgₗ)²/(Σhₗ + λ) + (Σgᵣ)²/(Σhᵣ + λ) − (Σg)²/(Σh + λ)] − γ — determines if a split is worth making</td>
+</tr>
+<tr>
+<td><strong>Shrinkage (Learning Rate η)</strong></td>
+<td>Multiplies each tree’s output: Fₜ(x) = Fₜ₋₁(x) + η·fₜ(x) — prevents overfitting by taking smaller steps</td>
+</tr>
+<tr>
+<td><strong>Column Subsampling</strong></td>
+<td>Randomly selecting a subset of features for each tree — reduces variance and speeds up computation</td>
+</tr>
+<tr>
+<td><strong>Closed-Form Solution</strong></td>
+<td>Direct mathematical formula for optimal values without iterative search</td>
+</tr>
+<tr>
+<td><strong>Approximate Algorithm</strong></td>
+<td>Uses histogram/quantile buckets instead of exact split points — trades small accuracy for large speed gains</td>
+</tr>
+<tr>
+<td><strong>Weighted Quantile Sketch</strong></td>
+<td>Algorithm that finds split points ensuring each bin has roughly equal total Hessian (information mass)</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 class="code-line has-line-data" data-line-start="103" data-line-end="104"><a id="SECTION_4_TREE_CONSTRUCTION_ALGORITHM_103"></a>SECTION 4: TREE CONSTRUCTION ALGORITHM</h2>
+<table class="table table-striped table-bordered">
+<thead>
+<tr>
+<th>Terminology</th>
+<th>Explanation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Greedy Tree Search</strong></td>
+<td>At each node, try all possible splits and pick the one with highest Gain — locally optimal, not globally optimal</td>
+</tr>
+<tr>
+<td><strong>Pre-Sorted Algorithm</strong></td>
+<td>Sorts all data points for each feature, then scans to find best split — accurate but slow O(N log N)</td>
+</tr>
+<tr>
+<td><strong>Histogram-Based Algorithm</strong></td>
+<td>Buckets continuous values into bins, then finds best split among bin boundaries — faster, approximate</td>
+</tr>
+<tr>
+<td><strong>Exact Greedy Algorithm</strong></td>
+<td>Evaluates all possible split points for all features — most accurate, computationally expensive</td>
+</tr>
+<tr>
+<td><strong>Approximate Greedy Algorithm</strong></td>
+<td>Proposes candidate split points using quantile sketches — faster with bounded approximation error O(1/k)</td>
+</tr>
+<tr>
+<td><strong>Sparsity-Aware Split Finding</strong></td>
+<td>Handles missing values by learning a default direction (left or right) for each split</td>
+</tr>
+<tr>
+<td><strong>Split Candidate</strong></td>
+<td>A threshold value on a feature that divides data into left/right subsets</td>
+</tr>
+<tr>
+<td><strong>Left Child / Right Child</strong></td>
+<td>The two resulting nodes after a split — each contains a subset of training samples</td>
+</tr>
+<tr>
+<td><strong>Leaf Node (Terminal Node)</strong></td>
+<td>A node that is not split further; contains a weight value used for predictions</td>
+</tr>
+<tr>
+<td><strong>Internal Node</strong></td>
+<td>A node that performs a split on a feature; has exactly two children</td>
+</tr>
+<tr>
+<td><strong>Depth-First Growth</strong></td>
+<td>Strategy that expands one branch fully before moving to next — memory efficient</td>
+</tr>
+<tr>
+<td><strong>Level-Wise (Breadth-First) Growth</strong></td>
+<td>Expands all nodes at current depth before going deeper — used by XGBoost default</td>
+</tr>
+<tr>
+<td><strong>Leaf-Wise Growth</strong></td>
+<td>Grows tree by splitting the leaf with maximum loss reduction — used by LightGBM</td>
+</tr>
+<tr>
+<td><strong>Maximum Depth</strong></td>
+<td>Hard limit on how deep trees can grow — primary overfitting control</td>
+</tr>
+<tr>
+<td><strong>Minimum Child Weight</strong></td>
+<td>Minimum sum of Hessian required in a child node — prevents splitting into too-small groups</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 class="code-line has-line-data" data-line-start="125" data-line-end="126"><a id="SECTION_5_REGULARIZATION_OVERFITTING_CONTROL_125"></a>SECTION 5: REGULARIZATION &amp; OVERFITTING CONTROL</h2>
+<table class="table table-striped table-bordered">
+<thead>
+<tr>
+<th>Terminology</th>
+<th>Explanation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>L1 Regularization (α, alpha)</strong></td>
+<td>Penalty on absolute leaf weights: αΣ|wⱼ| — encourages sparse weights (some become exactly zero)</td>
+</tr>
+<tr>
+<td><strong>L2 Regularization (λ, lambda/reg_lambda)</strong></td>
+<td>Penalty on squared leaf weights: ½λΣwⱼ² — discourages large weights, smooths predictions</td>
+</tr>
+<tr>
+<td><strong>Gamma (γ, min_split_loss)</strong></td>
+<td>Minimum Gain required to make a split — if Gain &lt; γ, the node becomes a leaf</td>
+</tr>
+<tr>
+<td><strong>Complexity Cost</strong></td>
+<td>The regularization penalty Ω(f) that must be overcome by loss reduction to justify a split</td>
+</tr>
+<tr>
+<td><strong>Multi-Level Regularization</strong></td>
+<td>Three levels: (1) tree structure (γ), (2) leaf weights (λ, α), (3) ensemble shrinkage (η)</td>
+</tr>
+<tr>
+<td><strong>Bias-Variance Tradeoff</strong></td>
+<td>Fundamental ML tension: simple models underfit (high bias), complex models overfit (high variance)</td>
+</tr>
+<tr>
+<td><strong>Underfitting</strong></td>
+<td>Model too simple to capture data patterns — high training and test error</td>
+</tr>
+<tr>
+<td><strong>Overfitting</strong></td>
+<td>Model too complex, memorizes noise — low training error but high test error</td>
+</tr>
+<tr>
+<td><strong>Generalization</strong></td>
+<td>Model’s ability to perform well on unseen data — the ultimate goal</td>
+</tr>
+<tr>
+<td><strong>Training Error</strong></td>
+<td>Loss measured on training data — can be misleadingly low</td>
+</tr>
+<tr>
+<td><strong>Test/Validation Error</strong></td>
+<td>Loss measured on held-out data — better indicator of real performance</td>
+</tr>
+<tr>
+<td><strong>Early Stopping</strong></td>
+<td>Halting training when validation error stops improving — prevents overfitting from too many trees</td>
+</tr>
+<tr>
+<td><strong>Shrinkage</strong></td>
+<td>Another term for learning rate η — “shrinks” each tree’s contribution</td>
+</tr>
+<tr>
+<td><strong>Subsampling (Row Sampling)</strong></td>
+<td>Using a random subset of training rows for each tree — reduces overfitting like bagging</td>
+</tr>
+<tr>
+<td><strong>Column Subsampling</strong></td>
+<td>Using a random subset of features for each tree — reduces correlation between trees</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 class="code-line has-line-data" data-line-start="147" data-line-end="148"><a id="SECTION_6_TRAINING_DYNAMICS_CONVERGENCE_147"></a>SECTION 6: TRAINING DYNAMICS &amp; CONVERGENCE</h2>
+<table class="table table-striped table-bordered">
+<thead>
+<tr>
+<th>Terminology</th>
+<th>Explanation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Convergence</strong></td>
+<td>When adding more trees no longer significantly reduces training loss</td>
+</tr>
+<tr>
+<td><strong>Divergence</strong></td>
+<td>When training loss increases — usually caused by too-high learning rate</td>
+</tr>
+<tr>
+<td><strong>Residuals</strong></td>
+<td>For MSE: y − ŷ; more generally: negative gradient −gᵢ</td>
+</tr>
+<tr>
+<td><strong>Pseudo-Residuals</strong></td>
+<td>The negative gradient values that new trees learn to predict — generalization of residuals beyond MSE</td>
+</tr>
+<tr>
+<td><strong>Newton-Raphson Step</strong></td>
+<td>Update using both gradient and Hessian: step = −g/h — more informed than gradient-only</td>
+</tr>
+<tr>
+<td><strong>Gradient Descent Step</strong></td>
+<td>Update using only gradient: step = −g — less information, may overshoot</td>
+</tr>
+<tr>
+<td><strong>Learning Rate Decay</strong></td>
+<td>Gradually reducing η during training — allows large initial steps, fine later tuning</td>
+</tr>
+<tr>
+<td><strong>Number of Boosting Rounds (n_estimators)</strong></td>
+<td>Total trees to build — stopped early if validation performance plateaus</td>
+</tr>
+<tr>
+<td><strong>Best Iteration</strong></td>
+<td>The tree number with optimal validation performance — used for final model</td>
+</tr>
+<tr>
+<td><strong>Convergence Criteria</strong></td>
+<td>Conditions to stop training: max rounds reached, validation error not improving for N rounds</td>
+</tr>
+<tr>
+<td><strong>Training Curve</strong></td>
+<td>Plot of training/validation loss vs. number of trees — visual diagnostic tool</td>
+</tr>
+<tr>
+<td><strong>Validation Curve</strong></td>
+<td>Plot of validation metrics vs. hyperparameter values — helps tune parameters</td>
+</tr>
+<tr>
+<td><strong>Plateau</strong></td>
+<td>Flat region in training curve where additional trees provide minimal benefit</td>
+</tr>
+<tr>
+<td><strong>Divergence Point</strong></td>
+<td>Where validation loss starts increasing — clear signal of overfitting</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 class="code-line has-line-data" data-line-start="168" data-line-end="169"><a id="SECTION_7_HYPERPARAMETERS_168"></a>SECTION 7: HYPERPARAMETERS</h2>
+<table class="table table-striped table-bordered">
+<thead>
+<tr>
+<th>Terminology</th>
+<th>Explanation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>eta (learning_rate)</strong></td>
+<td>Shrinkage factor (0.01-0.3) — scales each tree’s contribution; lower = more trees needed but better generalization</td>
+</tr>
+<tr>
+<td><strong>max_depth</strong></td>
+<td>Maximum tree depth (3-10) — primary control of model complexity; deeper = more complex interactions</td>
+</tr>
+<tr>
+<td><strong>min_child_weight</strong></td>
+<td>Minimum sum of instance Hessian in a child (1-10) — prevents overly specific splits</td>
+</tr>
+<tr>
+<td><strong>gamma (min_split_loss)</strong></td>
+<td>Minimum loss reduction required to split (0-5) — higher = more conservative, fewer splits</td>
+</tr>
+<tr>
+<td><strong>subsample</strong></td>
+<td>Fraction of rows sampled per tree (0.5-1.0) — row sampling rate for stochastic gradient boosting</td>
+</tr>
+<tr>
+<td><strong>colsample_bytree</strong></td>
+<td>Fraction of features sampled per tree (0.5-1.0) — feature randomness at tree level</td>
+</tr>
+<tr>
+<td><strong>colsample_bylevel</strong></td>
+<td>Fraction of features sampled per level/depth — additional feature randomness</td>
+</tr>
+<tr>
+<td><strong>colsample_bynode</strong></td>
+<td>Fraction of features sampled per split — most granular feature randomness</td>
+</tr>
+<tr>
+<td><strong>lambda (reg_lambda)</strong></td>
+<td>L2 regularization on leaf weights (1-10) — default 1; higher = smoother, more conservative</td>
+</tr>
+<tr>
+<td><strong>alpha (reg_alpha)</strong></td>
+<td>L1 regularization on leaf weights (0-1) — encourages sparsity; can zero out features</td>
+</tr>
+<tr>
+<td><strong>n_estimators (num_boost_round)</strong></td>
+<td>Total number of trees to build — often set high and combined with early stopping</td>
+</tr>
+<tr>
+<td><strong>scale_pos_weight</strong></td>
+<td>Balances positive/negative weights for imbalanced classification — useful for skewed data</td>
+</tr>
+<tr>
+<td><strong>max_delta_step</strong></td>
+<td>Maximum step size allowed — limits update magnitude; useful for imbalanced logistic regression</td>
+</tr>
+<tr>
+<td><strong>tree_method</strong></td>
+<td>Algorithm for tree construction: ‘exact’, ‘approx’, ‘hist’, ‘gpu_hist’</td>
+</tr>
+<tr>
+<td><strong>grow_policy</strong></td>
+<td>Tree growth strategy: ‘depthwise’ (level-wise) or ‘lossguide’ (leaf-wise)</td>
+</tr>
+<tr>
+<td><strong>max_leaves</strong></td>
+<td>Maximum number of terminal nodes — alternative to max_depth for controlling complexity</td>
+</tr>
+<tr>
+<td><strong>max_bin</strong></td>
+<td>Maximum number of bins for histogram-based algorithms — tradeoff between speed and accuracy</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 class="code-line has-line-data" data-line-start="192" data-line-end="193"><a id="SECTION_8_PREDICTION_INFERENCE_192"></a>SECTION 8: PREDICTION &amp; INFERENCE</h2>
+<table class="table table-striped table-bordered">
+<thead>
+<tr>
+<th>Terminology</th>
+<th>Explanation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Raw Score (zᵢ)</strong></td>
+<td>The unscaled model output: zᵢ = Σₖ η·fₖ(xᵢ) — sum of all tree outputs scaled by learning rate</td>
+</tr>
+<tr>
+<td><strong>Log-Odds</strong></td>
+<td>The raw score in classification — log(p/(1-p)); can be any real number</td>
+</tr>
+<tr>
+<td><strong>Sigmoid Function σ(z)</strong></td>
+<td>1/(1+e^(−z)) — converts log-odds to probability in [0,1]</td>
+</tr>
+<tr>
+<td><strong>Probability Output</strong></td>
+<td>Final classification output: p = σ(z) — interpretable as class probability</td>
+</tr>
+<tr>
+<td><strong>Decision Threshold</strong></td>
+<td>Cutoff on probability (default 0.5) to assign class labels</td>
+</tr>
+<tr>
+<td><strong>Margin</strong></td>
+<td>Distance from decision boundary; larger margin = more confident prediction</td>
+</tr>
+<tr>
+<td><strong>Prediction Pipeline</strong></td>
+<td>Sequence: input features → sum tree outputs → apply link function (sigmoid/logistic) → output</td>
+</tr>
+<tr>
+<td><strong>Link Function</strong></td>
+<td>Function connecting linear predictor to response: identity for regression, sigmoid for classification</td>
+</tr>
+<tr>
+<td><strong>Base Score (base_margin)</strong></td>
+<td>Starting prediction before any trees (default 0.5 for classification)</td>
+</tr>
+<tr>
+<td><strong>Leaf Weight Aggregation</strong></td>
+<td>Sum of leaf weights along the path each sample takes through all trees</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 class="code-line has-line-data" data-line-start="209" data-line-end="210"><a id="SECTION_9_FEATURE_IMPORTANCE_209"></a>SECTION 9: FEATURE IMPORTANCE</h2>
+<table class="table table-striped table-bordered">
+<thead>
+<tr>
+<th>Terminology</th>
+<th>Explanation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Gain</strong></td>
+<td>Total contribution of a feature to the model — sum of Gain across all splits using that feature</td>
+</tr>
+<tr>
+<td><strong>Cover</strong></td>
+<td>Number of samples affected by splits on a feature — measures feature’s reach</td>
+</tr>
+<tr>
+<td><strong>Frequency (Weight)</strong></td>
+<td>Number of times a feature appears in splits — simple but biased count</td>
+</tr>
+<tr>
+<td><strong>SHAP (SHapley Additive exPlanations)</strong></td>
+<td>Game-theoretic approach assigning each feature a contribution to each prediction</td>
+</tr>
+<tr>
+<td><strong>Shapley Value</strong></td>
+<td>From cooperative game theory — fair allocation of payout (prediction) among players (features)</td>
+</tr>
+<tr>
+<td><strong>Additivity</strong></td>
+<td>SHAP property: sum of all feature contributions + base value = final prediction</td>
+</tr>
+<tr>
+<td><strong>Local Interpretability</strong></td>
+<td>Understanding why model made a specific prediction for one sample</td>
+</tr>
+<tr>
+<td><strong>Global Interpretability</strong></td>
+<td>Understanding model behavior across entire dataset</td>
+</tr>
+<tr>
+<td><strong>Feature Selection</strong></td>
+<td>Using importance scores to choose most relevant features</td>
+</tr>
+<tr>
+<td><strong>Model Debugging</strong></td>
+<td>Using importance to identify unexpected or problematic feature behavior</td>
+</tr>
+<tr>
+<td><strong>Correlation Bias</strong></td>
+<td>When correlated features “steal” importance from each other — one gets credit, other ignored</td>
+</tr>
+<tr>
+<td><strong>High-Cardinality Bias</strong></td>
+<td>Features with many unique values (e.g., IDs) can appear artificially important</td>
+</tr>
+<tr>
+<td><strong>Directional Information</strong></td>
+<td>Whether a feature pushes prediction up or down — provided by SHAP, not by Gain/Cover</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 class="code-line has-line-data" data-line-start="229" data-line-end="230"><a id="SECTION_10_STRENGTHS_WEAKNESSES_USE_CASES_229"></a>SECTION 10: STRENGTHS, WEAKNESSES &amp; USE CASES</h2>
+<table class="table table-striped table-bordered">
+<thead>
+<tr>
+<th>Terminology</th>
+<th>Explanation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Tabular Data</strong></td>
+<td>Structured data in rows and columns — XGBoost’s domain of excellence</td>
+</tr>
+<tr>
+<td><strong>Feature Interactions</strong></td>
+<td>Nonlinear combinations of features automatically discovered by tree splits</td>
+</tr>
+<tr>
+<td><strong>Missing Value Handling</strong></td>
+<td>Native support for NaN — learns optimal direction for missing values</td>
+</tr>
+<tr>
+<td><strong>Heterogeneous Features</strong></td>
+<td>Mix of numerical, binary, categorical (after encoding) — handled naturally</td>
+</tr>
+<tr>
+<td><strong>Kaggle Competitions</strong></td>
+<td>ML competitions where XGBoost historically dominated structured data challenges</td>
+</tr>
+<tr>
+<td><strong>Enterprise ML Pipelines</strong></td>
+<td>Production systems requiring reliability, speed, and interpretability</td>
+</tr>
+<tr>
+<td><strong>Extrapolation</strong></td>
+<td>Predicting outside training distribution — trees CANNOT do this; they interpolate only</td>
+</tr>
+<tr>
+<td><strong>Noise Sensitivity</strong></td>
+<td>Boosting’s tendency to fit random noise if not regularized properly</td>
+</tr>
+<tr>
+<td><strong>High-Cardinality Categoricals</strong></td>
+<td>Features with many unique categories (e.g., user IDs, zip codes) — problematic for trees</td>
+</tr>
+<tr>
+<td><strong>GPU Underutilization</strong></td>
+<td>Trees don’t fully exploit GPU parallel architecture compared to neural networks</td>
+</tr>
+<tr>
+<td><strong>Interpretability Tradeoff</strong></td>
+<td>More trees = better accuracy but harder to interpret individual decisions</td>
+</tr>
+<tr>
+<td><strong>Decision Flowchart</strong></td>
+<td>Guiding questions: data type, size, linearity, interpretability needs → algorithm choice</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 class="code-line has-line-data" data-line-start="248" data-line-end="249"><a id="SECTION_11_NUMERICAL_EXAMPLE_ONE_COMPLETE_BOOSTING_STEP_248"></a>SECTION 11: NUMERICAL EXAMPLE — ONE COMPLETE BOOSTING STEP</h2>
+<table class="table table-striped table-bordered">
+<thead>
+<tr>
+<th>Terminology</th>
+<th>Explanation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Given Data</strong></td>
+<td>Training examples with features and target values used for demonstration</td>
+</tr>
+<tr>
+<td><strong>Initial Prediction (ŷ⁽⁰⁾)</strong></td>
+<td>Starting point: often the mean target value (for regression) or log-odds</td>
+</tr>
+<tr>
+<td><strong>Compute Gradient &amp; Hessian</strong></td>
+<td>Calculate gᵢ = ∂L/∂ŷᵢ and hᵢ = ∂²L/∂ŷᵢ² for each sample</td>
+</tr>
+<tr>
+<td><strong>Root Node Score</strong></td>
+<td>Objective value before any split: −½(Σg)²/(Σh + λ)</td>
+</tr>
+<tr>
+<td><strong>Left/Right Score</strong></td>
+<td>Objective value after split for each child node</td>
+</tr>
+<tr>
+<td><strong>Gain Calculation</strong></td>
+<td>Improvement from split: (Left Score + Right Score − Root Score) − γ</td>
+</tr>
+<tr>
+<td><strong>Accept/Reject Split</strong></td>
+<td>If Gain &gt; 0 (after accounting for γ), create children; else make leaf</td>
+</tr>
+<tr>
+<td><strong>Leaf Weight Computation</strong></td>
+<td>w* = −Σg/(Σh + λ) — optimal output for each terminal node</td>
+</tr>
+<tr>
+<td><strong>Update Predictions</strong></td>
+<td>ŷ⁽ᵗ⁾ = ŷ⁽ᵗ⁻¹⁾ + η·w* — add shrunk leaf weight to previous prediction</td>
+</tr>
+<tr>
+<td><strong>Point-by-Point Update</strong></td>
+<td>Showing how each individual sample’s prediction changes</td>
+</tr>
+<tr>
+<td><strong>With/Without Shrinkage</strong></td>
+<td>Comparison: η = 1.0 (aggressive, may overfit) vs η = 0.3 (conservative, safer)</td>
+</tr>
+<tr>
+<td><strong>Objective Improvement</strong></td>
+<td>Verifying that the split actually reduced total objective value</td>
+</tr>
+<tr>
+<td><strong>Exact Match Verification</strong></td>
+<td>Confirming computed values match theoretical formulas</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 class="code-line has-line-data" data-line-start="268" data-line-end="269"><a id="SECTION_12_SYSTEM_DESIGN_ENGINEERING_OPTIMIZATIONS_268"></a>SECTION 12: SYSTEM DESIGN &amp; ENGINEERING OPTIMIZATIONS</h2>
+<table class="table table-striped table-bordered">
+<thead>
+<tr>
+<th>Terminology</th>
+<th>Explanation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Column Block Structure</strong></td>
+<td>Data stored in compressed column format (CSC) — enables parallel feature processing</td>
+</tr>
+<tr>
+<td><strong>Cache-Aware Access Patterns</strong></td>
+<td>Organizing memory access to match CPU cache lines — reduces memory latency</td>
+</tr>
+<tr>
+<td><strong>Prefetching</strong></td>
+<td>Loading data into cache before it’s needed — hides memory access latency</td>
+</tr>
+<tr>
+<td><strong>Out-of-Core Computing</strong></td>
+<td>Training on datasets larger than RAM using disk storage</td>
+</tr>
+<tr>
+<td><strong>Block Compression</strong></td>
+<td>Compressing feature columns to reduce disk I/O and memory footprint</td>
+</tr>
+<tr>
+<td><strong>Parallel Split Finding</strong></td>
+<td>Using multiple CPU cores to evaluate different features simultaneously</td>
+</tr>
+<tr>
+<td><strong>Feature-Level Parallelism</strong></td>
+<td>Each thread handles one feature’s split finding — main parallelization strategy</td>
+</tr>
+<tr>
+<td><strong>Data-Level Parallelism</strong></td>
+<td>Distributing data across machines — for distributed XGBoost</td>
+</tr>
+<tr>
+<td><strong>Model-Level Parallelism</strong></td>
+<td>Not used in boosting — trees must be sequential</td>
+</tr>
+<tr>
+<td><strong>Approximate Split Finding</strong></td>
+<td>Using histogram/quantile buckets instead of exact values</td>
+</tr>
+<tr>
+<td><strong>Weighted Quantile Sketch</strong></td>
+<td>Algorithm ensuring each bucket has equal total Hessian (information)</td>
+</tr>
+<tr>
+<td><strong>Histogram Aggregation</strong></td>
+<td>Building frequency tables of gradients/Hessians per bin</td>
+</tr>
+<tr>
+<td><strong>Sorted Order vs. Original Order</strong></td>
+<td>Tradeoff: sorted enables exact splits but needs reordering; original preserves locality</td>
+</tr>
+<tr>
+<td><strong>Non-Uniform Memory Access (NUMA)</strong></td>
+<td>Multi-socket systems where memory access time depends on location</td>
+</tr>
+<tr>
+<td><strong>SIMD Instructions</strong></td>
+<td>Single Instruction Multiple Data — CPU vector operations for parallel computation</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 class="code-line has-line-data" data-line-start="290" data-line-end="291"><a id="COMPLETE_TERMINOLOGY_MASTER_INDEX_290"></a>COMPLETE TERMINOLOGY MASTER INDEX</h2>
+<p class="has-line-data" data-line-start="292" data-line-end="293">For quick reference, here’s an alphabetized index of all key terms across all sections:</p>
+<table class="table table-striped table-bordered">
+<thead>
+<tr>
+<th>Term</th>
+<th>Section</th>
+<th>Brief Definition</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Additive Model</strong></td>
+<td>1, 2</td>
+<td>Sum of weak learners: F(x) = Σfₖ(x)</td>
+</tr>
+<tr>
+<td><strong>Alpha (α)</strong></td>
+<td>5</td>
+<td>L1 regularization parameter</td>
+</tr>
+<tr>
+<td><strong>Approximate Algorithm</strong></td>
+<td>3, 4, 12</td>
+<td>Histogram-based split finding</td>
+</tr>
+<tr>
+<td><strong>Bagging</strong></td>
+<td>1</td>
+<td>Bootstrap aggregating — parallel ensemble</td>
+</tr>
+<tr>
+<td><strong>Base Score</strong></td>
+<td>8</td>
+<td>Initial prediction before trees</td>
+</tr>
+<tr>
+<td><strong>Boosting</strong></td>
+<td>1, 2</td>
+<td>Sequential error-correcting ensemble</td>
+</tr>
+<tr>
+<td><strong>Cache-Aware</strong></td>
+<td>1, 12</td>
+<td>Memory layout matching CPU cache</td>
+</tr>
+<tr>
+<td><strong>Column Block</strong></td>
+<td>12</td>
+<td>Compressed sparse column storage</td>
+</tr>
+<tr>
+<td><strong>Column Subsampling</strong></td>
+<td>3, 5</td>
+<td>Random feature selection per tree</td>
+</tr>
+<tr>
+<td><strong>Convergence</strong></td>
+<td>6</td>
+<td>When training loss stabilizes</td>
+</tr>
+<tr>
+<td><strong>Cover</strong></td>
+<td>9</td>
+<td>Samples affected by feature splits</td>
+</tr>
+<tr>
+<td><strong>Early Stopping</strong></td>
+<td>5, 6</td>
+<td>Halting when validation plateaus</td>
+</tr>
+<tr>
+<td><strong>Eta (η)</strong></td>
+<td>3, 6, 7</td>
+<td>Learning rate / shrinkage factor</td>
+</tr>
+<tr>
+<td><strong>Exact Greedy</strong></td>
+<td>4</td>
+<td>Evaluates all split points</td>
+</tr>
+<tr>
+<td><strong>Extrapolation</strong></td>
+<td>10</td>
+<td>Predicting outside training range</td>
+</tr>
+<tr>
+<td><strong>Feature Importance</strong></td>
+<td>9</td>
+<td>Measuring feature contribution</td>
+</tr>
+<tr>
+<td><strong>Functional Gradient Descent</strong></td>
+<td>1, 2</td>
+<td>Optimization in function space</td>
+</tr>
+<tr>
+<td><strong>Gain</strong></td>
+<td>4, 9</td>
+<td>Loss reduction from a split</td>
+</tr>
+<tr>
+<td><strong>Gamma (γ)</strong></td>
+<td>3, 5, 7</td>
+<td>Min split loss / complexity cost</td>
+</tr>
+<tr>
+<td><strong>Gradient (g)</strong></td>
+<td>1, 2, 3</td>
+<td>First derivative of loss</td>
+</tr>
+<tr>
+<td><strong>Greedy Search</strong></td>
+<td>4</td>
+<td>Locally optimal split selection</td>
+</tr>
+<tr>
+<td><strong>Grow Policy</strong></td>
+<td>7</td>
+<td>depthwise vs. lossguide</td>
+</tr>
+<tr>
+<td><strong>Hessian (h)</strong></td>
+<td>1, 2, 3</td>
+<td>Second derivative of loss</td>
+</tr>
+<tr>
+<td><strong>Histogram-Based</strong></td>
+<td>4, 12</td>
+<td>Bin-based approximate algorithm</td>
+</tr>
+<tr>
+<td><strong>Hyperparameters</strong></td>
+<td>7</td>
+<td>Tunable model settings</td>
+</tr>
+<tr>
+<td><strong>Lambda (λ)</strong></td>
+<td>3, 5, 7</td>
+<td>L2 regularization parameter</td>
+</tr>
+<tr>
+<td><strong>Leaf Weight (w)</strong></td>
+<td>3, 4</td>
+<td>Output value of terminal node</td>
+</tr>
+<tr>
+<td><strong>Learning Rate</strong></td>
+<td>2, 3, 6</td>
+<td>Step size shrinkage (η)</td>
+</tr>
+<tr>
+<td><strong>Log-Odds</strong></td>
+<td>8</td>
+<td>Raw classification output</td>
+</tr>
+<tr>
+<td><strong>Loss Function</strong></td>
+<td>2, 3</td>
+<td>Error measurement (MSE, Log Loss)</td>
+</tr>
+<tr>
+<td><strong>L1/L2 Regularization</strong></td>
+<td>5</td>
+<td>Weight penalties for sparsity/smoothness</td>
+</tr>
+<tr>
+<td><strong>Max Depth</strong></td>
+<td>4, 7</td>
+<td>Maximum tree depth</td>
+</tr>
+<tr>
+<td><strong>Min Child Weight</strong></td>
+<td>4, 7</td>
+<td>Minimum Hessian sum in child</td>
+</tr>
+<tr>
+<td><strong>Missing Values</strong></td>
+<td>1, 4</td>
+<td>Sparsity-aware handling</td>
+</tr>
+<tr>
+<td><strong>Negative Gradient</strong></td>
+<td>2, 6</td>
+<td>What new trees learn to predict</td>
+</tr>
+<tr>
+<td><strong>Newton Step</strong></td>
+<td>6</td>
+<td>Update using gradient + Hessian</td>
+</tr>
+<tr>
+<td><strong>Objective Function</strong></td>
+<td>3</td>
+<td>Loss + regularization to minimize</td>
+</tr>
+<tr>
+<td><strong>Out-of-Core</strong></td>
+<td>1, 12</td>
+<td>Disk-based learning for big data</td>
+</tr>
+<tr>
+<td><strong>Overfitting</strong></td>
+<td>1, 5</td>
+<td>Memorizing noise, poor generalization</td>
+</tr>
+<tr>
+<td><strong>Parallel Split Finding</strong></td>
+<td>1, 12</td>
+<td>Multi-core feature evaluation</td>
+</tr>
+<tr>
+<td><strong>Prediction Pipeline</strong></td>
+<td>8</td>
+<td>Features → trees → link function → output</td>
+</tr>
+<tr>
+<td><strong>Pseudo-Residuals</strong></td>
+<td>6</td>
+<td>Negative gradients (generalized residuals)</td>
+</tr>
+<tr>
+<td><strong>Quantile Sketch</strong></td>
+<td>3, 12</td>
+<td>Weighted split point proposal</td>
+</tr>
+<tr>
+<td><strong>Regularization</strong></td>
+<td>1, 3, 5</td>
+<td>Complexity penalties</td>
+</tr>
+<tr>
+<td><strong>Residuals</strong></td>
+<td>2, 6</td>
+<td>y − ŷ (for MSE only)</td>
+</tr>
+<tr>
+<td><strong>Row Subsampling</strong></td>
+<td>5, 7</td>
+<td>Random data subset per tree</td>
+</tr>
+<tr>
+<td><strong>Second-Order Taylor</strong></td>
+<td>1, 3</td>
+<td>Using gradient + Hessian expansion</td>
+</tr>
+<tr>
+<td><strong>SHAP</strong></td>
+<td>9</td>
+<td>Shapley feature attributions</td>
+</tr>
+<tr>
+<td><strong>Shrinkage</strong></td>
+<td>3, 5, 6</td>
+<td>Learning rate scaling</td>
+</tr>
+<tr>
+<td><strong>Sigmoid</strong></td>
+<td>8</td>
+<td>Probability conversion function</td>
+</tr>
+<tr>
+<td><strong>Sparse-Aware</strong></td>
+<td>1, 4</td>
+<td>Missing value / zero handling</td>
+</tr>
+<tr>
+<td><strong>Split Gain</strong></td>
+<td>3, 4</td>
+<td>Formula for split quality</td>
+</tr>
+<tr>
+<td><strong>Strong/Weak Learner</strong></td>
+<td>1, 2</td>
+<td>Model capability levels</td>
+</tr>
+<tr>
+<td><strong>Subsample</strong></td>
+<td>7</td>
+<td>Row sampling rate</td>
+</tr>
+<tr>
+<td><strong>Tree Method</strong></td>
+<td>7</td>
+<td>exact, approx, hist, gpu_hist</td>
+</tr>
+<tr>
+<td><strong>Underfitting</strong></td>
+<td>5</td>
+<td>Overly simple model</td>
+</tr>
+<tr>
+<td><strong>Validation</strong></td>
+<td>5, 6</td>
+<td>Held-out data evaluation</td>
+</tr>
+<tr>
+<td><strong>Weighted Quantile</strong></td>
+<td>3, 12</td>
+<td>Hessian-weighted binning</td>
+</tr>
+</tbody>
+</table>
+<hr>
+
+</body>
+</html>

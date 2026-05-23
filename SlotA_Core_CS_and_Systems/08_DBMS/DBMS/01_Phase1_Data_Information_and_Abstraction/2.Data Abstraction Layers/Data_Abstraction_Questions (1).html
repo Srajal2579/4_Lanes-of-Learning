@@ -1,0 +1,1146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Data Abstraction Questions</title>
+  <style>
+  @import url("https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.9.0-alpha2/katex.min.css");
+
+  body {
+    font-family: Georgia, Cambria, serif;
+    font-size: 14px;
+    line-height: 1.7;
+    color: #373D49;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 2rem;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    font-family: "Source Sans Pro", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-weight: 600;
+    margin-top: 1.5em;
+    margin-bottom: 0.5em;
+  }
+  h1 { font-size: 2em; }
+  h2 { font-size: 1.5em; }
+  h3 { font-size: 1.25em; }
+  a { color: #35D7BB; text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  code {
+    font-family: "Ubuntu Mono", Monaco, monospace;
+    background: #F5F7FA;
+    padding: 0.2em 0.4em;
+    border-radius: 3px;
+  }
+  pre {
+    background: #F5F7FA;
+    padding: 1em;
+    border-radius: 3px;
+    overflow-x: auto;
+  }
+  .hljs {
+    display: block;
+    overflow-x: auto;
+    padding: 0;
+    color: #333;
+  }
+  pre code { background: none; padding: 0; }
+  blockquote {
+    border-left: 3px solid #A0AABF;
+    padding-left: 1em;
+    margin-left: 0;
+    font-style: italic;
+    color: #666;
+  }
+  table {
+    border-collapse: collapse;
+    width: 100%;
+  }
+  th, td {
+    border: 1px solid #E8E8E8;
+    padding: 0.5em;
+    text-align: left;
+  }
+  th {
+    background: #F5F7FA;
+    font-weight: 600;
+  }
+  #preview .table {
+    width: auto;
+  }
+  img {
+    max-width: 100%;
+    height: auto;
+  }
+  .katex-display {
+    overflow-x: auto;
+    overflow-y: hidden;
+  }
+</style>
+</head>
+<body id="preview">
+<p class="has-line-data" data-line-start="0" data-line-end="1">I’ll answer all 270 database questions in a clear, detailed, and easy-to-understand way. This is comprehensive, so I’ll organize it by section with practical examples.</p>
+<hr>
+<h1 class="code-line has-line-data" data-line-start="4" data-line-end="5"><a id="SECTION_1_DATABASE_FUNDAMENTALS_4"></a>SECTION 1 — DATABASE FUNDAMENTALS</h1>
+<h3 class="code-line has-line-data" data-line-start="6" data-line-end="7"><a id="1_What_is_a_database_6"></a>1. What is a database?</h3>
+<p class="has-line-data" data-line-start="7" data-line-end="8">A <strong>database</strong> is an organized collection of data stored electronically. Think of it as a digital filing cabinet where information is structured so you can easily find, add, update, or delete data. Example: A university database stores student records, courses, and grades.</p>
+<h3 class="code-line has-line-data" data-line-start="9" data-line-end="10"><a id="2_What_is_a_DBMS_9"></a>2. What is a DBMS?</h3>
+<p class="has-line-data" data-line-start="10" data-line-end="11">A <strong>Database Management System (DBMS)</strong> is software that lets you create, manage, and interact with databases. It’s like the operating system for your data. Examples: MySQL, PostgreSQL, Oracle, MongoDB.</p>
+<h3 class="code-line has-line-data" data-line-start="12" data-line-end="13"><a id="3_Why_do_we_need_DBMS_12"></a>3. Why do we need DBMS?</h3>
+<p class="has-line-data" data-line-start="13" data-line-end="14">Without a DBMS, you’d store data in plain files (like Excel or text files), which causes problems:</p>
+<ul>
+<li class="has-line-data" data-line-start="14" data-line-end="15"><strong>Data redundancy</strong>: Same data copied in multiple places</li>
+<li class="has-line-data" data-line-start="15" data-line-end="16"><strong>Inconsistency</strong>: Updating one copy but not others</li>
+<li class="has-line-data" data-line-start="16" data-line-end="17"><strong>No concurrent access</strong>: Two people can’t edit safely at once</li>
+<li class="has-line-data" data-line-start="17" data-line-end="18"><strong>No crash recovery</strong>: Lose everything if computer crashes</li>
+<li class="has-line-data" data-line-start="18" data-line-end="20"><strong>Security issues</strong>: Can’t easily control who sees what</li>
+</ul>
+<h3 class="code-line has-line-data" data-line-start="20" data-line-end="21"><a id="4_What_problems_exist_in_file_systems_20"></a>4. What problems exist in file systems?</h3>
+<p class="has-line-data" data-line-start="21" data-line-end="22">File systems have these major issues:</p>
+<ul>
+<li class="has-line-data" data-line-start="22" data-line-end="23"><strong>Data isolation</strong>: Data scattered across many files</li>
+<li class="has-line-data" data-line-start="23" data-line-end="24"><strong>Duplication</strong>: Same customer address in 10 files</li>
+<li class="has-line-data" data-line-start="24" data-line-end="25"><strong>Dependency</strong>: Programs are written for specific file formats</li>
+<li class="has-line-data" data-line-start="25" data-line-end="26"><strong>No integrity checks</strong>: Can enter invalid data (like age = -5)</li>
+<li class="has-line-data" data-line-start="26" data-line-end="28"><strong>No atomic operations</strong>: A transfer might debit one account but not credit another</li>
+</ul>
+<h3 class="code-line has-line-data" data-line-start="28" data-line-end="29"><a id="5_How_does_DBMS_manage_data_28"></a>5. How does DBMS manage data?</h3>
+<p class="has-line-data" data-line-start="29" data-line-end="30">A DBMS manages data through:</p>
+<ul>
+<li class="has-line-data" data-line-start="30" data-line-end="31"><strong>Storage management</strong>: Decides where and how to store data on disk</li>
+<li class="has-line-data" data-line-start="31" data-line-end="32"><strong>Query processing</strong>: Interprets your requests and finds data efficiently</li>
+<li class="has-line-data" data-line-start="32" data-line-end="33"><strong>Transaction management</strong>: Ensures operations complete properly</li>
+<li class="has-line-data" data-line-start="33" data-line-end="34"><strong>Concurrency control</strong>: Handles multiple users simultaneously</li>
+<li class="has-line-data" data-line-start="34" data-line-end="35"><strong>Recovery</strong>: Restores data after crashes</li>
+<li class="has-line-data" data-line-start="35" data-line-end="37"><strong>Security</strong>: Controls who can access what</li>
+</ul>
+<h3 class="code-line has-line-data" data-line-start="37" data-line-end="38"><a id="6_What_are_responsibilities_of_DBMS_37"></a>6. What are responsibilities of DBMS?</h3>
+<ul>
+<li class="has-line-data" data-line-start="38" data-line-end="39">Data definition (creating tables/structures)</li>
+<li class="has-line-data" data-line-start="39" data-line-end="40">Data manipulation (insert, update, delete, query)</li>
+<li class="has-line-data" data-line-start="40" data-line-end="41">Data security and integrity enforcement</li>
+<li class="has-line-data" data-line-start="41" data-line-end="42">Multi-user access control</li>
+<li class="has-line-data" data-line-start="42" data-line-end="43">Backup and recovery</li>
+<li class="has-line-data" data-line-start="43" data-line-end="45">Performance optimization</li>
+</ul>
+<h3 class="code-line has-line-data" data-line-start="45" data-line-end="46"><a id="7_What_are_examples_of_DBMS_45"></a>7. What are examples of DBMS?</h3>
+<ul>
+<li class="has-line-data" data-line-start="46" data-line-end="47"><strong>Relational</strong>: MySQL, PostgreSQL, Oracle, SQL Server, SQLite</li>
+<li class="has-line-data" data-line-start="47" data-line-end="48"><strong>NoSQL</strong>: MongoDB (document), Redis (key-value), Cassandra (column), Neo4j (graph)</li>
+<li class="has-line-data" data-line-start="48" data-line-end="50"><strong>Cloud</strong>: Amazon RDS, Google Cloud Spanner, Azure SQL</li>
+</ul>
+<h3 class="code-line has-line-data" data-line-start="50" data-line-end="51"><a id="8_What_is_relational_DBMS_50"></a>8. What is relational DBMS?</h3>
+<p class="has-line-data" data-line-start="51" data-line-end="52">A <strong>Relational DBMS (RDBMS)</strong> stores data in tables (relations) with rows and columns. Tables can relate to each other through keys. It’s based on mathematical set theory. Example: A <code>Students</code> table links to an <code>Enrollments</code> table via <code>student_id</code>.</p>
+<h3 class="code-line has-line-data" data-line-start="53" data-line-end="54"><a id="9_What_is_SQL_53"></a>9. What is SQL?</h3>
+<p class="has-line-data" data-line-start="54" data-line-end="55"><strong>SQL (Structured Query Language)</strong> is the standard language for talking to relational databases. You use it to ask questions (queries) and give commands.</p>
+<pre><code class="has-line-data language-sql" data-line-start="57" data-line-end="59"><span class="hljs-keyword">SELECT</span> name <span class="hljs-keyword">FROM</span> students <span class="hljs-keyword">WHERE</span> grade <span class="hljs-operator">=</span> <span class="hljs-string">&#x27;A&#x27;</span>;
+</code></pre>
+<h3 class="code-line has-line-data" data-line-start="60" data-line-end="61"><a id="10_Why_is_SQL_important_60"></a>10. Why is SQL important?</h3>
+<ul>
+<li class="has-line-data" data-line-start="61" data-line-end="62"><strong>Universal</strong>: Works across almost all relational databases</li>
+<li class="has-line-data" data-line-start="62" data-line-end="63"><strong>Declarative</strong>: You say <em>what</em> you want, not <em>how</em> to get it</li>
+<li class="has-line-data" data-line-start="63" data-line-end="64"><strong>Standardized</strong>: ANSI/ISO standard since 1986</li>
+<li class="has-line-data" data-line-start="64" data-line-end="65"><strong>Powerful</strong>: Handles complex data operations simply</li>
+<li class="has-line-data" data-line-start="65" data-line-end="67"><strong>Industry standard</strong>: Required skill for data jobs</li>
+</ul>
+<hr>
+<h1 class="code-line has-line-data" data-line-start="69" data-line-end="70"><a id="SECTION_2_DATA_ABSTRACTION_69"></a>SECTION 2 — DATA ABSTRACTION</h1>
+<h3 class="code-line has-line-data" data-line-start="71" data-line-end="72"><a id="11_What_is_data_abstraction_71"></a>11. What is data abstraction?</h3>
+<p class="has-line-data" data-line-start="72" data-line-end="73"><strong>Data abstraction</strong> means hiding complex details and showing only essential information. Like driving a car—you use the steering wheel and pedals without knowing how the engine works internally.</p>
+<h3 class="code-line has-line-data" data-line-start="74" data-line-end="75"><a id="12_Why_is_data_abstraction_needed_74"></a>12. Why is data abstraction needed?</h3>
+<p class="has-line-data" data-line-start="75" data-line-end="76">Because databases are incredibly complex internally. Users shouldn’t need to understand disk sectors, memory buffers, indexing algorithms, or query optimization just to retrieve customer names.</p>
+<h3 class="code-line has-line-data" data-line-start="77" data-line-end="78"><a id="13_What_complexity_does_DBMS_hide_77"></a>13. What complexity does DBMS hide?</h3>
+<ul>
+<li class="has-line-data" data-line-start="78" data-line-end="79">Physical storage details (where bytes sit on disk)</li>
+<li class="has-line-data" data-line-start="79" data-line-end="80">Index structures (B+ trees, hash tables)</li>
+<li class="has-line-data" data-line-start="80" data-line-end="81">Query optimization (choosing the fastest execution plan)</li>
+<li class="has-line-data" data-line-start="81" data-line-end="82">Memory management (buffer pools, caching)</li>
+<li class="has-line-data" data-line-start="82" data-line-end="83">Concurrency control (locking mechanisms)</li>
+<li class="has-line-data" data-line-start="83" data-line-end="85">Recovery procedures (logging, checkpoints)</li>
+</ul>
+<h3 class="code-line has-line-data" data-line-start="85" data-line-end="86"><a id="14_How_does_abstraction_simplify_databases_85"></a>14. How does abstraction simplify databases?</h3>
+<p class="has-line-data" data-line-start="86" data-line-end="87">Users interact with a <strong>simplified model</strong>: tables, rows, and SQL commands. The DBMS handles the translation to physical operations automatically.</p>
+<h3 class="code-line has-line-data" data-line-start="88" data-line-end="89"><a id="15_What_are_advantages_of_abstraction_88"></a>15. What are advantages of abstraction?</h3>
+<ul>
+<li class="has-line-data" data-line-start="89" data-line-end="90">Easier to learn and use</li>
+<li class="has-line-data" data-line-start="90" data-line-end="91">Less error-prone</li>
+<li class="has-line-data" data-line-start="91" data-line-end="92">Changes to internals don’t break applications</li>
+<li class="has-line-data" data-line-start="92" data-line-end="93">Multiple users see customized views</li>
+<li class="has-line-data" data-line-start="93" data-line-end="95">Security through information hiding</li>
+</ul>
+<h3 class="code-line has-line-data" data-line-start="95" data-line-end="96"><a id="16_What_problems_happen_without_abstraction_95"></a>16. What problems happen without abstraction?</h3>
+<ul>
+<li class="has-line-data" data-line-start="96" data-line-end="97">Every programmer must understand disk I/O, memory, indexing</li>
+<li class="has-line-data" data-line-start="97" data-line-end="98">Applications break when storage changes</li>
+<li class="has-line-data" data-line-start="98" data-line-end="99">No security boundaries</li>
+<li class="has-line-data" data-line-start="99" data-line-end="100">Code becomes unmaintainable</li>
+<li class="has-line-data" data-line-start="100" data-line-end="102">Users accidentally corrupt data</li>
+</ul>
+<h3 class="code-line has-line-data" data-line-start="102" data-line-end="103"><a id="17_How_does_abstraction_improve_security_102"></a>17. How does abstraction improve security?</h3>
+<p class="has-line-data" data-line-start="103" data-line-end="104">By showing users only what they need. A payroll clerk sees salaries but not server passwords. A manager sees department summaries, not individual employee records.</p>
+<h3 class="code-line has-line-data" data-line-start="105" data-line-end="106"><a id="18_How_does_abstraction_improve_maintainability_105"></a>18. How does abstraction improve maintainability?</h3>
+<p class="has-line-data" data-line-start="106" data-line-end="107">When internal storage changes (e.g., moving from HDD to SSD), only the DBMS internal code changes. Applications using SQL continue working unchanged.</p>
+<h3 class="code-line has-line-data" data-line-start="108" data-line-end="109"><a id="19_How_does_abstraction_improve_flexibility_108"></a>19. How does abstraction improve flexibility?</h3>
+<p class="has-line-data" data-line-start="109" data-line-end="110">You can change the physical layout (add indexes, partition tables) without changing the logical design or user applications.</p>
+<h3 class="code-line has-line-data" data-line-start="111" data-line-end="112"><a id="20_How_does_abstraction_improve_usability_111"></a>20. How does abstraction improve usability?</h3>
+<p class="has-line-data" data-line-start="112" data-line-end="113">Users write <code>SELECT * FROM customers</code> instead of writing code to traverse disk blocks, parse page headers, and assemble records.</p>
+<h3 class="code-line has-line-data" data-line-start="114" data-line-end="115"><a id="21_What_is_the_realworld_meaning_of_abstraction_114"></a>21. What is the real-world meaning of abstraction?</h3>
+<p class="has-line-data" data-line-start="115" data-line-end="116">Like using a TV remote—you press “power” and the TV turns on. You don’t need to understand electricity, circuit boards, or signal processing.</p>
+<h3 class="code-line has-line-data" data-line-start="117" data-line-end="118"><a id="22_How_is_abstraction_used_in_DBMS_117"></a>22. How is abstraction used in DBMS?</h3>
+<p class="has-line-data" data-line-start="118" data-line-end="119">Through <strong>three levels</strong>: External (user views), Conceptual (logical design), Internal (physical storage). Each level hides the one below it.</p>
+<h3 class="code-line has-line-data" data-line-start="120" data-line-end="121"><a id="23_What_is_separation_of_concerns_120"></a>23. What is separation of concerns?</h3>
+<p class="has-line-data" data-line-start="121" data-line-end="122">Dividing a system into distinct sections, each handling one aspect. The DBMS separates: user interface, data logic, and storage mechanics.</p>
+<h3 class="code-line has-line-data" data-line-start="123" data-line-end="124"><a id="24_How_does_DBMS_separate_complexity_into_layers_123"></a>24. How does DBMS separate complexity into layers?</h3>
+<ul>
+<li class="has-line-data" data-line-start="124" data-line-end="125"><strong>External layer</strong>: What users see (views)</li>
+<li class="has-line-data" data-line-start="125" data-line-end="126"><strong>Conceptual layer</strong>: What the database logically contains (tables, relationships)</li>
+<li class="has-line-data" data-line-start="126" data-line-end="128"><strong>Internal layer</strong>: How it’s physically stored (files, indexes, blocks)</li>
+</ul>
+<h3 class="code-line has-line-data" data-line-start="128" data-line-end="129"><a id="25_What_happens_internally_when_user_executes_SQL_128"></a>25. What happens internally when user executes SQL?</h3>
+<ol>
+<li class="has-line-data" data-line-start="129" data-line-end="130"><strong>Parse</strong>: Check syntax and semantics</li>
+<li class="has-line-data" data-line-start="130" data-line-end="131"><strong>Optimize</strong>: Find the cheapest execution plan</li>
+<li class="has-line-data" data-line-start="131" data-line-end="132"><strong>Compile</strong>: Generate execution code</li>
+<li class="has-line-data" data-line-start="132" data-line-end="133"><strong>Execute</strong>: Run against storage, using indexes if helpful</li>
+<li class="has-line-data" data-line-start="133" data-line-end="135"><strong>Return</strong>: Format and send results to user</li>
+</ol>
+<h3 class="code-line has-line-data" data-line-start="135" data-line-end="136"><a id="26_What_internal_operations_are_hidden_from_users_135"></a>26. What internal operations are hidden from users?</h3>
+<ul>
+<li class="has-line-data" data-line-start="136" data-line-end="137">Parsing and validating the SQL statement</li>
+<li class="has-line-data" data-line-start="137" data-line-end="138">Rewriting the query for efficiency</li>
+<li class="has-line-data" data-line-start="138" data-line-end="139">Choosing between index scan vs. table scan</li>
+<li class="has-line-data" data-line-start="139" data-line-end="140">Locking rows to prevent conflicts</li>
+<li class="has-line-data" data-line-start="140" data-line-end="141">Reading/writing disk blocks</li>
+<li class="has-line-data" data-line-start="141" data-line-end="142">Managing buffer pool memory</li>
+<li class="has-line-data" data-line-start="142" data-line-end="144">Writing to transaction logs</li>
+</ul>
+<h3 class="code-line has-line-data" data-line-start="144" data-line-end="145"><a id="27_How_does_DBMS_hide_storage_details_144"></a>27. How does DBMS hide storage details?</h3>
+<p class="has-line-data" data-line-start="145" data-line-end="146">Users see “tables.” The DBMS decides whether to store rows in one file or many, compressed or uncompressed, on SSD or in memory.</p>
+<h3 class="code-line has-line-data" data-line-start="147" data-line-end="148"><a id="28_How_does_DBMS_hide_indexing_details_147"></a>28. How does DBMS hide indexing details?</h3>
+<p class="has-line-data" data-line-start="148" data-line-end="149">Users don’t manually create or navigate indexes. The DBMS automatically uses indexes when beneficial, and users don’t even know indexes exist unless they create them.</p>
+<h3 class="code-line has-line-data" data-line-start="150" data-line-end="151"><a id="29_How_does_DBMS_hide_query_optimization_150"></a>29. How does DBMS hide query optimization?</h3>
+<p class="has-line-data" data-line-start="151" data-line-end="152">The DBMS might rewrite your query, change join order, or use an index—all automatically. You write simple SQL; the DBMS finds the fastest way to run it.</p>
+<h3 class="code-line has-line-data" data-line-start="153" data-line-end="154"><a id="30_Why_should_users_not_interact_with_physical_storage_directly_153"></a>30. Why should users not interact with physical storage directly?</h3>
+<ul>
+<li class="has-line-data" data-line-start="154" data-line-end="155">They could corrupt data structures</li>
+<li class="has-line-data" data-line-start="155" data-line-end="156">They’d need specialized knowledge</li>
+<li class="has-line-data" data-line-start="156" data-line-end="157">Applications would become tied to specific hardware</li>
+<li class="has-line-data" data-line-start="157" data-line-end="159">Security would be impossible to enforce</li>
+</ul>
+<hr>
+<h1 class="code-line has-line-data" data-line-start="161" data-line-end="162"><a id="SECTION_3_ANSISPARC_ARCHITECTURE_161"></a>SECTION 3 — ANSI/SPARC ARCHITECTURE</h1>
+<h3 class="code-line has-line-data" data-line-start="163" data-line-end="164"><a id="31_What_is_ANSISPARC_architecture_163"></a>31. What is ANSI/SPARC architecture?</h3>
+<p class="has-line-data" data-line-start="164" data-line-end="165">A <strong>standard framework</strong> (1975) proposed by ANSI (American National Standards Institute) and SPARC (Standards Planning and Requirements Committee) defining three levels of database abstraction.</p>
+<h3 class="code-line has-line-data" data-line-start="166" data-line-end="167"><a id="32_Why_was_ANSISPARC_introduced_166"></a>32. Why was ANSI/SPARC introduced?</h3>
+<p class="has-line-data" data-line-start="167" data-line-end="168">Before this, database systems were inconsistent. There was no standard way to talk about data independence or layered design. This framework provided a common vocabulary and structure.</p>
+<h3 class="code-line has-line-data" data-line-start="169" data-line-end="170"><a id="33_What_problems_existed_before_ANSISPARC_169"></a>33. What problems existed before ANSI/SPARC?</h3>
+<ul>
+<li class="has-line-data" data-line-start="170" data-line-end="171">Applications were tightly coupled to physical storage</li>
+<li class="has-line-data" data-line-start="171" data-line-end="172">Changing storage format broke all programs</li>
+<li class="has-line-data" data-line-start="172" data-line-end="173">No clean separation between user views and database design</li>
+<li class="has-line-data" data-line-start="173" data-line-end="175">Every DBMS had a different architecture</li>
+</ul>
+<h3 class="code-line has-line-data" data-line-start="175" data-line-end="176"><a id="34_What_are_the_three_levels_of_DBMS_architecture_175"></a>34. What are the three levels of DBMS architecture?</h3>
+<ol>
+<li class="has-line-data" data-line-start="176" data-line-end="177"><strong>External Level</strong> (User views)</li>
+<li class="has-line-data" data-line-start="177" data-line-end="178"><strong>Conceptual Level</strong> (Logical structure)</li>
+<li class="has-line-data" data-line-start="178" data-line-end="180"><strong>Internal Level</strong> (Physical storage)</li>
+</ol>
+<h3 class="code-line has-line-data" data-line-start="180" data-line-end="181"><a id="35_What_is_the_purpose_of_3level_architecture_180"></a>35. What is the purpose of 3-level architecture?</h3>
+<p class="has-line-data" data-line-start="181" data-line-end="182">To achieve <strong>data independence</strong>—the ability to change one level without affecting others.</p>
+<h3 class="code-line has-line-data" data-line-start="183" data-line-end="184"><a id="36_How_does_ANSISPARC_architecture_work_183"></a>36. How does ANSI/SPARC architecture work?</h3>
+<p class="has-line-data" data-line-start="184" data-line-end="185">Like an office building:</p>
+<ul>
+<li class="has-line-data" data-line-start="185" data-line-end="186"><strong>Lobby (External)</strong>: Different visitors see different areas</li>
+<li class="has-line-data" data-line-start="186" data-line-end="187"><strong>Floor plans (Conceptual)</strong>: The actual layout of rooms</li>
+<li class="has-line-data" data-line-start="187" data-line-end="189"><strong>Foundation (Internal)</strong>: Concrete, wiring, plumbing</li>
+</ul>
+<h3 class="code-line has-line-data" data-line-start="189" data-line-end="190"><a id="37_What_is_abstraction_hierarchy_in_DBMS_189"></a>37. What is abstraction hierarchy in DBMS?</h3>
+<p class="has-line-data" data-line-start="190" data-line-end="191">A pyramid where each layer builds on the one below:</p>
+<ul>
+<li class="has-line-data" data-line-start="191" data-line-end="192">Top: External views (most abstract, user-specific)</li>
+<li class="has-line-data" data-line-start="192" data-line-end="193">Middle: Conceptual schema (logical design)</li>
+<li class="has-line-data" data-line-start="193" data-line-end="195">Bottom: Internal schema (physical implementation)</li>
+</ul>
+<h3 class="code-line has-line-data" data-line-start="195" data-line-end="196"><a id="38_Why_is_layered_DBMS_design_important_195"></a>38. Why is layered DBMS design important?</h3>
+<ul>
+<li class="has-line-data" data-line-start="196" data-line-end="197">Isolates changes</li>
+<li class="has-line-data" data-line-start="197" data-line-end="198">Supports multiple user perspectives</li>
+<li class="has-line-data" data-line-start="198" data-line-end="199">Allows optimization at each level independently</li>
+<li class="has-line-data" data-line-start="199" data-line-end="201">Enables security boundaries</li>
+</ul>
+<h3 class="code-line has-line-data" data-line-start="201" data-line-end="202"><a id="39_How_do_abstraction_levels_communicate_201"></a>39. How do abstraction levels communicate?</h3>
+<p class="has-line-data" data-line-start="202" data-line-end="203">Through <strong>mappings</strong> (translations). When a user queries a view, the DBMS maps it to the conceptual schema, then to the internal schema, then executes on physical storage.</p>
+<h3 class="code-line has-line-data" data-line-start="204" data-line-end="205"><a id="40_What_is_schema_mapping_204"></a>40. What is schema mapping?</h3>
+<p class="has-line-data" data-line-start="205" data-line-end="206">The translation process between levels. It’s like translating from English (external) to French (conceptual) to German (internal).</p>
+<h3 class="code-line has-line-data" data-line-start="207" data-line-end="208"><a id="41_What_is_externalconceptual_mapping_207"></a>41. What is external-conceptual mapping?</h3>
+<p class="has-line-data" data-line-start="208" data-line-end="209">Translates a user’s view into the conceptual schema. If a view shows <code>employee_name</code> but the conceptual table calls it <code>full_name</code>, this mapping handles the conversion.</p>
+<h3 class="code-line has-line-data" data-line-start="210" data-line-end="211"><a id="42_What_is_conceptualinternal_mapping_210"></a>42. What is conceptual-internal mapping?</h3>
+<p class="has-line-data" data-line-start="211" data-line-end="212">Translates the logical design into physical storage instructions. The conceptual <code>Employees</code> table might be stored in file <code>emp.data</code> with B+ tree index <code>emp.idx</code>.</p>
+<h3 class="code-line has-line-data" data-line-start="213" data-line-end="214"><a id="43_How_does_data_move_between_layers_213"></a>43. How does data move between layers?</h3>
+<p class="has-line-data" data-line-start="214" data-line-end="216"><strong>Downward</strong>: User query → External view → Conceptual schema → Internal schema → Physical I/O<br>
+<strong>Upward</strong>: Physical data → Internal format → Conceptual format → External view → User display</p>
+<h3 class="code-line has-line-data" data-line-start="217" data-line-end="218"><a id="44_What_are_advantages_of_layered_architecture_217"></a>44. What are advantages of layered architecture?</h3>
+<ul>
+<li class="has-line-data" data-line-start="218" data-line-end="219"><strong>Data independence</strong>: Change physical storage without touching applications</li>
+<li class="has-line-data" data-line-start="219" data-line-end="220"><strong>Multiple views</strong>: Different users see different data</li>
+<li class="has-line-data" data-line-start="220" data-line-end="221"><strong>Security</strong>: Hide sensitive data from unauthorized users</li>
+<li class="has-line-data" data-line-start="221" data-line-end="223"><strong>Simplification</strong>: Each layer deals with manageable complexity</li>
+</ul>
+<h3 class="code-line has-line-data" data-line-start="223" data-line-end="224"><a id="45_What_are_disadvantages_of_layered_architecture_223"></a>45. What are disadvantages of layered architecture?</h3>
+<ul>
+<li class="has-line-data" data-line-start="224" data-line-end="225"><strong>Performance overhead</strong>: Multiple translations take time</li>
+<li class="has-line-data" data-line-start="225" data-line-end="226"><strong>Complexity</strong>: More layers = more code to maintain</li>
+<li class="has-line-data" data-line-start="226" data-line-end="228"><strong>Storage</strong>: Mappings themselves need storage and management</li>
+</ul>
+<h3 class="code-line has-line-data" data-line-start="228" data-line-end="229"><a id="46_How_does_layered_architecture_improve_scalability_228"></a>46. How does layered architecture improve scalability?</h3>
+<p class="has-line-data" data-line-start="229" data-line-end="230">Change physical storage (add servers, shard data) without rewriting applications. The conceptual layer remains stable.</p>
+<h3 class="code-line has-line-data" data-line-start="231" data-line-end="232"><a id="47_How_does_layered_architecture_improve_maintainability_231"></a>47. How does layered architecture improve maintainability?</h3>
+<p class="has-line-data" data-line-start="232" data-line-end="233">Fix a bug in the storage layer, and all applications continue working. Update a view definition without touching the underlying tables.</p>
+<h3 class="code-line has-line-data" data-line-start="234" data-line-end="235"><a id="48_How_does_layered_architecture_improve_security_234"></a>48. How does layered architecture improve security?</h3>
+<p class="has-line-data" data-line-start="235" data-line-end="236">Create views that exclude sensitive columns. Users interact only with views, never seeing the base tables or physical files.</p>
+<h3 class="code-line has-line-data" data-line-start="237" data-line-end="238"><a id="49_How_does_layered_architecture_improve_portability_237"></a>49. How does layered architecture improve portability?</h3>
+<p class="has-line-data" data-line-start="238" data-line-end="239">Move from Oracle to PostgreSQL—applications using standard SQL need minimal changes because the abstraction layers handle differences.</p>
+<h3 class="code-line has-line-data" data-line-start="240" data-line-end="241"><a id="50_How_does_layered_architecture_improve_optimization_240"></a>50. How does layered architecture improve optimization?</h3>
+<p class="has-line-data" data-line-start="241" data-line-end="242">The DBMS can change physical organization (add indexes, partition tables) to improve speed without requiring application changes.</p>
+<hr>
+<h1 class="code-line has-line-data" data-line-start="245" data-line-end="246"><a id="SECTION_4_EXTERNAL_VIEW_LEVEL_245"></a>SECTION 4 — EXTERNAL / VIEW LEVEL</h1>
+<h3 class="code-line has-line-data" data-line-start="247" data-line-end="248"><a id="51_What_is_external_level_247"></a>51. What is external level?</h3>
+<p class="has-line-data" data-line-start="248" data-line-end="249">The <strong>top layer</strong> of the ANSI/SPARC architecture. It’s what individual users or applications see—their personalized window into the database.</p>
+<h3 class="code-line has-line-data" data-line-start="250" data-line-end="251"><a id="52_What_is_view_level_250"></a>52. What is view level?</h3>
+<p class="has-line-data" data-line-start="251" data-line-end="252">Same as external level. “View” because it’s a particular way of looking at the data, like looking through colored glass that shows only certain colors.</p>
+<h3 class="code-line has-line-data" data-line-start="253" data-line-end="254"><a id="53_What_is_external_schema_253"></a>53. What is external schema?</h3>
+<p class="has-line-data" data-line-start="254" data-line-end="255">The definition of a specific user view. It describes what tables, columns, and rows a particular user can see.</p>
+<h3 class="code-line has-line-data" data-line-start="256" data-line-end="257"><a id="54_What_is_view_schema_256"></a>54. What is view schema?</h3>
+<p class="has-line-data" data-line-start="257" data-line-end="258">Same as external schema—the structure definition of a view.</p>
+<h3 class="code-line has-line-data" data-line-start="259" data-line-end="260"><a id="55_What_is_subschema_259"></a>55. What is subschema?</h3>
+<p class="has-line-data" data-line-start="260" data-line-end="261">An older term for external schema. In CODASYL/network databases, the subschema defined which parts of the database a program could access.</p>
+<h3 class="code-line has-line-data" data-line-start="262" data-line-end="263"><a id="56_Why_do_we_need_external_views_262"></a>56. Why do we need external views?</h3>
+<ul>
+<li class="has-line-data" data-line-start="263" data-line-end="264"><strong>Security</strong>: Hide sensitive data (salaries, passwords)</li>
+<li class="has-line-data" data-line-start="264" data-line-end="265"><strong>Simplicity</strong>: Show only relevant data to each job role</li>
+<li class="has-line-data" data-line-start="265" data-line-end="266"><strong>Customization</strong>: Rename columns for user convenience</li>
+<li class="has-line-data" data-line-start="266" data-line-end="268"><strong>Data independence</strong>: Protect apps from schema changes</li>
+</ul>
+<h3 class="code-line has-line-data" data-line-start="268" data-line-end="269"><a id="57_What_is_userspecific_data_representation_268"></a>57. What is user-specific data representation?</h3>
+<p class="has-line-data" data-line-start="269" data-line-end="270">A view tailored to a user’s needs. A sales rep sees their customers and orders; an accountant sees invoices and payments.</p>
+<h3 class="code-line has-line-data" data-line-start="271" data-line-end="272"><a id="58_How_do_different_users_see_different_data_271"></a>58. How do different users see different data?</h3>
+<p class="has-line-data" data-line-start="272" data-line-end="273">The DBMS creates different views for different users. Same underlying database, different filtered perspectives.</p>
+<pre><code class="has-line-data language-sql" data-line-start="275" data-line-end="281"><span class="hljs-comment">-- Manager sees all employees</span>
+<span class="hljs-keyword">CREATE</span> <span class="hljs-keyword">VIEW</span> manager_employees <span class="hljs-keyword">AS</span> <span class="hljs-keyword">SELECT</span> <span class="hljs-operator">*</span> <span class="hljs-keyword">FROM</span> employees;
+
+<span class="hljs-comment">-- Employee sees only their own record</span>
+<span class="hljs-keyword">CREATE</span> <span class="hljs-keyword">VIEW</span> my_record <span class="hljs-keyword">AS</span> <span class="hljs-keyword">SELECT</span> <span class="hljs-operator">*</span> <span class="hljs-keyword">FROM</span> employees <span class="hljs-keyword">WHERE</span> emp_id <span class="hljs-operator">=</span> <span class="hljs-built_in">CURRENT_USER</span>;
+</code></pre>
+<h3 class="code-line has-line-data" data-line-start="282" data-line-end="283"><a id="59_How_do_views_improve_security_282"></a>59. How do views improve security?</h3>
+<p class="has-line-data" data-line-start="283" data-line-end="284">By restricting what users can see. Even if they try to access other data, the view definition prevents it.</p>
+<h3 class="code-line has-line-data" data-line-start="285" data-line-end="286"><a id="60_What_is_viewlevel_security_285"></a>60. What is view-level security?</h3>
+<p class="has-line-data" data-line-start="286" data-line-end="287">Security enforced through views—granting access to views rather than base tables. Users can only see what the view allows.</p>
+<h3 class="code-line has-line-data" data-line-start="288" data-line-end="289"><a id="61_What_is_row_filtering_288"></a>61. What is row filtering?</h3>
+<p class="has-line-data" data-line-start="289" data-line-end="290">A view that shows only certain rows. Example: <code>WHERE department = 'Sales'</code> shows only sales employees.</p>
+<h3 class="code-line has-line-data" data-line-start="291" data-line-end="292"><a id="62_What_is_column_filtering_291"></a>62. What is column filtering?</h3>
+<p class="has-line-data" data-line-start="292" data-line-end="293">A view that hides certain columns. Example: Excluding <code>salary</code> and <code>ssn</code> columns from a view shown to general employees.</p>
+<h3 class="code-line has-line-data" data-line-start="294" data-line-end="295"><a id="63_What_is_customized_data_access_294"></a>63. What is customized data access?</h3>
+<p class="has-line-data" data-line-start="295" data-line-end="296">Creating views that join tables, compute values, or rename columns to match user expectations or application needs.</p>
+<h3 class="code-line has-line-data" data-line-start="297" data-line-end="298"><a id="64_What_is_data_hiding_using_views_297"></a>64. What is data hiding using views?</h3>
+<p class="has-line-data" data-line-start="298" data-line-end="299">Concealing the existence or values of certain data. Users don’t know what they’re missing—it’s invisible to them.</p>
+<h3 class="code-line has-line-data" data-line-start="300" data-line-end="301"><a id="65_What_are_examples_of_external_views_300"></a>65. What are examples of external views?</h3>
+<ul>
+<li class="has-line-data" data-line-start="301" data-line-end="302">A view showing only active customers for the sales team</li>
+<li class="has-line-data" data-line-start="302" data-line-end="303">A view aggregating monthly sales for managers</li>
+<li class="has-line-data" data-line-start="303" data-line-end="304">A view joining employee and department data for HR</li>
+<li class="has-line-data" data-line-start="304" data-line-end="306">A view excluding financial data for public access</li>
+</ul>
+<h3 class="code-line has-line-data" data-line-start="306" data-line-end="307"><a id="66_What_is_virtual_table_306"></a>66. What is virtual table?</h3>
+<p class="has-line-data" data-line-start="307" data-line-end="308">A <strong>view</strong> is called a virtual table because it looks and acts like a table but doesn’t physically store data. It’s defined by a query that runs when you access it.</p>
+<h3 class="code-line has-line-data" data-line-start="309" data-line-end="310"><a id="67_What_is_a_database_view_309"></a>67. What is a database view?</h3>
+<p class="has-line-data" data-line-start="310" data-line-end="311">A saved query that presents data as if it were a table. It derives its data from base tables (or other views) in real-time.</p>
+<h3 class="code-line has-line-data" data-line-start="312" data-line-end="313"><a id="68_What_is_materialized_view_312"></a>68. What is materialized view?</h3>
+<p class="has-line-data" data-line-start="313" data-line-end="314">A view that <strong>actually stores</strong> the query results physically, like caching. It’s refreshed periodically. Faster to read, slower to update.</p>
+<h3 class="code-line has-line-data" data-line-start="315" data-line-end="316"><a id="69_Difference_between_virtual_view_and_materialized_view_315"></a>69. Difference between virtual view and materialized view?</h3>
+<table class="table table-striped table-bordered">
+<thead>
+<tr>
+<th>Aspect</th>
+<th>Virtual View</th>
+<th>Materialized View</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Storage</td>
+<td>No physical storage</td>
+<td>Stores actual data</td>
+</tr>
+<tr>
+<td>Freshness</td>
+<td>Always current</td>
+<td>May be stale</td>
+</tr>
+<tr>
+<td>Read speed</td>
+<td>Slower (query runs each time)</td>
+<td>Faster (pre-computed)</td>
+</tr>
+<tr>
+<td>Write impact</td>
+<td>None</td>
+<td>Needs refresh</td>
+</tr>
+<tr>
+<td>Space</td>
+<td>Minimal</td>
+<td>Uses disk space</td>
+</tr>
+</tbody>
+</table>
+<h3 class="code-line has-line-data" data-line-start="324" data-line-end="325"><a id="70_What_is_view_abstraction_324"></a>70. What is view abstraction?</h3>
+<p class="has-line-data" data-line-start="325" data-line-end="326">The principle that views provide an abstract, simplified interface to complex underlying data structures.</p>
+<h3 class="code-line has-line-data" data-line-start="327" data-line-end="328"><a id="71_Can_multiple_views_exist_for_same_database_327"></a>71. Can multiple views exist for same database?</h3>
+<p class="has-line-data" data-line-start="328" data-line-end="329">Yes—hundreds or thousands. Each user or application can have its own view of the same underlying data.</p>
+<h3 class="code-line has-line-data" data-line-start="330" data-line-end="331"><a id="72_What_users_interact_with_external_level_330"></a>72. What users interact with external level?</h3>
+<ul>
+<li class="has-line-data" data-line-start="331" data-line-end="332">End users through applications</li>
+<li class="has-line-data" data-line-start="332" data-line-end="333">Report generators</li>
+<li class="has-line-data" data-line-start="333" data-line-end="334">Business analysts</li>
+<li class="has-line-data" data-line-start="334" data-line-end="336">Any application programmer using the database</li>
+</ul>
+<h3 class="code-line has-line-data" data-line-start="336" data-line-end="337"><a id="73_How_do_applications_use_views_336"></a>73. How do applications use views?</h3>
+<p class="has-line-data" data-line-start="337" data-line-end="338">Applications query views as if they were tables. The view insulates the app from underlying schema changes.</p>
+<h3 class="code-line has-line-data" data-line-start="339" data-line-end="340"><a id="74_How_does_external_layer_simplify_databases_339"></a>74. How does external layer simplify databases?</h3>
+<p class="has-line-data" data-line-start="340" data-line-end="341">Users don’t need to understand complex joins, table relationships, or normalization. They see a flat, relevant dataset.</p>
+<h3 class="code-line has-line-data" data-line-start="342" data-line-end="343"><a id="75_What_is_computed_column_in_views_342"></a>75. What is computed column in views?</h3>
+<p class="has-line-data" data-line-start="343" data-line-end="344">A column calculated from other columns in the view definition.</p>
+<pre><code class="has-line-data language-sql" data-line-start="346" data-line-end="350"><span class="hljs-keyword">CREATE</span> <span class="hljs-keyword">VIEW</span> order_summary <span class="hljs-keyword">AS</span>
+<span class="hljs-keyword">SELECT</span> order_id, quantity, price, quantity <span class="hljs-operator">*</span> price <span class="hljs-keyword">AS</span> total_amount
+<span class="hljs-keyword">FROM</span> order_items;
+</code></pre>
+<h3 class="code-line has-line-data" data-line-start="351" data-line-end="352"><a id="76_What_is_aggregation_in_views_351"></a>76. What is aggregation in views?</h3>
+<p class="has-line-data" data-line-start="352" data-line-end="353">Using GROUP BY and aggregate functions to summarize data in a view.</p>
+<pre><code class="has-line-data language-sql" data-line-start="355" data-line-end="360"><span class="hljs-keyword">CREATE</span> <span class="hljs-keyword">VIEW</span> monthly_sales <span class="hljs-keyword">AS</span>
+<span class="hljs-keyword">SELECT</span> <span class="hljs-keyword">MONTH</span>(order_date) <span class="hljs-keyword">AS</span> <span class="hljs-keyword">month</span>, <span class="hljs-built_in">SUM</span>(amount) <span class="hljs-keyword">AS</span> total
+<span class="hljs-keyword">FROM</span> orders
+<span class="hljs-keyword">GROUP</span> <span class="hljs-keyword">BY</span> <span class="hljs-keyword">MONTH</span>(order_date);
+</code></pre>
+<h3 class="code-line has-line-data" data-line-start="361" data-line-end="362"><a id="77_What_is_view_updatability_361"></a>77. What is view updatability?</h3>
+<p class="has-line-data" data-line-start="362" data-line-end="363">Whether you can INSERT, UPDATE, or DELETE through a view. Simple views on single tables usually allow this; complex views with joins/aggregations often don’t.</p>
+<h3 class="code-line has-line-data" data-line-start="364" data-line-end="365"><a id="78_What_are_limitations_of_views_364"></a>78. What are limitations of views?</h3>
+<ul>
+<li class="has-line-data" data-line-start="365" data-line-end="366">Performance: Complex views may run slowly</li>
+<li class="has-line-data" data-line-start="366" data-line-end="367">Updatability: Not all views support modifications</li>
+<li class="has-line-data" data-line-start="367" data-line-end="368">Dependencies: Changing base tables can break views</li>
+<li class="has-line-data" data-line-start="368" data-line-end="370">Nesting: Views on views on views become hard to debug</li>
+</ul>
+<hr>
+<h1 class="code-line has-line-data" data-line-start="372" data-line-end="373"><a id="SECTION_5_CONCEPTUAL_LOGICAL_LEVEL_372"></a>SECTION 5 — CONCEPTUAL / LOGICAL LEVEL</h1>
+<h3 class="code-line has-line-data" data-line-start="374" data-line-end="375"><a id="79_What_is_conceptual_level_374"></a>79. What is conceptual level?</h3>
+<p class="has-line-data" data-line-start="375" data-line-end="376">The <strong>middle layer</strong> describing the entire database’s logical structure—what data exists, how it’s organized, and what rules apply. Independent of physical storage and user views.</p>
+<h3 class="code-line has-line-data" data-line-start="377" data-line-end="378"><a id="80_What_is_logical_level_377"></a>80. What is logical level?</h3>
+<p class="has-line-data" data-line-start="378" data-line-end="379">Same as conceptual level. It deals with the logical (not physical) organization of data.</p>
+<h3 class="code-line has-line-data" data-line-start="380" data-line-end="381"><a id="81_What_is_conceptual_schema_380"></a>81. What is conceptual schema?</h3>
+<p class="has-line-data" data-line-start="381" data-line-end="382">The complete logical design of the database—all tables, columns, relationships, constraints, and business rules. The “master blueprint.”</p>
+<h3 class="code-line has-line-data" data-line-start="383" data-line-end="384"><a id="82_What_is_logical_schema_383"></a>82. What is logical schema?</h3>
+<p class="has-line-data" data-line-start="384" data-line-end="385">Same as conceptual schema—the structural definition at the logical level.</p>
+<h3 class="code-line has-line-data" data-line-start="386" data-line-end="387"><a id="83_What_does_conceptual_level_describe_386"></a>83. What does conceptual level describe?</h3>
+<ul>
+<li class="has-line-data" data-line-start="387" data-line-end="388">All entities (things we store data about)</li>
+<li class="has-line-data" data-line-start="388" data-line-end="389">Their attributes (properties)</li>
+<li class="has-line-data" data-line-start="389" data-line-end="390">Relationships between entities</li>
+<li class="has-line-data" data-line-start="390" data-line-end="391">Integrity constraints (rules data must follow)</li>
+<li class="has-line-data" data-line-start="391" data-line-end="393">Business rules</li>
+</ul>
+<h3 class="code-line has-line-data" data-line-start="393" data-line-end="394"><a id="84_What_exists_at_conceptual_level_393"></a>84. What exists at conceptual level?</h3>
+<p class="has-line-data" data-line-start="394" data-line-end="395">Tables, columns, primary keys, foreign keys, constraints, domains, and relationships. The complete database design.</p>
+<h3 class="code-line has-line-data" data-line-start="396" data-line-end="397"><a id="85_What_is_logical_database_structure_396"></a>85. What is logical database structure?</h3>
+<p class="has-line-data" data-line-start="397" data-line-end="398">The organization of data into tables and relationships, independent of how it’s stored on disk.</p>
+<h3 class="code-line has-line-data" data-line-start="399" data-line-end="400"><a id="86_What_are_entities_399"></a>86. What are entities?</h3>
+<p class="has-line-data" data-line-start="400" data-line-end="401">Real-world objects or concepts we store information about. Examples: Student, Course, Employee, Product.</p>
+<h3 class="code-line has-line-data" data-line-start="402" data-line-end="403"><a id="87_What_are_attributes_402"></a>87. What are attributes?</h3>
+<p class="has-line-data" data-line-start="403" data-line-end="404">Properties or characteristics of entities. A Student has attributes: name, student_id, email, major.</p>
+<h3 class="code-line has-line-data" data-line-start="405" data-line-end="406"><a id="88_What_are_relationships_405"></a>88. What are relationships?</h3>
+<p class="has-line-data" data-line-start="406" data-line-end="407">How entities connect to each other. A Student <strong>enrolls in</strong> a Course. An Employee <strong>works in</strong> a Department.</p>
+<h3 class="code-line has-line-data" data-line-start="408" data-line-end="409"><a id="89_What_are_constraints_408"></a>89. What are constraints?</h3>
+<p class="has-line-data" data-line-start="409" data-line-end="410">Rules that data must obey to be valid. Example: Age must be positive. Every student must have a unique ID.</p>
+<h3 class="code-line has-line-data" data-line-start="411" data-line-end="412"><a id="90_What_are_business_rules_411"></a>90. What are business rules?</h3>
+<p class="has-line-data" data-line-start="412" data-line-end="413">Organization-specific policies expressed as database constraints. “Every order must have a valid customer.” “No employee can manage more than 10 people.”</p>
+<h3 class="code-line has-line-data" data-line-start="414" data-line-end="415"><a id="91_What_are_domains_414"></a>91. What are domains?</h3>
+<p class="has-line-data" data-line-start="415" data-line-end="416">The set of valid values for an attribute. The domain of “Gender” might be {M, F, Other}. The domain of “Grade” might be {A, B, C, D, F}.</p>
+<h3 class="code-line has-line-data" data-line-start="417" data-line-end="418"><a id="92_What_is_relation_schema_417"></a>92. What is relation schema?</h3>
+<p class="has-line-data" data-line-start="418" data-line-end="419">The definition of a table: its name, columns, and their data types and constraints.</p>
+<pre><code class="has-line-data language-sql" data-line-start="421" data-line-end="423">Students(student_id <span class="hljs-type">INT</span> <span class="hljs-keyword">PRIMARY KEY</span>, name <span class="hljs-type">VARCHAR</span>(<span class="hljs-number">50</span>), major <span class="hljs-type">VARCHAR</span>(<span class="hljs-number">30</span>))
+</code></pre>
+<h3 class="code-line has-line-data" data-line-start="424" data-line-end="425"><a id="93_How_are_tables_represented_logically_424"></a>93. How are tables represented logically?</h3>
+<p class="has-line-data" data-line-start="425" data-line-end="426">As <strong>relations</strong> (mathematical sets of tuples). Each row is a tuple; each column is an attribute.</p>
+<h3 class="code-line has-line-data" data-line-start="427" data-line-end="428"><a id="94_What_is_logical_organization_of_data_427"></a>94. What is logical organization of data?</h3>
+<p class="has-line-data" data-line-start="428" data-line-end="429">Grouping related data into tables and establishing relationships through keys, without worrying about disk blocks or file formats.</p>
+<h3 class="code-line has-line-data" data-line-start="430" data-line-end="431"><a id="95_What_is_complete_database_blueprint_430"></a>95. What is complete database blueprint?</h3>
+<p class="has-line-data" data-line-start="431" data-line-end="432">The conceptual schema showing all tables, columns, keys, and relationships. Database administrators and designers work at this level.</p>
+<h3 class="code-line has-line-data" data-line-start="433" data-line-end="434"><a id="96_What_is_schema_design_433"></a>96. What is schema design?</h3>
+<p class="has-line-data" data-line-start="434" data-line-end="435">The process of creating the conceptual schema—deciding what tables to create, what columns they need, and how they relate.</p>
+<h3 class="code-line has-line-data" data-line-start="436" data-line-end="437"><a id="97_What_is_entity_relationship_modeling_436"></a>97. What is entity relationship modeling?</h3>
+<p class="has-line-data" data-line-start="437" data-line-end="438">A design technique using diagrams (ER diagrams) to plan databases. Boxes represent entities, lines represent relationships.</p>
+<h3 class="code-line has-line-data" data-line-start="439" data-line-end="440"><a id="98_What_is_logical_data_modeling_439"></a>98. What is logical data modeling?</h3>
+<p class="has-line-data" data-line-start="440" data-line-end="441">Creating a detailed model of data structures, relationships, and constraints before implementing them in a specific DBMS.</p>
+<h3 class="code-line has-line-data" data-line-start="442" data-line-end="443"><a id="99_What_users_work_at_logical_level_442"></a>99. What users work at logical level?</h3>
+<ul>
+<li class="has-line-data" data-line-start="443" data-line-end="444">Database designers</li>
+<li class="has-line-data" data-line-start="444" data-line-end="445">Database administrators (DBAs)</li>
+<li class="has-line-data" data-line-start="445" data-line-end="446">Data architects</li>
+<li class="has-line-data" data-line-start="446" data-line-end="448">Senior developers designing data structures</li>
+</ul>
+<h3 class="code-line has-line-data" data-line-start="448" data-line-end="449"><a id="100_Why_is_conceptual_level_important_448"></a>100. Why is conceptual level important?</h3>
+<p class="has-line-data" data-line-start="449" data-line-end="450">It’s the stable foundation of the database. Changes here affect everyone, so it must be designed carefully. It represents the “truth” of the organization’s data.</p>
+<hr>
+<h1 class="code-line has-line-data" data-line-start="453" data-line-end="454"><a id="SECTION_6_INTERNAL_PHYSICAL_LEVEL_453"></a>SECTION 6 — INTERNAL / PHYSICAL LEVEL</h1>
+<h3 class="code-line has-line-data" data-line-start="455" data-line-end="456"><a id="101_What_is_internal_level_455"></a>101. What is internal level?</h3>
+<p class="has-line-data" data-line-start="456" data-line-end="457">The <strong>bottom layer</strong> of ANSI/SPARC. It describes how data is actually stored on physical hardware—files, indexes, blocks, compression, encryption.</p>
+<h3 class="code-line has-line-data" data-line-start="458" data-line-end="459"><a id="102_What_is_physical_level_458"></a>102. What is physical level?</h3>
+<p class="has-line-data" data-line-start="459" data-line-end="460">Same as internal level. Concerned with bits, bytes, disk sectors, and memory.</p>
+<h3 class="code-line has-line-data" data-line-start="461" data-line-end="462"><a id="103_What_is_physical_schema_461"></a>103. What is physical schema?</h3>
+<p class="has-line-data" data-line-start="462" data-line-end="463">The definition of how conceptual objects map to physical storage—file names, record formats, indexing methods, compression techniques.</p>
+<h3 class="code-line has-line-data" data-line-start="464" data-line-end="465"><a id="104_What_is_storage_schema_464"></a>104. What is storage schema?</h3>
+<p class="has-line-data" data-line-start="465" data-line-end="466">Same as physical schema—the blueprint for physical storage.</p>
+<h3 class="code-line has-line-data" data-line-start="467" data-line-end="468"><a id="105_What_does_internal_level_describe_467"></a>105. What does internal level describe?</h3>
+<ul>
+<li class="has-line-data" data-line-start="468" data-line-end="469">File organization (how records are arranged in files)</li>
+<li class="has-line-data" data-line-start="469" data-line-end="470">Index structures (B+ trees, hash tables)</li>
+<li class="has-line-data" data-line-start="470" data-line-end="471">Storage allocation (disk blocks, pages)</li>
+<li class="has-line-data" data-line-start="471" data-line-end="472">Compression and encryption methods</li>
+<li class="has-line-data" data-line-start="472" data-line-end="474">Buffer management</li>
+</ul>
+<h3 class="code-line has-line-data" data-line-start="474" data-line-end="475"><a id="106_What_exists_at_physical_level_474"></a>106. What exists at physical level?</h3>
+<p class="has-line-data" data-line-start="475" data-line-end="476">Data files, index files, log files, temporary files, system catalogs, and the actual bytes on disk.</p>
+<h3 class="code-line has-line-data" data-line-start="477" data-line-end="478"><a id="107_How_is_data_physically_stored_477"></a>107. How is data physically stored?</h3>
+<p class="has-line-data" data-line-start="478" data-line-end="479">In operating system files or raw disk partitions, organized into pages/blocks (typically 4KB, 8KB, or 16KB each).</p>
+<h3 class="code-line has-line-data" data-line-start="480" data-line-end="481"><a id="108_What_are_disk_blocks_480"></a>108. What are disk blocks?</h3>
+<p class="has-line-data" data-line-start="481" data-line-end="482">The smallest unit of disk I/O. The OS and DBMS read/write in block-sized chunks (e.g., 8KB at a time).</p>
+<h3 class="code-line has-line-data" data-line-start="483" data-line-end="484"><a id="109_What_are_pages_in_DBMS_483"></a>109. What are pages in DBMS?</h3>
+<p class="has-line-data" data-line-start="484" data-line-end="485">Same as disk blocks—the fixed-size units of storage that the DBMS manages in memory and on disk.</p>
+<h3 class="code-line has-line-data" data-line-start="486" data-line-end="487"><a id="110_What_is_file_organization_486"></a>110. What is file organization?</h3>
+<p class="has-line-data" data-line-start="487" data-line-end="488">How records are arranged in a file:</p>
+<ul>
+<li class="has-line-data" data-line-start="488" data-line-end="489"><strong>Heap</strong>: Unordered, append-only</li>
+<li class="has-line-data" data-line-start="489" data-line-end="490"><strong>Sorted</strong>: Ordered by some key</li>
+<li class="has-line-data" data-line-start="490" data-line-end="491"><strong>Hash</strong>: Organized by hash function</li>
+<li class="has-line-data" data-line-start="491" data-line-end="493"><strong>Indexed</strong>: With separate index structures</li>
+</ul>
+<h3 class="code-line has-line-data" data-line-start="493" data-line-end="494"><a id="111_What_are_indexes_493"></a>111. What are indexes?</h3>
+<p class="has-line-data" data-line-start="494" data-line-end="495">Data structures that speed up data retrieval, like the index at the back of a book. They map key values to record locations.</p>
+<h3 class="code-line has-line-data" data-line-start="496" data-line-end="497"><a id="112_What_is_indexing_496"></a>112. What is indexing?</h3>
+<p class="has-line-data" data-line-start="497" data-line-end="498">The technique of creating and maintaining index structures to avoid scanning entire tables.</p>
+<h3 class="code-line has-line-data" data-line-start="499" data-line-end="500"><a id="113_What_is_B_Tree_499"></a>113. What is B+ Tree?</h3>
+<p class="has-line-data" data-line-start="500" data-line-end="501">A <strong>balanced tree</strong> data structure optimized for disk storage. All data pointers are in leaf nodes, which are linked together. Very efficient for range queries.</p>
+<h3 class="code-line has-line-data" data-line-start="502" data-line-end="503"><a id="114_What_is_hash_indexing_502"></a>114. What is hash indexing?</h3>
+<p class="has-line-data" data-line-start="503" data-line-end="504">Using a hash function to map keys directly to storage locations. Extremely fast for exact-match lookups, useless for ranges.</p>
+<h3 class="code-line has-line-data" data-line-start="505" data-line-end="506"><a id="115_What_is_bitmap_indexing_505"></a>115. What is bitmap indexing?</h3>
+<p class="has-line-data" data-line-start="506" data-line-end="507">Using bit arrays to represent which rows contain specific values. Excellent for low-cardinality columns (gender, status, boolean flags) in data warehouses.</p>
+<h3 class="code-line has-line-data" data-line-start="508" data-line-end="509"><a id="116_What_is_storage_optimization_508"></a>116. What is storage optimization?</h3>
+<p class="has-line-data" data-line-start="509" data-line-end="510">Techniques to reduce space and improve speed: compression, deduplication, columnar storage, partitioning.</p>
+<h3 class="code-line has-line-data" data-line-start="511" data-line-end="512"><a id="117_What_is_query_optimization_511"></a>117. What is query optimization?</h3>
+<p class="has-line-data" data-line-start="512" data-line-end="513">The DBMS process of finding the cheapest/fastest way to execute a query—choosing join order, access methods, and execution strategy.</p>
+<h3 class="code-line has-line-data" data-line-start="514" data-line-end="515"><a id="118_What_is_buffer_pool_514"></a>118. What is buffer pool?</h3>
+<p class="has-line-data" data-line-start="515" data-line-end="516">A region of memory where the DBMS caches disk pages. Recently used data stays in RAM for fast access.</p>
+<h3 class="code-line has-line-data" data-line-start="517" data-line-end="518"><a id="119_What_is_buffer_manager_517"></a>119. What is buffer manager?</h3>
+<p class="has-line-data" data-line-start="518" data-line-end="519">The DBMS component that manages the buffer pool—deciding which pages to keep in memory and which to evict when space is needed.</p>
+<h3 class="code-line has-line-data" data-line-start="520" data-line-end="521"><a id="120_What_is_file_manager_520"></a>120. What is file manager?</h3>
+<p class="has-line-data" data-line-start="521" data-line-end="522">The component that handles reading/writing pages to disk files, managing file growth, and allocating disk space.</p>
+<h3 class="code-line has-line-data" data-line-start="523" data-line-end="524"><a id="121_What_is_storage_manager_523"></a>121. What is storage manager?</h3>
+<p class="has-line-data" data-line-start="524" data-line-end="525">The overall subsystem handling all physical storage operations—file manager, buffer manager, and space allocation.</p>
+<h3 class="code-line has-line-data" data-line-start="526" data-line-end="527"><a id="122_What_is_page_replacement_526"></a>122. What is page replacement?</h3>
+<p class="has-line-data" data-line-start="527" data-line-end="528">When the buffer pool is full and a new page is needed, the buffer manager chooses which existing page to remove (evict). Algorithms: LRU (Least Recently Used), MRU, Clock.</p>
+<h3 class="code-line has-line-data" data-line-start="529" data-line-end="530"><a id="123_What_is_compression_529"></a>123. What is compression?</h3>
+<p class="has-line-data" data-line-start="530" data-line-end="531">Reducing data size using algorithms (like gzip, dictionary compression) to save disk space and I/O bandwidth.</p>
+<h3 class="code-line has-line-data" data-line-start="532" data-line-end="533"><a id="124_What_is_encryption_532"></a>124. What is encryption?</h3>
+<p class="has-line-data" data-line-start="533" data-line-end="534">Scrambling data so unauthorized users can’t read it, even if they access the physical files. Requires keys to decrypt.</p>
+<h3 class="code-line has-line-data" data-line-start="535" data-line-end="536"><a id="125_What_is_partitioning_535"></a>125. What is partitioning?</h3>
+<p class="has-line-data" data-line-start="536" data-line-end="537">Splitting large tables into smaller pieces based on criteria (range, list, hash). Improves query performance and maintenance.</p>
+<h3 class="code-line has-line-data" data-line-start="538" data-line-end="539"><a id="126_What_is_clustering_538"></a>126. What is clustering?</h3>
+<p class="has-line-data" data-line-start="539" data-line-end="540">Storing related rows physically close together. Clustering by <code>customer_id</code> keeps all orders for one customer on the same disk pages.</p>
+<h3 class="code-line has-line-data" data-line-start="541" data-line-end="542"><a id="127_What_is_RAID_541"></a>127. What is RAID?</h3>
+<p class="has-line-data" data-line-start="542" data-line-end="543"><strong>Redundant Array of Independent Disks</strong>. Combining multiple disks for performance (striping) or reliability (mirroring). RAID 0 = speed, RAID 1 = mirror, RAID 5/6 = parity.</p>
+<h3 class="code-line has-line-data" data-line-start="544" data-line-end="545"><a id="128_What_is_tablespace_544"></a>128. What is tablespace?</h3>
+<p class="has-line-data" data-line-start="545" data-line-end="546">A logical container for database objects (tables, indexes). Maps to physical files. Allows organizing storage by function or performance needs.</p>
+<h3 class="code-line has-line-data" data-line-start="547" data-line-end="548"><a id="129_What_are_access_paths_547"></a>129. What are access paths?</h3>
+<p class="has-line-data" data-line-start="548" data-line-end="549">The routes to retrieve data: sequential scan (read all rows), index scan (use index), index-only scan (get data from index without touching table).</p>
+<h3 class="code-line has-line-data" data-line-start="550" data-line-end="551"><a id="130_Why_is_physical_layer_hidden_from_users_550"></a>130. Why is physical layer hidden from users?</h3>
+<p class="has-line-data" data-line-start="551" data-line-end="552">Users would be overwhelmed by complexity. More importantly, it allows the DBMS to change storage technology (HDD→SSD→memory) without breaking applications.</p>
+<hr>
+<h1 class="code-line has-line-data" data-line-start="555" data-line-end="556"><a id="SECTION_7_DATA_INDEPENDENCE_555"></a>SECTION 7 — DATA INDEPENDENCE</h1>
+<h3 class="code-line has-line-data" data-line-start="557" data-line-end="558"><a id="131_What_is_data_independence_557"></a>131. What is data independence?</h3>
+<p class="has-line-data" data-line-start="558" data-line-end="559">The ability to change one schema level without having to change the levels above it. The holy grail of database design.</p>
+<h3 class="code-line has-line-data" data-line-start="560" data-line-end="561"><a id="132_Why_is_data_independence_important_560"></a>132. Why is data independence important?</h3>
+<p class="has-line-data" data-line-start="561" data-line-end="562">It decouples applications from data structures, allowing evolution and optimization without massive rewrites.</p>
+<h3 class="code-line has-line-data" data-line-start="563" data-line-end="564"><a id="133_What_are_types_of_data_independence_563"></a>133. What are types of data independence?</h3>
+<p class="has-line-data" data-line-start="564" data-line-end="565">Two types:</p>
+<ul>
+<li class="has-line-data" data-line-start="565" data-line-end="566"><strong>Physical data independence</strong></li>
+<li class="has-line-data" data-line-start="566" data-line-end="568"><strong>Logical data independence</strong></li>
+</ul>
+<h3 class="code-line has-line-data" data-line-start="568" data-line-end="569"><a id="134_What_is_physical_data_independence_568"></a>134. What is physical data independence?</h3>
+<p class="has-line-data" data-line-start="569" data-line-end="570">Ability to change the physical schema without changing the conceptual schema. You can add indexes, change file organizations, or move to faster disks without touching SQL queries.</p>
+<h3 class="code-line has-line-data" data-line-start="571" data-line-end="572"><a id="135_What_is_logical_data_independence_571"></a>135. What is logical data independence?</h3>
+<p class="has-line-data" data-line-start="572" data-line-end="573">Ability to change the conceptual schema without changing external schemas or applications. You can add a column to a table without breaking existing views.</p>
+<h3 class="code-line has-line-data" data-line-start="574" data-line-end="575"><a id="136_How_does_physical_data_independence_work_574"></a>136. How does physical data independence work?</h3>
+<p class="has-line-data" data-line-start="575" data-line-end="576">Through the conceptual-internal mapping. When physical storage changes, only this mapping is updated. The conceptual schema remains the same, so all applications continue working.</p>
+<h3 class="code-line has-line-data" data-line-start="577" data-line-end="578"><a id="137_How_does_logical_data_independence_work_577"></a>137. How does logical data independence work?</h3>
+<p class="has-line-data" data-line-start="578" data-line-end="579">Through the external-conceptual mapping. When the conceptual schema changes (e.g., splitting a table), views can be adjusted to present the old structure, keeping applications unchanged.</p>
+<h3 class="code-line has-line-data" data-line-start="580" data-line-end="581"><a id="138_What_changes_are_allowed_in_physical_layer_580"></a>138. What changes are allowed in physical layer?</h3>
+<ul>
+<li class="has-line-data" data-line-start="581" data-line-end="582">Adding/dropping indexes</li>
+<li class="has-line-data" data-line-start="582" data-line-end="583">Changing file organizations</li>
+<li class="has-line-data" data-line-start="583" data-line-end="584">Moving data to different disks</li>
+<li class="has-line-data" data-line-start="584" data-line-end="585">Compressing data</li>
+<li class="has-line-data" data-line-start="585" data-line-end="586">Changing page sizes</li>
+<li class="has-line-data" data-line-start="586" data-line-end="588">Using different RAID configurations</li>
+</ul>
+<h3 class="code-line has-line-data" data-line-start="588" data-line-end="589"><a id="139_What_changes_are_allowed_in_logical_layer_588"></a>139. What changes are allowed in logical layer?</h3>
+<ul>
+<li class="has-line-data" data-line-start="589" data-line-end="590">Adding new tables or columns</li>
+<li class="has-line-data" data-line-start="590" data-line-end="591">Splitting or merging tables</li>
+<li class="has-line-data" data-line-start="591" data-line-end="592">Adding relationships</li>
+<li class="has-line-data" data-line-start="592" data-line-end="593">Changing constraints (carefully)</li>
+<li class="has-line-data" data-line-start="593" data-line-end="595">Creating new views</li>
+</ul>
+<h3 class="code-line has-line-data" data-line-start="595" data-line-end="596"><a id="140_Why_is_logical_data_independence_difficult_595"></a>140. Why is logical data independence difficult?</h3>
+<p class="has-line-data" data-line-start="596" data-line-end="597">Because applications often depend on specific table structures. Adding a column is easy; removing a column or changing its meaning can break applications. Views help but can’t hide all changes.</p>
+<h3 class="code-line has-line-data" data-line-start="598" data-line-end="599"><a id="141_Why_is_physical_data_independence_easier_598"></a>141. Why is physical data independence easier?</h3>
+<p class="has-line-data" data-line-start="599" data-line-end="600">Because the conceptual schema insulates applications. As long as tables and columns remain logically the same, physical changes are invisible.</p>
+<h3 class="code-line has-line-data" data-line-start="601" data-line-end="602"><a id="142_How_does_data_independence_improve_maintenance_601"></a>142. How does data independence improve maintenance?</h3>
+<p class="has-line-data" data-line-start="602" data-line-end="603">DBAs can tune performance (add indexes, partition tables) without involving developers. Developers can evolve schemas without breaking all applications at once.</p>
+<h3 class="code-line has-line-data" data-line-start="604" data-line-end="605"><a id="143_How_does_data_independence_reduce_coupling_604"></a>143. How does data independence reduce coupling?</h3>
+<p class="has-line-data" data-line-start="605" data-line-end="606">Applications depend on logical structures (views, stable table designs) rather than physical details. Changes in one area don’t cascade to others.</p>
+<h3 class="code-line has-line-data" data-line-start="607" data-line-end="608"><a id="144_How_does_data_independence_support_scalability_607"></a>144. How does data independence support scalability?</h3>
+<p class="has-line-data" data-line-start="608" data-line-end="609">You can scale storage (add servers, shard data) or optimize performance at the physical level while keeping the application layer stable.</p>
+<h3 class="code-line has-line-data" data-line-start="610" data-line-end="611"><a id="145_How_does_data_independence_support_schema_evolution_610"></a>145. How does data independence support schema evolution?</h3>
+<p class="has-line-data" data-line-start="611" data-line-end="612">Organizations change over time. Data independence lets the database evolve (new fields, new tables, new relationships) without requiring every application to be rewritten simultaneously.</p>
+<hr>
+<h1 class="code-line has-line-data" data-line-start="615" data-line-end="616"><a id="SECTION_8_SCHEMA_VS_INSTANCE_615"></a>SECTION 8 — SCHEMA VS INSTANCE</h1>
+<h3 class="code-line has-line-data" data-line-start="617" data-line-end="618"><a id="146_What_is_schema_617"></a>146. What is schema?</h3>
+<p class="has-line-data" data-line-start="618" data-line-end="619">The <strong>blueprint</strong> or definition of a database—tables, columns, types, constraints. It’s the <em>structure</em> or <em>intension</em>. Static and rarely changes.</p>
+<h3 class="code-line has-line-data" data-line-start="620" data-line-end="621"><a id="147_What_is_instance_620"></a>147. What is instance?</h3>
+<p class="has-line-data" data-line-start="621" data-line-end="622">The <strong>actual data</strong> in the database at a specific moment—the rows in the tables. Dynamic and changes constantly.</p>
+<h3 class="code-line has-line-data" data-line-start="623" data-line-end="624"><a id="148_Difference_between_schema_and_instance_623"></a>148. Difference between schema and instance?</h3>
+<table class="table table-striped table-bordered">
+<thead>
+<tr>
+<th>Schema</th>
+<th>Instance</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Definition/structure</td>
+<td>Actual data content</td>
+</tr>
+<tr>
+<td>Static (rarely changes)</td>
+<td>Dynamic (changes frequently)</td>
+</tr>
+<tr>
+<td>Created by DDL (CREATE TABLE)</td>
+<td>Modified by DML (INSERT, UPDATE)</td>
+</tr>
+<tr>
+<td>Blueprint</td>
+<td>Building contents</td>
+</tr>
+</tbody>
+</table>
+<h3 class="code-line has-line-data" data-line-start="631" data-line-end="632"><a id="149_What_is_database_state_631"></a>149. What is database state?</h3>
+<p class="has-line-data" data-line-start="632" data-line-end="633">The complete set of data in the database at a specific point in time. Same as “instance.”</p>
+<h3 class="code-line has-line-data" data-line-start="634" data-line-end="635"><a id="150_What_is_intension_634"></a>150. What is intension?</h3>
+<p class="has-line-data" data-line-start="635" data-line-end="636">The formal term for schema—the intentional definition of what the database contains.</p>
+<h3 class="code-line has-line-data" data-line-start="637" data-line-end="638"><a id="151_What_is_extension_637"></a>151. What is extension?</h3>
+<p class="has-line-data" data-line-start="638" data-line-end="639">The formal term for instance—the extensional set of actual tuples/rows.</p>
+<h3 class="code-line has-line-data" data-line-start="640" data-line-end="641"><a id="152_Why_is_schema_static_640"></a>152. Why is schema static?</h3>
+<p class="has-line-data" data-line-start="641" data-line-end="642">Because changing structure (adding tables, modifying columns) requires careful planning and can break applications. It’s a deliberate design activity.</p>
+<h3 class="code-line has-line-data" data-line-start="643" data-line-end="644"><a id="153_Why_is_instance_dynamic_643"></a>153. Why is instance dynamic?</h3>
+<p class="has-line-data" data-line-start="644" data-line-end="645">Because business operations constantly create, update, and delete data. Every new order, customer registration, or inventory change updates the instance.</p>
+<h3 class="code-line has-line-data" data-line-start="646" data-line-end="647"><a id="154_What_does_schema_define_646"></a>154. What does schema define?</h3>
+<ul>
+<li class="has-line-data" data-line-start="647" data-line-end="648">What tables exist</li>
+<li class="has-line-data" data-line-start="648" data-line-end="649">What columns each table has</li>
+<li class="has-line-data" data-line-start="649" data-line-end="650">Data types and constraints</li>
+<li class="has-line-data" data-line-start="650" data-line-end="651">Relationships and keys</li>
+<li class="has-line-data" data-line-start="651" data-line-end="653">Indexes and views</li>
+</ul>
+<h3 class="code-line has-line-data" data-line-start="653" data-line-end="654"><a id="155_What_does_instance_represent_653"></a>155. What does instance represent?</h3>
+<p class="has-line-data" data-line-start="654" data-line-end="655">The current reality—the actual customers, orders, products, and transactions stored in the database right now.</p>
+<h3 class="code-line has-line-data" data-line-start="656" data-line-end="657"><a id="156_What_is_relation_schema_656"></a>156. What is relation schema?</h3>
+<p class="has-line-data" data-line-start="657" data-line-end="658">The definition of a table: <code>Employee(emp_id, name, salary, dept_id)</code> with types and constraints.</p>
+<h3 class="code-line has-line-data" data-line-start="659" data-line-end="660"><a id="157_What_is_relation_instance_659"></a>157. What is relation instance?</h3>
+<p class="has-line-data" data-line-start="660" data-line-end="661">The actual set of rows in that table at a moment: {(1, ‘Alice’, 50000, 10), (2, ‘Bob’, 60000, 20), …}.</p>
+<h3 class="code-line has-line-data" data-line-start="662" data-line-end="663"><a id="158_What_is_database_blueprint_662"></a>158. What is database blueprint?</h3>
+<p class="has-line-data" data-line-start="663" data-line-end="664">The schema—the architectural plan showing all structures and rules.</p>
+<h3 class="code-line has-line-data" data-line-start="665" data-line-end="666"><a id="159_What_is_actual_stored_data_665"></a>159. What is actual stored data?</h3>
+<p class="has-line-data" data-line-start="666" data-line-end="667">The instance—the population of the database with real values.</p>
+<h3 class="code-line has-line-data" data-line-start="668" data-line-end="669"><a id="160_How_frequently_does_schema_change_668"></a>160. How frequently does schema change?</h3>
+<p class="has-line-data" data-line-start="669" data-line-end="670">Rarely. Schema changes (migrations) happen during development, upgrades, or major business changes—maybe monthly or quarterly in production.</p>
+<h3 class="code-line has-line-data" data-line-start="671" data-line-end="672"><a id="161_How_frequently_does_instance_change_671"></a>161. How frequently does instance change?</h3>
+<p class="has-line-data" data-line-start="672" data-line-end="673">Constantly. Every transaction modifies the instance—potentially thousands of times per second in busy systems.</p>
+<h3 class="code-line has-line-data" data-line-start="674" data-line-end="675"><a id="162_What_is_timedependent_data_674"></a>162. What is time-dependent data?</h3>
+<p class="has-line-data" data-line-start="675" data-line-end="676">Data whose values change over time. The instance captures a snapshot, but real-world data evolves.</p>
+<h3 class="code-line has-line-data" data-line-start="677" data-line-end="678"><a id="163_What_is_timeindependent_definition_677"></a>163. What is time-independent definition?</h3>
+<p class="has-line-data" data-line-start="678" data-line-end="679">The schema doesn’t change when data changes. The definition of “Employee” remains stable even as employees come and go.</p>
+<h3 class="code-line has-line-data" data-line-start="680" data-line-end="681"><a id="164_How_are_schema_and_instance_related_680"></a>164. How are schema and instance related?</h3>
+<p class="has-line-data" data-line-start="681" data-line-end="682">Every instance must conform to the schema. You can’t have a row with columns that don’t exist in the schema, or values that violate constraints.</p>
+<h3 class="code-line has-line-data" data-line-start="683" data-line-end="684"><a id="165_Why_must_every_instance_obey_schema_683"></a>165. Why must every instance obey schema?</h3>
+<p class="has-line-data" data-line-start="684" data-line-end="685">Because the schema defines the rules. Violations would mean data corruption, inconsistency, and broken applications. The DBMS enforces this obedience.</p>
+<hr>
+<h1 class="code-line has-line-data" data-line-start="688" data-line-end="689"><a id="SECTION_9_RELATIONAL_MODEL_TERMINOLOGY_688"></a>SECTION 9 — RELATIONAL MODEL TERMINOLOGY</h1>
+<h3 class="code-line has-line-data" data-line-start="690" data-line-end="691"><a id="166_What_is_relation_690"></a>166. What is relation?</h3>
+<p class="has-line-data" data-line-start="691" data-line-end="692">A <strong>table</strong>—a set of tuples (rows) with the same structure. Mathematically, a subset of the Cartesian product of domains.</p>
+<h3 class="code-line has-line-data" data-line-start="693" data-line-end="694"><a id="167_What_is_tuple_693"></a>167. What is tuple?</h3>
+<p class="has-line-data" data-line-start="694" data-line-end="695">A <strong>row</strong> in a table. An ordered set of values, one for each attribute.</p>
+<h3 class="code-line has-line-data" data-line-start="696" data-line-end="697"><a id="168_What_is_attribute_696"></a>168. What is attribute?</h3>
+<p class="has-line-data" data-line-start="697" data-line-end="698">A <strong>column</strong> in a table. A named property of a relation.</p>
+<h3 class="code-line has-line-data" data-line-start="699" data-line-end="700"><a id="169_What_is_domain_699"></a>169. What is domain?</h3>
+<p class="has-line-data" data-line-start="700" data-line-end="701">The set of permissible values for an attribute. Like the data type but can be more specific (e.g., integers between 1 and 100).</p>
+<h3 class="code-line has-line-data" data-line-start="702" data-line-end="703"><a id="170_What_is_degree_of_relation_702"></a>170. What is degree of relation?</h3>
+<p class="has-line-data" data-line-start="703" data-line-end="704">The number of attributes (columns) in a relation. A table with 5 columns has degree 5.</p>
+<h3 class="code-line has-line-data" data-line-start="705" data-line-end="706"><a id="171_What_is_cardinality_of_relation_705"></a>171. What is cardinality of relation?</h3>
+<p class="has-line-data" data-line-start="706" data-line-end="707">The number of tuples (rows) in a relation. Changes as data is inserted/deleted.</p>
+<h3 class="code-line has-line-data" data-line-start="708" data-line-end="709"><a id="172_What_is_candidate_key_708"></a>172. What is candidate key?</h3>
+<p class="has-line-data" data-line-start="709" data-line-end="710">A minimal set of attributes that uniquely identifies each tuple. A table may have multiple candidate keys.</p>
+<p class="has-line-data" data-line-start="711" data-line-end="712">Example: In a <code>Students</code> table, both <code>student_id</code> and <code>email</code> might be unique—both are candidate keys.</p>
+<h3 class="code-line has-line-data" data-line-start="713" data-line-end="714"><a id="173_What_is_super_key_713"></a>173. What is super key?</h3>
+<p class="has-line-data" data-line-start="714" data-line-end="715">Any set of attributes that uniquely identifies tuples (not necessarily minimal). A candidate key is a minimal super key. <code>{student_id, name}</code> is a super key but not a candidate key because <code>name</code> is redundant.</p>
+<h3 class="code-line has-line-data" data-line-start="716" data-line-end="717"><a id="174_What_is_primary_key_716"></a>174. What is primary key?</h3>
+<p class="has-line-data" data-line-start="717" data-line-end="718">The candidate key chosen by the designer as the main identifier. Every table should have one. Example: <code>student_id</code> is declared PRIMARY KEY.</p>
+<h3 class="code-line has-line-data" data-line-start="719" data-line-end="720"><a id="175_What_is_composite_key_719"></a>175. What is composite key?</h3>
+<p class="has-line-data" data-line-start="720" data-line-end="721">A key consisting of multiple attributes. Example: In an <code>Enrollments</code> table, <code>(student_id, course_id)</code> together form the primary key.</p>
+<h3 class="code-line has-line-data" data-line-start="722" data-line-end="723"><a id="176_What_is_alternate_key_722"></a>176. What is alternate key?</h3>
+<p class="has-line-data" data-line-start="723" data-line-end="724">A candidate key that is NOT chosen as the primary key. If <code>email</code> is unique but <code>student_id</code> is primary key, <code>email</code> is an alternate key.</p>
+<h3 class="code-line has-line-data" data-line-start="725" data-line-end="726"><a id="177_What_is_foreign_key_725"></a>177. What is foreign key?</h3>
+<p class="has-line-data" data-line-start="726" data-line-end="727">An attribute (or set) in one table that references the primary key of another table. Establishes relationships.</p>
+<pre><code class="has-line-data language-sql" data-line-start="729" data-line-end="732"><span class="hljs-comment">-- dept_id in Employees references id in Departments</span>
+<span class="hljs-keyword">FOREIGN KEY</span> (dept_id) <span class="hljs-keyword">REFERENCES</span> Departments(id)
+</code></pre>
+<h3 class="code-line has-line-data" data-line-start="733" data-line-end="734"><a id="178_What_is_referential_integrity_733"></a>178. What is referential integrity?</h3>
+<p class="has-line-data" data-line-start="734" data-line-end="735">The rule that foreign key values must either match a primary key value in the referenced table or be NULL. Prevents “dangling references.”</p>
+<h3 class="code-line has-line-data" data-line-start="736" data-line-end="737"><a id="179_What_is_entity_integrity_736"></a>179. What is entity integrity?</h3>
+<p class="has-line-data" data-line-start="737" data-line-end="738">The rule that primary keys cannot be NULL. Every row must be uniquely identifiable.</p>
+<h3 class="code-line has-line-data" data-line-start="739" data-line-end="740"><a id="180_What_is_relational_integrity_739"></a>180. What is relational integrity?</h3>
+<p class="has-line-data" data-line-start="740" data-line-end="741">The overall correctness of data with respect to all defined constraints (entity integrity, referential integrity, domain constraints, user-defined constraints).</p>
+<h3 class="code-line has-line-data" data-line-start="742" data-line-end="743"><a id="181_What_is_NULL_value_742"></a>181. What is NULL value?</h3>
+<p class="has-line-data" data-line-start="743" data-line-end="744">A special marker indicating “unknown” or “not applicable.” Not the same as zero or empty string. <code>NULL + 5 = NULL</code>.</p>
+<h3 class="code-line has-line-data" data-line-start="745" data-line-end="746"><a id="182_What_are_relational_constraints_745"></a>182. What are relational constraints?</h3>
+<p class="has-line-data" data-line-start="746" data-line-end="747">Rules defining valid states:</p>
+<ul>
+<li class="has-line-data" data-line-start="747" data-line-end="748"><strong>Domain constraints</strong>: Values must be from declared domains</li>
+<li class="has-line-data" data-line-start="748" data-line-end="749"><strong>Key constraints</strong>: Primary and candidate keys must be unique</li>
+<li class="has-line-data" data-line-start="749" data-line-end="750"><strong>Referential integrity</strong>: Foreign keys must be valid</li>
+<li class="has-line-data" data-line-start="750" data-line-end="752"><strong>Entity integrity</strong>: Primary keys can’t be NULL</li>
+</ul>
+<h3 class="code-line has-line-data" data-line-start="752" data-line-end="753"><a id="183_What_is_redundancy_752"></a>183. What is redundancy?</h3>
+<p class="has-line-data" data-line-start="753" data-line-end="754">Storing the same information multiple times. Wastes space and causes update anomalies.</p>
+<h3 class="code-line has-line-data" data-line-start="755" data-line-end="756"><a id="184_What_are_update_anomalies_755"></a>184. What are update anomalies?</h3>
+<p class="has-line-data" data-line-start="756" data-line-end="757">Problems caused by redundancy:</p>
+<ul>
+<li class="has-line-data" data-line-start="757" data-line-end="758"><strong>Insertion anomaly</strong>: Can’t insert data because other required (unrelated) data is missing</li>
+<li class="has-line-data" data-line-start="758" data-line-end="759"><strong>Deletion anomaly</strong>: Deleting one fact accidentally deletes another</li>
+<li class="has-line-data" data-line-start="759" data-line-end="761"><strong>Update anomaly</strong>: Changing one copy but not others causes inconsistency</li>
+</ul>
+<h3 class="code-line has-line-data" data-line-start="761" data-line-end="762"><a id="185_What_is_normalization_761"></a>185. What is normalization?</h3>
+<p class="has-line-data" data-line-start="762" data-line-end="763">The process of organizing tables to minimize redundancy and eliminate anomalies. Divides large tables into smaller, well-structured ones.</p>
+<hr>
+<h1 class="code-line has-line-data" data-line-start="766" data-line-end="767"><a id="SECTION_10_CONSTRAINTS_INTEGRITY_766"></a>SECTION 10 — CONSTRAINTS &amp; INTEGRITY</h1>
+<h3 class="code-line has-line-data" data-line-start="768" data-line-end="769"><a id="186_What_is_constraint_768"></a>186. What is constraint?</h3>
+<p class="has-line-data" data-line-start="769" data-line-end="770">A rule enforced by the DBMS that limits what data can be stored. Ensures correctness and consistency.</p>
+<h3 class="code-line has-line-data" data-line-start="771" data-line-end="772"><a id="187_Why_are_constraints_important_771"></a>187. Why are constraints important?</h3>
+<p class="has-line-data" data-line-start="772" data-line-end="773">They prevent invalid data, maintain business rules automatically, and ensure data quality without relying on application code.</p>
+<h3 class="code-line has-line-data" data-line-start="774" data-line-end="775"><a id="188_What_are_integrity_constraints_774"></a>188. What are integrity constraints?</h3>
+<p class="has-line-data" data-line-start="775" data-line-end="776">Constraints that preserve data correctness and consistency. The “integrity” of the database.</p>
+<h3 class="code-line has-line-data" data-line-start="777" data-line-end="778"><a id="189_What_is_PRIMARY_KEY_constraint_777"></a>189. What is PRIMARY KEY constraint?</h3>
+<p class="has-line-data" data-line-start="778" data-line-end="779">Ensures a column (or combination) uniquely identifies each row and cannot be NULL.</p>
+<pre><code class="has-line-data language-sql" data-line-start="781" data-line-end="786"><span class="hljs-keyword">CREATE TABLE</span> students (
+    student_id <span class="hljs-type">INT</span> <span class="hljs-keyword">PRIMARY KEY</span>,
+    name <span class="hljs-type">VARCHAR</span>(<span class="hljs-number">50</span>)
+);
+</code></pre>
+<h3 class="code-line has-line-data" data-line-start="787" data-line-end="788"><a id="190_What_is_FOREIGN_KEY_constraint_787"></a>190. What is FOREIGN KEY constraint?</h3>
+<p class="has-line-data" data-line-start="788" data-line-end="789">Ensures values in a column match values in a referenced table’s primary key, maintaining referential integrity.</p>
+<h3 class="code-line has-line-data" data-line-start="790" data-line-end="791"><a id="191_What_is_UNIQUE_constraint_790"></a>191. What is UNIQUE constraint?</h3>
+<p class="has-line-data" data-line-start="791" data-line-end="792">Ensures no duplicate values in a column (unlike PRIMARY KEY, allows one NULL).</p>
+<h3 class="code-line has-line-data" data-line-start="793" data-line-end="794"><a id="192_What_is_NOT_NULL_constraint_793"></a>192. What is NOT NULL constraint?</h3>
+<p class="has-line-data" data-line-start="794" data-line-end="795">Prevents NULL values in a column. Every row must have a value.</p>
+<h3 class="code-line has-line-data" data-line-start="796" data-line-end="797"><a id="193_What_is_CHECK_constraint_796"></a>193. What is CHECK constraint?</h3>
+<p class="has-line-data" data-line-start="797" data-line-end="798">Validates data against a boolean expression.</p>
+<pre><code class="has-line-data language-sql" data-line-start="800" data-line-end="805"><span class="hljs-keyword">CREATE TABLE</span> employees (
+    age <span class="hljs-type">INT</span> <span class="hljs-keyword">CHECK</span> (age <span class="hljs-operator">&gt;=</span> <span class="hljs-number">18</span> <span class="hljs-keyword">AND</span> age <span class="hljs-operator">&lt;=</span> <span class="hljs-number">65</span>),
+    salary <span class="hljs-type">DECIMAL</span> <span class="hljs-keyword">CHECK</span> (salary <span class="hljs-operator">&gt;</span> <span class="hljs-number">0</span>)
+);
+</code></pre>
+<h3 class="code-line has-line-data" data-line-start="806" data-line-end="807"><a id="194_What_is_domain_constraint_806"></a>194. What is domain constraint?</h3>
+<p class="has-line-data" data-line-start="807" data-line-end="808">Restricts values to a specific data type or set. The domain of “DayOfWeek” might be {Mon, Tue, Wed, Thu, Fri, Sat, Sun}.</p>
+<h3 class="code-line has-line-data" data-line-start="809" data-line-end="810"><a id="195_What_is_referential_integrity_constraint_809"></a>195. What is referential integrity constraint?</h3>
+<p class="has-line-data" data-line-start="810" data-line-end="811">The rule enforced by FOREIGN KEY constraints: no orphaned references.</p>
+<h3 class="code-line has-line-data" data-line-start="812" data-line-end="813"><a id="196_What_is_entity_integrity_constraint_812"></a>196. What is entity integrity constraint?</h3>
+<p class="has-line-data" data-line-start="813" data-line-end="814">The rule enforced by PRIMARY KEY constraints: no NULL primary keys, no duplicates.</p>
+<h3 class="code-line has-line-data" data-line-start="815" data-line-end="816"><a id="197_What_happens_when_constraints_fail_815"></a>197. What happens when constraints fail?</h3>
+<p class="has-line-data" data-line-start="816" data-line-end="817">The DBMS <strong>rejects the operation</strong> and returns an error. The transaction may be rolled back.</p>
+<h3 class="code-line has-line-data" data-line-start="818" data-line-end="819"><a id="198_What_is_constraint_violation_818"></a>198. What is constraint violation?</h3>
+<p class="has-line-data" data-line-start="819" data-line-end="820">Attempting an operation that breaks a constraint. Example: Inserting duplicate primary key, or a foreign key that doesn’t exist.</p>
+<h3 class="code-line has-line-data" data-line-start="821" data-line-end="822"><a id="199_What_is_domain_violation_821"></a>199. What is domain violation?</h3>
+<p class="has-line-data" data-line-start="822" data-line-end="823">Inserting a value outside the permitted domain. Example: Putting ‘ABC’ in an INTEGER column, or -5 in an AGE column.</p>
+<h3 class="code-line has-line-data" data-line-start="824" data-line-end="825"><a id="200_What_is_referential_integrity_violation_824"></a>200. What is referential integrity violation?</h3>
+<p class="has-line-data" data-line-start="825" data-line-end="826">Inserting a row with a foreign key value that doesn’t exist in the referenced table, or deleting a referenced row that still has foreign keys pointing to it.</p>
+<h3 class="code-line has-line-data" data-line-start="827" data-line-end="828"><a id="201_What_is_duplicate_key_violation_827"></a>201. What is duplicate key violation?</h3>
+<p class="has-line-data" data-line-start="828" data-line-end="829">Trying to insert or update a primary key or unique key to a value that already exists.</p>
+<h3 class="code-line has-line-data" data-line-start="830" data-line-end="831"><a id="202_How_does_DBMS_enforce_constraints_830"></a>202. How does DBMS enforce constraints?</h3>
+<ul>
+<li class="has-line-data" data-line-start="831" data-line-end="832"><strong>Immediate checking</strong>: Validates on every INSERT/UPDATE</li>
+<li class="has-line-data" data-line-start="832" data-line-end="833"><strong>Deferred checking</strong>: Validates at transaction commit (for complex cases)</li>
+<li class="has-line-data" data-line-start="833" data-line-end="834">Uses indexes for fast uniqueness checks</li>
+<li class="has-line-data" data-line-start="834" data-line-end="836">Uses triggers and rules for complex constraints</li>
+</ul>
+<h3 class="code-line has-line-data" data-line-start="836" data-line-end="837"><a id="203_Why_are_constraints_necessary_836"></a>203. Why are constraints necessary?</h3>
+<p class="has-line-data" data-line-start="837" data-line-end="838">Application bugs, user errors, and concurrent operations can all introduce bad data. Constraints are the last line of defense—enforced by the DBMS itself, impossible to bypass.</p>
+<h3 class="code-line has-line-data" data-line-start="839" data-line-end="840"><a id="204_How_do_constraints_maintain_consistency_839"></a>204. How do constraints maintain consistency?</h3>
+<p class="has-line-data" data-line-start="840" data-line-end="841">By rejecting invalid changes before they become permanent. They ensure the database always satisfies business rules, even when applications have bugs.</p>
+<hr>
+<h1 class="code-line has-line-data" data-line-start="844" data-line-end="845"><a id="SECTION_11_QUERY_PROCESSING_844"></a>SECTION 11 — QUERY PROCESSING</h1>
+<h3 class="code-line has-line-data" data-line-start="846" data-line-end="847"><a id="205_What_is_query_846"></a>205. What is query?</h3>
+<p class="has-line-data" data-line-start="847" data-line-end="848">A request for data or an operation on data. “Give me all customers from New York” or “Increase all prices by 10%.”</p>
+<h3 class="code-line has-line-data" data-line-start="849" data-line-end="850"><a id="206_What_is_SQL_query_849"></a>206. What is SQL query?</h3>
+<p class="has-line-data" data-line-start="850" data-line-end="851">A query written in SQL language.</p>
+<pre><code class="has-line-data language-sql" data-line-start="853" data-line-end="855"><span class="hljs-keyword">SELECT</span> name, email <span class="hljs-keyword">FROM</span> customers <span class="hljs-keyword">WHERE</span> city <span class="hljs-operator">=</span> <span class="hljs-string">&#x27;New York&#x27;</span>;
+</code></pre>
+<h3 class="code-line has-line-data" data-line-start="856" data-line-end="857"><a id="207_What_happens_when_SQL_executes_856"></a>207. What happens when SQL executes?</h3>
+<ol>
+<li class="has-line-data" data-line-start="857" data-line-end="858">Parse and validate</li>
+<li class="has-line-data" data-line-start="858" data-line-end="859">Optimize (find best execution plan)</li>
+<li class="has-line-data" data-line-start="859" data-line-end="860">Execute (access storage, process data)</li>
+<li class="has-line-data" data-line-start="860" data-line-end="862">Return results</li>
+</ol>
+<h3 class="code-line has-line-data" data-line-start="862" data-line-end="863"><a id="208_What_is_query_parsing_862"></a>208. What is query parsing?</h3>
+<p class="has-line-data" data-line-start="863" data-line-end="864">Checking that the SQL is syntactically correct and semantically valid (tables/columns exist, user has permissions).</p>
+<h3 class="code-line has-line-data" data-line-start="865" data-line-end="866"><a id="209_What_is_query_optimization_865"></a>209. What is query optimization?</h3>
+<p class="has-line-data" data-line-start="866" data-line-end="867">Finding the most efficient way to execute a query. The DBMS considers many possible plans and picks the cheapest.</p>
+<h3 class="code-line has-line-data" data-line-start="868" data-line-end="869"><a id="210_What_is_execution_plan_868"></a>210. What is execution plan?</h3>
+<p class="has-line-data" data-line-start="869" data-line-end="870">The step-by-step strategy the optimizer chooses. Shows which indexes to use, join order, and access methods.</p>
+<h3 class="code-line has-line-data" data-line-start="871" data-line-end="872"><a id="211_What_is_query_execution_engine_871"></a>211. What is query execution engine?</h3>
+<p class="has-line-data" data-line-start="872" data-line-end="873">The DBMS component that carries out the execution plan, coordinating storage access, joins, sorting, and aggregation.</p>
+<h3 class="code-line has-line-data" data-line-start="874" data-line-end="875"><a id="212_What_is_sequential_scan_874"></a>212. What is sequential scan?</h3>
+<p class="has-line-data" data-line-start="875" data-line-end="876">Reading every row in a table, one after another. Simple but slow for large tables. Used when no index helps or when most rows will be returned anyway.</p>
+<h3 class="code-line has-line-data" data-line-start="877" data-line-end="878"><a id="213_What_is_index_scan_877"></a>213. What is index scan?</h3>
+<p class="has-line-data" data-line-start="878" data-line-end="879">Using an index to find specific rows quickly. Jump directly to relevant data instead of reading the whole table.</p>
+<h3 class="code-line has-line-data" data-line-start="880" data-line-end="881"><a id="214_What_is_join_algorithm_880"></a>214. What is join algorithm?</h3>
+<p class="has-line-data" data-line-start="881" data-line-end="882">Methods for combining rows from multiple tables:</p>
+<ul>
+<li class="has-line-data" data-line-start="882" data-line-end="883"><strong>Nested Loop</strong>: For each row in table A, scan table B</li>
+<li class="has-line-data" data-line-start="883" data-line-end="884"><strong>Hash Join</strong>: Build hash table from one table, probe with the other</li>
+<li class="has-line-data" data-line-start="884" data-line-end="886"><strong>Merge Join</strong>: Sort both tables, then merge (efficient for large sorted data)</li>
+</ul>
+<h3 class="code-line has-line-data" data-line-start="886" data-line-end="887"><a id="215_How_does_optimizer_choose_plans_886"></a>215. How does optimizer choose plans?</h3>
+<p class="has-line-data" data-line-start="887" data-line-end="888">Estimates cost (disk I/O, CPU, memory) for each possible plan using statistics (table sizes, index selectivity, data distribution). Picks the cheapest.</p>
+<h3 class="code-line has-line-data" data-line-start="889" data-line-end="890"><a id="216_What_is_query_cost_889"></a>216. What is query cost?</h3>
+<p class="has-line-data" data-line-start="890" data-line-end="891">The estimated resource consumption—primarily disk I/O operations, plus CPU and memory usage. Lower cost = faster execution.</p>
+<h3 class="code-line has-line-data" data-line-start="892" data-line-end="893"><a id="217_How_does_DBMS_minimize_IO_892"></a>217. How does DBMS minimize I/O?</h3>
+<ul>
+<li class="has-line-data" data-line-start="893" data-line-end="894">Uses indexes to avoid full table scans</li>
+<li class="has-line-data" data-line-start="894" data-line-end="895">Caches frequently accessed pages in buffer pool</li>
+<li class="has-line-data" data-line-start="895" data-line-end="896">Prefetches pages it expects to need</li>
+<li class="has-line-data" data-line-start="896" data-line-end="898">Uses covering indexes (index contains all needed columns)</li>
+</ul>
+<h3 class="code-line has-line-data" data-line-start="898" data-line-end="899"><a id="218_How_does_indexing_improve_performance_898"></a>218. How does indexing improve performance?</h3>
+<p class="has-line-data" data-line-start="899" data-line-end="900">Instead of reading 1 million rows to find 10 matches, an index lets the DBMS jump directly to those 10 rows. Can speed up queries by 1000x or more.</p>
+<h3 class="code-line has-line-data" data-line-start="901" data-line-end="902"><a id="219_What_is_CPU_cost_in_queries_901"></a>219. What is CPU cost in queries?</h3>
+<p class="has-line-data" data-line-start="902" data-line-end="903">Processing time for operations like comparisons, calculations, sorting, and hashing. Less significant than I/O cost but matters for complex queries.</p>
+<h3 class="code-line has-line-data" data-line-start="904" data-line-end="905"><a id="220_What_is_memory_cost_in_queries_904"></a>220. What is memory cost in queries?</h3>
+<p class="has-line-data" data-line-start="905" data-line-end="906">RAM needed for sorting, hashing, and caching. Large sorts or joins may require spilling to disk if memory is insufficient, slowing execution dramatically.</p>
+<hr>
+<h1 class="code-line has-line-data" data-line-start="909" data-line-end="910"><a id="SECTION_12_TRANSACTIONS_ACID_909"></a>SECTION 12 — TRANSACTIONS &amp; ACID</h1>
+<h3 class="code-line has-line-data" data-line-start="911" data-line-end="912"><a id="221_What_is_transaction_911"></a>221. What is transaction?</h3>
+<p class="has-line-data" data-line-start="912" data-line-end="913">A <strong>logical unit of work</strong>—a sequence of operations that must complete entirely or not at all. Example: Transferring $100 from Account A to Account B involves two updates; both must succeed or both must fail.</p>
+<h3 class="code-line has-line-data" data-line-start="914" data-line-end="915"><a id="222_What_is_transaction_manager_914"></a>222. What is transaction manager?</h3>
+<p class="has-line-data" data-line-start="915" data-line-end="916">The DBMS component that oversees transactions—starting them, tracking their operations, and ensuring they complete properly or are undone.</p>
+<h3 class="code-line has-line-data" data-line-start="917" data-line-end="918"><a id="223_What_are_ACID_properties_917"></a>223. What are ACID properties?</h3>
+<p class="has-line-data" data-line-start="918" data-line-end="919">The four guarantees of reliable transaction processing:</p>
+<ul>
+<li class="has-line-data" data-line-start="919" data-line-end="920"><strong>Atomicity</strong></li>
+<li class="has-line-data" data-line-start="920" data-line-end="921"><strong>Consistency</strong></li>
+<li class="has-line-data" data-line-start="921" data-line-end="922"><strong>Isolation</strong></li>
+<li class="has-line-data" data-line-start="922" data-line-end="924"><strong>Durability</strong></li>
+</ul>
+<h3 class="code-line has-line-data" data-line-start="924" data-line-end="925"><a id="224_What_is_atomicity_924"></a>224. What is atomicity?</h3>
+<p class="has-line-data" data-line-start="925" data-line-end="926">“All or nothing.” A transaction’s operations either all complete successfully, or all are undone (rolled back). No partial completion.</p>
+<h3 class="code-line has-line-data" data-line-start="927" data-line-end="928"><a id="225_What_is_consistency_927"></a>225. What is consistency?</h3>
+<p class="has-line-data" data-line-start="928" data-line-end="929">A transaction brings the database from one valid state to another. All constraints and rules remain satisfied after the transaction.</p>
+<h3 class="code-line has-line-data" data-line-start="930" data-line-end="931"><a id="226_What_is_isolation_930"></a>226. What is isolation?</h3>
+<p class="has-line-data" data-line-start="931" data-line-end="932">Concurrent transactions don’t interfere with each other. Each transaction executes as if it’s the only one running, even when many run simultaneously.</p>
+<h3 class="code-line has-line-data" data-line-start="933" data-line-end="934"><a id="227_What_is_durability_933"></a>227. What is durability?</h3>
+<p class="has-line-data" data-line-start="934" data-line-end="935">Once a transaction commits, its changes are permanent—even if the system crashes immediately after. Usually achieved by writing to transaction logs before confirming commit.</p>
+<h3 class="code-line has-line-data" data-line-start="936" data-line-end="937"><a id="228_What_is_concurrency_control_936"></a>228. What is concurrency control?</h3>
+<p class="has-line-data" data-line-start="937" data-line-end="938">Managing simultaneous transactions so they don’t corrupt each other’s work while maintaining good performance.</p>
+<h3 class="code-line has-line-data" data-line-start="939" data-line-end="940"><a id="229_What_is_locking_939"></a>229. What is locking?</h3>
+<p class="has-line-data" data-line-start="940" data-line-end="941">A concurrency control method where transactions acquire locks on data before accessing it. Other transactions must wait.</p>
+<ul>
+<li class="has-line-data" data-line-start="941" data-line-end="942"><strong>Shared lock (S)</strong>: For reading—multiple readers allowed</li>
+<li class="has-line-data" data-line-start="942" data-line-end="944"><strong>Exclusive lock (X)</strong>: For writing—no other access allowed</li>
+</ul>
+<h3 class="code-line has-line-data" data-line-start="944" data-line-end="945"><a id="230_What_is_deadlock_944"></a>230. What is deadlock?</h3>
+<p class="has-line-data" data-line-start="945" data-line-end="946">When two transactions each hold a lock the other needs, and both wait forever. Example:</p>
+<ul>
+<li class="has-line-data" data-line-start="946" data-line-end="947">Transaction A locks Row 1, wants Row 2</li>
+<li class="has-line-data" data-line-start="947" data-line-end="949">Transaction B locks Row 2, wants Row 1</li>
+</ul>
+<p class="has-line-data" data-line-start="949" data-line-end="950"><strong>Solution</strong>: Deadlock detection (DBMS kills one) or timeout.</p>
+<h3 class="code-line has-line-data" data-line-start="951" data-line-end="952"><a id="231_What_is_recovery_system_951"></a>231. What is recovery system?</h3>
+<p class="has-line-data" data-line-start="952" data-line-end="953">The DBMS subsystem that restores the database to a consistent state after crashes, using transaction logs and checkpoints.</p>
+<h3 class="code-line has-line-data" data-line-start="954" data-line-end="955"><a id="232_How_does_DBMS_recover_after_crash_954"></a>232. How does DBMS recover after crash?</h3>
+<ol>
+<li class="has-line-data" data-line-start="955" data-line-end="956"><strong>Redo</strong>: Replay committed transactions that might not have reached disk</li>
+<li class="has-line-data" data-line-start="956" data-line-end="959"><strong>Undo</strong>: Roll back uncommitted transactions that were partially written<br>
+Uses write-ahead logging (WAL)—log entries are written before data changes.</li>
+</ol>
+<h3 class="code-line has-line-data" data-line-start="959" data-line-end="960"><a id="233_How_are_concurrent_transactions_managed_959"></a>233. How are concurrent transactions managed?</h3>
+<p class="has-line-data" data-line-start="960" data-line-end="961">Through isolation levels and locking:</p>
+<ul>
+<li class="has-line-data" data-line-start="961" data-line-end="962"><strong>READ UNCOMMITTED</strong>: No isolation, can see dirty data</li>
+<li class="has-line-data" data-line-start="962" data-line-end="963"><strong>READ COMMITTED</strong>: See only committed data</li>
+<li class="has-line-data" data-line-start="963" data-line-end="964"><strong>REPEATABLE READ</strong>: Same query returns same results</li>
+<li class="has-line-data" data-line-start="964" data-line-end="966"><strong>SERIALIZABLE</strong>: Full isolation, transactions appear sequential</li>
+</ul>
+<h3 class="code-line has-line-data" data-line-start="966" data-line-end="967"><a id="234_Why_are_transactions_important_966"></a>234. Why are transactions important?</h3>
+<p class="has-line-data" data-line-start="967" data-line-end="968">Real-world operations often involve multiple database changes that must happen together. Without transactions, partial completion causes data corruption and business errors.</p>
+<h3 class="code-line has-line-data" data-line-start="969" data-line-end="970"><a id="235_What_is_rollback_969"></a>235. What is rollback?</h3>
+<p class="has-line-data" data-line-start="970" data-line-end="971">Undoing all changes made by a transaction, returning the database to its state before the transaction began. Happens on error or explicit ROLLBACK command.</p>
+<h3 class="code-line has-line-data" data-line-start="972" data-line-end="973"><a id="236_What_is_commit_972"></a>236. What is commit?</h3>
+<p class="has-line-data" data-line-start="973" data-line-end="974">Making all changes from a transaction permanent. After COMMIT, changes are durable and visible to other transactions.</p>
+<hr>
+<h1 class="code-line has-line-data" data-line-start="977" data-line-end="978"><a id="SECTION_13_SECURITY_ACCESS_CONTROL_977"></a>SECTION 13 — SECURITY &amp; ACCESS CONTROL</h1>
+<h3 class="code-line has-line-data" data-line-start="979" data-line-end="980"><a id="237_What_is_database_security_979"></a>237. What is database security?</h3>
+<p class="has-line-data" data-line-start="980" data-line-end="981">Protecting data from unauthorized access, modification, or destruction. Includes authentication, authorization, encryption, and auditing.</p>
+<h3 class="code-line has-line-data" data-line-start="982" data-line-end="983"><a id="238_How_do_views_improve_security_982"></a>238. How do views improve security?</h3>
+<p class="has-line-data" data-line-start="983" data-line-end="984">By restricting what users can see. Create views that exclude sensitive columns, and grant access to views instead of base tables.</p>
+<h3 class="code-line has-line-data" data-line-start="985" data-line-end="986"><a id="239_What_is_rowlevel_security_985"></a>239. What is row-level security?</h3>
+<p class="has-line-data" data-line-start="986" data-line-end="987">Restricting access to specific rows based on user identity. A sales rep sees only their own customers’ rows.</p>
+<h3 class="code-line has-line-data" data-line-start="988" data-line-end="989"><a id="240_What_is_columnlevel_security_988"></a>240. What is column-level security?</h3>
+<p class="has-line-data" data-line-start="989" data-line-end="990">Restricting access to specific columns. Hiding salary information from general employees while showing it to HR.</p>
+<h3 class="code-line has-line-data" data-line-start="991" data-line-end="992"><a id="241_What_is_inference_attack_991"></a>241. What is inference attack?</h3>
+<p class="has-line-data" data-line-start="992" data-line-end="993">Deducing sensitive information from non-sensitive data. Example: Knowing department averages and all but one salary, you can calculate the last person’s salary.</p>
+<h3 class="code-line has-line-data" data-line-start="994" data-line-end="995"><a id="242_How_does_DBMS_restrict_access_994"></a>242. How does DBMS restrict access?</h3>
+<ul>
+<li class="has-line-data" data-line-start="995" data-line-end="996"><strong>Authentication</strong>: Verify identity (username/password, certificates)</li>
+<li class="has-line-data" data-line-start="996" data-line-end="997"><strong>Authorization</strong>: Grant specific privileges (SELECT, INSERT, UPDATE, DELETE)</li>
+<li class="has-line-data" data-line-start="997" data-line-end="998"><strong>Views</strong>: Limit visible data</li>
+<li class="has-line-data" data-line-start="998" data-line-end="1000"><strong>Encryption</strong>: Protect data at rest and in transit</li>
+</ul>
+<h3 class="code-line has-line-data" data-line-start="1000" data-line-end="1001"><a id="243_What_is_authorization_1000"></a>243. What is authorization?</h3>
+<p class="has-line-data" data-line-start="1001" data-line-end="1002">Granting permissions to users—what they can do and what data they can access.</p>
+<pre><code class="has-line-data language-sql" data-line-start="1004" data-line-end="1007"><span class="hljs-keyword">GRANT</span> <span class="hljs-keyword">SELECT</span> <span class="hljs-keyword">ON</span> employees <span class="hljs-keyword">TO</span> hr_manager;
+<span class="hljs-keyword">REVOKE</span> <span class="hljs-keyword">DELETE</span> <span class="hljs-keyword">ON</span> employees <span class="hljs-keyword">FROM</span> intern;
+</code></pre>
+<h3 class="code-line has-line-data" data-line-start="1008" data-line-end="1009"><a id="244_What_is_authentication_1008"></a>244. What is authentication?</h3>
+<p class="has-line-data" data-line-start="1009" data-line-end="1010">Verifying who someone is—checking credentials before allowing database access.</p>
+<h3 class="code-line has-line-data" data-line-start="1011" data-line-end="1012"><a id="245_What_is_privilege_management_1011"></a>245. What is privilege management?</h3>
+<p class="has-line-data" data-line-start="1012" data-line-end="1013">Controlling and tracking what operations each user can perform on which objects. Includes granting, revoking, and auditing privileges.</p>
+<h3 class="code-line has-line-data" data-line-start="1014" data-line-end="1015"><a id="246_Why_is_abstraction_important_for_security_1014"></a>246. Why is abstraction important for security?</h3>
+<p class="has-line-data" data-line-start="1015" data-line-end="1016">Because users interact with abstract views rather than raw physical storage. They can’t access what they can’t see, and they can’t manipulate what they don’t understand.</p>
+<hr>
+<h1 class="code-line has-line-data" data-line-start="1019" data-line-end="1020"><a id="SECTION_14_MODERN_DATABASE_CONCEPTS_1019"></a>SECTION 14 — MODERN DATABASE CONCEPTS</h1>
+<h3 class="code-line has-line-data" data-line-start="1021" data-line-end="1022"><a id="247_What_is_ORM_1021"></a>247. What is ORM?</h3>
+<p class="has-line-data" data-line-start="1022" data-line-end="1023"><strong>Object-Relational Mapping</strong>. A technique that lets you interact with databases using objects in your programming language, instead of writing raw SQL.</p>
+<h3 class="code-line has-line-data" data-line-start="1024" data-line-end="1025"><a id="248_What_is_objectrelational_mapping_1024"></a>248. What is object-relational mapping?</h3>
+<p class="has-line-data" data-line-start="1025" data-line-end="1026">The process of converting between relational database tables and object-oriented programming objects. Example: A <code>User</code> class maps to a <code>users</code> table.</p>
+<pre><code class="has-line-data language-python" data-line-start="1028" data-line-end="1031"><span class="hljs-comment"># Django ORM example</span>
+user = User.objects.get(name=<span class="hljs-string">&#x27;Alice&#x27;</span>)  <span class="hljs-comment"># Instead of: SELECT * FROM users WHERE name=&#x27;Alice&#x27;</span>
+</code></pre>
+<h3 class="code-line has-line-data" data-line-start="1032" data-line-end="1033"><a id="249_What_is_impedance_mismatch_1032"></a>249. What is impedance mismatch?</h3>
+<p class="has-line-data" data-line-start="1033" data-line-end="1034">The fundamental differences between relational tables and programming objects:</p>
+<ul>
+<li class="has-line-data" data-line-start="1034" data-line-end="1035">Tables are flat; objects have nested structures</li>
+<li class="has-line-data" data-line-start="1035" data-line-end="1036">Tables use foreign keys; objects use references</li>
+<li class="has-line-data" data-line-start="1036" data-line-end="1037">SQL returns sets; programs expect individual objects</li>
+<li class="has-line-data" data-line-start="1037" data-line-end="1039">Object inheritance doesn’t map cleanly to tables</li>
+</ul>
+<h3 class="code-line has-line-data" data-line-start="1039" data-line-end="1040"><a id="250_What_is_NoSQL_1039"></a>250. What is NoSQL?</h3>
+<p class="has-line-data" data-line-start="1040" data-line-end="1041">“Not Only SQL”—database systems that don’t use the traditional relational model. Designed for scalability, flexibility, and specific data types.</p>
+<p class="has-line-data" data-line-start="1042" data-line-end="1043">Types:</p>
+<ul>
+<li class="has-line-data" data-line-start="1043" data-line-end="1044"><strong>Document</strong> (MongoDB): JSON-like flexible schemas</li>
+<li class="has-line-data" data-line-start="1044" data-line-end="1045"><strong>Key-Value</strong> (Redis): Simple hash table</li>
+<li class="has-line-data" data-line-start="1045" data-line-end="1046"><strong>Column</strong> (Cassandra): Wide columns, good for big data</li>
+<li class="has-line-data" data-line-start="1046" data-line-end="1048"><strong>Graph</strong> (Neo4j): Nodes and relationships</li>
+</ul>
+<h3 class="code-line has-line-data" data-line-start="1048" data-line-end="1049"><a id="251_What_is_NewSQL_1048"></a>251. What is NewSQL?</h3>
+<p class="has-line-data" data-line-start="1049" data-line-end="1050">Modern databases that combine NoSQL scalability with ACID transactions and SQL interface. Examples: Google Spanner, CockroachDB, TiDB.</p>
+<h3 class="code-line has-line-data" data-line-start="1051" data-line-end="1052"><a id="252_What_is_cloud_database_1051"></a>252. What is cloud database?</h3>
+<p class="has-line-data" data-line-start="1052" data-line-end="1053">Database services hosted and managed by cloud providers (AWS, Azure, GCP). You don’t manage hardware, backups, or patching—the provider does.</p>
+<h3 class="code-line has-line-data" data-line-start="1054" data-line-end="1055"><a id="253_What_is_distributed_database_1054"></a>253. What is distributed database?</h3>
+<p class="has-line-data" data-line-start="1055" data-line-end="1056">A database spread across multiple computers (nodes), often in different locations. Appears as a single database to users but stores data across a network.</p>
+<h3 class="code-line has-line-data" data-line-start="1057" data-line-end="1058"><a id="254_How_do_modern_databases_extend_ANSISPARC_1057"></a>254. How do modern databases extend ANSI/SPARC?</h3>
+<ul>
+<li class="has-line-data" data-line-start="1058" data-line-end="1059">Adding <strong>federation layers</strong> (unifying multiple databases)</li>
+<li class="has-line-data" data-line-start="1059" data-line-end="1060"><strong>Caching layers</strong> between external and conceptual</li>
+<li class="has-line-data" data-line-start="1060" data-line-end="1061"><strong>Sharding</strong> at the internal level (splitting data across servers)</li>
+<li class="has-line-data" data-line-start="1061" data-line-end="1063"><strong>Replication</strong> views at external level (read replicas)</li>
+</ul>
+<h3 class="code-line has-line-data" data-line-start="1063" data-line-end="1064"><a id="255_What_is_multitenancy_1063"></a>255. What is multi-tenancy?</h3>
+<p class="has-line-data" data-line-start="1064" data-line-end="1065">Multiple customers (tenants) sharing one database instance while keeping data isolated. Each tenant sees only their own schema or data partition.</p>
+<h3 class="code-line has-line-data" data-line-start="1066" data-line-end="1067"><a id="256_How_do_cloud_databases_manage_abstraction_1066"></a>256. How do cloud databases manage abstraction?</h3>
+<p class="has-line-data" data-line-start="1067" data-line-end="1068">Through managed services that hide infrastructure: auto-scaling, automated backups, serverless compute. Users see only the database connection; the cloud handles everything below.</p>
+<h3 class="code-line has-line-data" data-line-start="1069" data-line-end="1070"><a id="257_What_are_examples_of_distributed_SQL_databases_1069"></a>257. What are examples of distributed SQL databases?</h3>
+<ul>
+<li class="has-line-data" data-line-start="1070" data-line-end="1071"><strong>Google Spanner</strong>: Globally distributed, strongly consistent</li>
+<li class="has-line-data" data-line-start="1071" data-line-end="1072"><strong>CockroachDB</strong>: PostgreSQL-compatible, distributed</li>
+<li class="has-line-data" data-line-start="1072" data-line-end="1073"><strong>TiDB</strong>: MySQL-compatible, cloud-native</li>
+<li class="has-line-data" data-line-start="1073" data-line-end="1075"><strong>YugabyteDB</strong>: Distributed SQL with NoSQL flexibility</li>
+</ul>
+<h3 class="code-line has-line-data" data-line-start="1075" data-line-end="1076"><a id="258_How_do_ORMs_interact_with_relational_models_1075"></a>258. How do ORMs interact with relational models?</h3>
+<p class="has-line-data" data-line-start="1076" data-line-end="1077">ORMs generate SQL automatically from object operations. They handle the mapping between class attributes and table columns, but sometimes generate inefficient queries.</p>
+<hr>
+<h1 class="code-line has-line-data" data-line-start="1080" data-line-end="1081"><a id="SECTION_15_REALWORLD_IMPLEMENTATION_1080"></a>SECTION 15 — REAL-WORLD IMPLEMENTATION</h1>
+<h3 class="code-line has-line-data" data-line-start="1082" data-line-end="1083"><a id="259_How_does_SQL_implement_ANSISPARC_architecture_1082"></a>259. How does SQL implement ANSI/SPARC architecture?</h3>
+<ul>
+<li class="has-line-data" data-line-start="1083" data-line-end="1084"><strong>External</strong>: Views (<code>CREATE VIEW</code>)</li>
+<li class="has-line-data" data-line-start="1084" data-line-end="1085"><strong>Conceptual</strong>: Base tables, constraints, relationships (<code>CREATE TABLE</code>)</li>
+<li class="has-line-data" data-line-start="1085" data-line-end="1087"><strong>Internal</strong>: Indexes, tablespaces, storage engines (<code>CREATE INDEX</code>, engine configuration)</li>
+</ul>
+<h3 class="code-line has-line-data" data-line-start="1087" data-line-end="1088"><a id="260_How_does_DBMS_translate_SQL_internally_1087"></a>260. How does DBMS translate SQL internally?</h3>
+<ol>
+<li class="has-line-data" data-line-start="1088" data-line-end="1089"><strong>Parser</strong>: Converts SQL text to parse tree</li>
+<li class="has-line-data" data-line-start="1089" data-line-end="1090"><strong>Analyzer</strong>: Validates against catalog (table/column existence)</li>
+<li class="has-line-data" data-line-start="1090" data-line-end="1091"><strong>Rewriter</strong>: Applies views and rules</li>
+<li class="has-line-data" data-line-start="1091" data-line-end="1092"><strong>Optimizer</strong>: Generates execution plan</li>
+<li class="has-line-data" data-line-start="1092" data-line-end="1094"><strong>Executor</strong>: Runs the plan against storage</li>
+</ol>
+<h3 class="code-line has-line-data" data-line-start="1094" data-line-end="1095"><a id="261_How_does_logical_schema_map_to_physical_storage_1094"></a>261. How does logical schema map to physical storage?</h3>
+<p class="has-line-data" data-line-start="1095" data-line-end="1096">The DBMS maintains a <strong>system catalog</strong> (data dictionary) that tracks:</p>
+<ul>
+<li class="has-line-data" data-line-start="1096" data-line-end="1097">Which files store which tables</li>
+<li class="has-line-data" data-line-start="1097" data-line-end="1098">Index definitions and their file locations</li>
+<li class="has-line-data" data-line-start="1098" data-line-end="1099">Column types and offsets within records</li>
+<li class="has-line-data" data-line-start="1099" data-line-end="1101">Partition boundaries</li>
+</ul>
+<h3 class="code-line has-line-data" data-line-start="1101" data-line-end="1102"><a id="262_How_do_queries_travel_through_DBMS_layers_1101"></a>262. How do queries travel through DBMS layers?</h3>
+<p class="has-line-data" data-line-start="1102" data-line-end="1103"><strong>User → External View → Conceptual Schema → Internal Schema → Storage Engine → Disk I/O → Results back up the chain</strong></p>
+<h3 class="code-line has-line-data" data-line-start="1104" data-line-end="1105"><a id="263_How_are_tables_converted_into_bytes_1104"></a>263. How are tables converted into bytes?</h3>
+<p class="has-line-data" data-line-start="1105" data-line-end="1106">The DBMS uses <strong>record formats</strong>:</p>
+<ul>
+<li class="has-line-data" data-line-start="1106" data-line-end="1107">Fixed-length fields: Store directly with padding</li>
+<li class="has-line-data" data-line-start="1107" data-line-end="1108">Variable-length fields: Store length prefix + data</li>
+<li class="has-line-data" data-line-start="1108" data-line-end="1109">NULL bitmaps: Track which fields are NULL</li>
+<li class="has-line-data" data-line-start="1109" data-line-end="1111">Row headers: Store metadata (visibility info for MVCC)</li>
+</ul>
+<h3 class="code-line has-line-data" data-line-start="1111" data-line-end="1112"><a id="264_How_are_rows_stored_physically_1111"></a>264. How are rows stored physically?</h3>
+<p class="has-line-data" data-line-start="1112" data-line-end="1113">In <strong>pages/slots</strong> within files. Each page has a header (free space info, checksum), then slot directory pointing to row locations, then actual row data.</p>
+<h3 class="code-line has-line-data" data-line-start="1114" data-line-end="1115"><a id="265_How_are_indexes_maintained_internally_1114"></a>265. How are indexes maintained internally?</h3>
+<ul>
+<li class="has-line-data" data-line-start="1115" data-line-end="1116"><strong>B+ Trees</strong>: Balanced on insert/delete, nodes split/merge</li>
+<li class="has-line-data" data-line-start="1116" data-line-end="1117"><strong>Hash indexes</strong>: Rehash when load factor exceeds threshold</li>
+<li class="has-line-data" data-line-start="1117" data-line-end="1119"><strong>Bitmap indexes</strong>: Update bit vectors when rows change</li>
+</ul>
+<p class="has-line-data" data-line-start="1119" data-line-end="1120">All index changes are logged for recovery.</p>
+<h3 class="code-line has-line-data" data-line-start="1121" data-line-end="1122"><a id="266_How_does_DBMS_enforce_constraints_internally_1121"></a>266. How does DBMS enforce constraints internally?</h3>
+<ul>
+<li class="has-line-data" data-line-start="1122" data-line-end="1123"><strong>Primary/Unique</strong>: Check unique indexes before insert/update</li>
+<li class="has-line-data" data-line-start="1123" data-line-end="1124"><strong>Foreign Key</strong>: Check referenced table’s primary key index</li>
+<li class="has-line-data" data-line-start="1124" data-line-end="1125"><strong>CHECK</strong>: Evaluate expression for each row</li>
+<li class="has-line-data" data-line-start="1125" data-line-end="1127"><strong>NOT NULL</strong>: Reject NULLs during type checking</li>
+</ul>
+<h3 class="code-line has-line-data" data-line-start="1127" data-line-end="1128"><a id="267_How_do_views_hide_schema_complexity_1127"></a>267. How do views hide schema complexity?</h3>
+<p class="has-line-data" data-line-start="1128" data-line-end="1129">Views can join multiple tables, filter rows, compute columns, and rename fields. Users see a simple flat structure while the view definition handles the complexity.</p>
+<pre><code class="has-line-data language-sql" data-line-start="1131" data-line-end="1141"><span class="hljs-comment">-- User sees: customer_order_summary</span>
+<span class="hljs-comment">-- Underlying: 4 tables joined with aggregation</span>
+<span class="hljs-keyword">CREATE</span> <span class="hljs-keyword">VIEW</span> customer_order_summary <span class="hljs-keyword">AS</span>
+<span class="hljs-keyword">SELECT</span> c.name, <span class="hljs-built_in">COUNT</span>(o.id) <span class="hljs-keyword">AS</span> order_count, <span class="hljs-built_in">SUM</span>(o.total) <span class="hljs-keyword">AS</span> lifetime_value
+<span class="hljs-keyword">FROM</span> customers c
+<span class="hljs-keyword">LEFT</span> <span class="hljs-keyword">JOIN</span> orders o <span class="hljs-keyword">ON</span> c.id <span class="hljs-operator">=</span> o.customer_id
+<span class="hljs-keyword">LEFT</span> <span class="hljs-keyword">JOIN</span> order_items oi <span class="hljs-keyword">ON</span> o.id <span class="hljs-operator">=</span> oi.order_id
+<span class="hljs-keyword">LEFT</span> <span class="hljs-keyword">JOIN</span> products p <span class="hljs-keyword">ON</span> oi.product_id <span class="hljs-operator">=</span> p.id
+<span class="hljs-keyword">GROUP</span> <span class="hljs-keyword">BY</span> c.id, c.name;
+</code></pre>
+<h3 class="code-line has-line-data" data-line-start="1142" data-line-end="1143"><a id="268_How_do_modern_DBMSs_implement_abstraction_1142"></a>268. How do modern DBMSs implement abstraction?</h3>
+<ul>
+<li class="has-line-data" data-line-start="1143" data-line-end="1144"><strong>Storage engines</strong>: Pluggable backends (MySQL: InnoDB vs. MyISAM)</li>
+<li class="has-line-data" data-line-start="1144" data-line-end="1145"><strong>Query engines</strong>: Separate from storage (Apache Calcite)</li>
+<li class="has-line-data" data-line-start="1145" data-line-end="1146"><strong>Serverless layers</strong>: Abstract compute from storage (Snowflake, BigQuery)</li>
+<li class="has-line-data" data-line-start="1146" data-line-end="1148"><strong>API layers</strong>: GraphQL, REST over SQL</li>
+</ul>
+<h3 class="code-line has-line-data" data-line-start="1148" data-line-end="1149"><a id="269_How_does_DBMS_maintain_independence_between_layers_1148"></a>269. How does DBMS maintain independence between layers?</h3>
+<p class="has-line-data" data-line-start="1149" data-line-end="1150">Through <strong>strict interfaces</strong>:</p>
+<ul>
+<li class="has-line-data" data-line-start="1150" data-line-end="1151">External layer only knows views and their definitions</li>
+<li class="has-line-data" data-line-start="1151" data-line-end="1152">Conceptual layer manages tables and constraints</li>
+<li class="has-line-data" data-line-start="1152" data-line-end="1155">Internal layer handles files and indexes<br>
+Changes in one layer only require updating the mapping to adjacent layers.</li>
+</ul>
+<h3 class="code-line has-line-data" data-line-start="1155" data-line-end="1156"><a id="270_How_does_abstraction_help_realworld_scalability_1155"></a>270. How does abstraction help real-world scalability?</h3>
+<ul>
+<li class="has-line-data" data-line-start="1156" data-line-end="1157"><strong>Vertical scaling</strong>: Upgrade hardware, internal layer adapts</li>
+<li class="has-line-data" data-line-start="1157" data-line-end="1158"><strong>Horizontal scaling</strong>: Add servers, internal layer shards/partitions</li>
+<li class="has-line-data" data-line-start="1158" data-line-end="1159"><strong>Read scaling</strong>: Add read replicas, external layer routes queries</li>
+<li class="has-line-data" data-line-start="1159" data-line-end="1161"><strong>Cloud scaling</strong>: Auto-scale storage, completely hidden from users</li>
+</ul>
+<p class="has-line-data" data-line-start="1161" data-line-end="1162">Applications keep running the same SQL while the DBMS handles massive infrastructure changes underneath.</p>
+<hr>
+<h2 class="code-line has-line-data" data-line-start="1165" data-line-end="1166"><a id="Summary_Cheat_Sheet_1165"></a>Summary Cheat Sheet</h2>
+<table class="table table-striped table-bordered">
+<thead>
+<tr>
+<th>Concept</th>
+<th>Simple Analogy</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Database</strong></td>
+<td>Digital filing cabinet</td>
+</tr>
+<tr>
+<td><strong>DBMS</strong></td>
+<td>Filing cabinet manager</td>
+</tr>
+<tr>
+<td><strong>Data Abstraction</strong></td>
+<td>Car dashboard (steering wheel hides engine)</td>
+</tr>
+<tr>
+<td><strong>ANSI/SPARC 3 Levels</strong></td>
+<td>Building: Lobby (External), Floor Plans (Conceptual), Foundation (Internal)</td>
+</tr>
+<tr>
+<td><strong>Schema</strong></td>
+<td>Blueprint of the building</td>
+</tr>
+<tr>
+<td><strong>Instance</strong></td>
+<td>People and furniture inside right now</td>
+</tr>
+<tr>
+<td><strong>View</strong></td>
+<td>Window looking at specific rooms</td>
+</tr>
+<tr>
+<td><strong>Index</strong></td>
+<td>Book index (find pages fast)</td>
+</tr>
+<tr>
+<td><strong>Transaction</strong></td>
+<td>Bank transfer (all or nothing)</td>
+</tr>
+<tr>
+<td><strong>ACID</strong></td>
+<td>Promise that your money won’t disappear</td>
+</tr>
+<tr>
+<td><strong>Normalization</strong></td>
+<td>Organizing closet to avoid duplicate clothes</td>
+</tr>
+<tr>
+<td><strong>Query Optimization</strong></td>
+<td>GPS finding fastest route</td>
+</tr>
+<tr>
+<td><strong>ORM</strong></td>
+<td>Translator between two languages</td>
+</tr>
+</tbody>
+</table>
+<p class="has-line-data" data-line-start="1183" data-line-end="1184">This covers all 270 questions with practical explanations. Let me know if you’d like any topic expanded with code examples or diagrams!</p>
+
+</body>
+</html>
