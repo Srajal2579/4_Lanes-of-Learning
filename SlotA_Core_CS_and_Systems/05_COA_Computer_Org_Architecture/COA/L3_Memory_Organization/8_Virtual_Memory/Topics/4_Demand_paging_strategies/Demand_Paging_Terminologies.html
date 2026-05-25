@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Demand Paging Terminologies</title>
+  <style>
+  @import url("https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.9.0-alpha2/katex.min.css");
+
+  body {
+    font-family: Georgia, Cambria, serif;
+    font-size: 14px;
+    line-height: 1.7;
+    color: #373D49;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 2rem;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    font-family: "Source Sans Pro", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-weight: 600;
+    margin-top: 1.5em;
+    margin-bottom: 0.5em;
+  }
+  h1 { font-size: 2em; }
+  h2 { font-size: 1.5em; }
+  h3 { font-size: 1.25em; }
+  a { color: #35D7BB; text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  code {
+    font-family: "Ubuntu Mono", Monaco, monospace;
+    background: #F5F7FA;
+    padding: 0.2em 0.4em;
+    border-radius: 3px;
+  }
+  pre {
+    background: #F5F7FA;
+    padding: 1em;
+    border-radius: 3px;
+    overflow-x: auto;
+  }
+  .hljs {
+    display: block;
+    overflow-x: auto;
+    padding: 0;
+    color: #333;
+  }
+  pre code { background: none; padding: 0; }
+  blockquote {
+    border-left: 3px solid #A0AABF;
+    padding-left: 1em;
+    margin-left: 0;
+    font-style: italic;
+    color: #666;
+  }
+  table {
+    border-collapse: collapse;
+    width: 100%;
+  }
+  th, td {
+    border: 1px solid #E8E8E8;
+    padding: 0.5em;
+    text-align: left;
+  }
+  th {
+    background: #F5F7FA;
+    font-weight: 600;
+  }
+  #preview .table {
+    width: auto;
+  }
+  img {
+    max-width: 100%;
+    height: auto;
+  }
+  .katex-display {
+    overflow-x: auto;
+    overflow-y: hidden;
+  }
+</style>
+</head>
+<body id="preview">
+<p class="has-line-data" data-line-start="0" data-line-end="1">I’ll extract and organize all the terminologies from this operating systems tutorial, section by section, with clear explanations.</p>
+<hr>
+<h2 class="code-line has-line-data" data-line-start="4" data-line-end="5"><a id="Section_1_Unified_Memory_Architecture_Page_1_4"></a>Section 1: Unified Memory Architecture (Page 1)</h2>
+<table class="table table-striped table-bordered">
+<thead>
+<tr>
+<th style="text-align:left">Terminology</th>
+<th style="text-align:left">Explanation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><strong>Unified Memory Architecture (UMA)</strong></td>
+<td style="text-align:left">A memory design where CPU and GPU share the same physical memory pool, rather than having separate dedicated memories</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Demand Paging</strong></td>
+<td style="text-align:left">A memory management technique where pages are loaded into RAM only when needed (on demand), not all at once</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Shared Memory</strong></td>
+<td style="text-align:left">Memory space that can be accessed by multiple processors or components (CPU/GPU)</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 class="code-line has-line-data" data-line-start="14" data-line-end="15"><a id="Section_2_Modern_Optimizations_Page_1_14"></a>Section 2: Modern Optimizations (Page 1)</h2>
+<table class="table table-striped table-bordered">
+<thead>
+<tr>
+<th style="text-align:left">Terminology</th>
+<th style="text-align:left">Explanation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><strong>TLB (Translation Lookaside Buffer)</strong></td>
+<td style="text-align:left">A hardware cache that stores recent virtual-to-physical address translations to speed up memory access</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Page Table Walk</strong></td>
+<td style="text-align:left">The process of traversing the page table hierarchy to find the physical address for a virtual address</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Prefetching</strong></td>
+<td style="text-align:left">A technique where the OS predicts which pages will be needed next and loads them into RAM before they’re requested</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Huge Pages</strong></td>
+<td style="text-align:left">Larger memory page sizes (2MB or 1GB) used instead of standard 4KB pages to reduce TLB misses for large datasets</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Swap Compression (zswap/zram)</strong></td>
+<td style="text-align:left">A technique that compresses pages in RAM instead of writing them to disk, making swap operations faster than disk I/O</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 class="code-line has-line-data" data-line-start="26" data-line-end="27"><a id="Section_3_Worked_Example_Page_Replacement_Pages_12_26"></a>Section 3: Worked Example — Page Replacement (Pages 1-2)</h2>
+<table class="table table-striped table-bordered">
+<thead>
+<tr>
+<th style="text-align:left">Terminology</th>
+<th style="text-align:left">Explanation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><strong>Working Set</strong></td>
+<td style="text-align:left">The set of pages a program is actively using at any given time</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Page Fault</strong></td>
+<td style="text-align:left">An exception raised when a program accesses a page that is not currently loaded in RAM</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Hit Rate</strong></td>
+<td style="text-align:left">The percentage of memory accesses that find the requested page already in RAM (no page fault)</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Eviction</strong></td>
+<td style="text-align:left">The process of removing a page from RAM to make space for a new page</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Thrashing</strong></td>
+<td style="text-align:left">A state where the system spends most of its time handling page faults rather than executing useful work</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 class="code-line has-line-data" data-line-start="38" data-line-end="39"><a id="Section_4_Key_Definitions_Page_2_38"></a>Section 4: Key Definitions (Page 2)</h2>
+<table class="table table-striped table-bordered">
+<thead>
+<tr>
+<th style="text-align:left">Terminology</th>
+<th style="text-align:left">Explanation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><strong>Page</strong></td>
+<td style="text-align:left">A fixed-size block of virtual memory (typically 4KB), the basic unit of transfer between disk and RAM</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Frame</strong></td>
+<td style="text-align:left">A page-sized slot in physical RAM that can hold one page</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Page Table</strong></td>
+<td style="text-align:left">A per-process data structure that maps virtual page numbers to physical frame numbers or disk locations</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Page Fault</strong></td>
+<td style="text-align:left">A hardware exception triggered when the CPU accesses a page not present in RAM</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 class="code-line has-line-data" data-line-start="49" data-line-end="50"><a id="Section_5_Demand_Paging_vs_Load_Everything_Page_3_49"></a>Section 5: Demand Paging vs. Load Everything (Page 3)</h2>
+<table class="table table-striped table-bordered">
+<thead>
+<tr>
+<th style="text-align:left">Terminology</th>
+<th style="text-align:left">Explanation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><strong>Virtual Memory</strong></td>
+<td style="text-align:left">A memory management technique that allows programs to use more memory than physically available RAM by using disk as backup</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Backing Store / Disk</strong></td>
+<td style="text-align:left">Secondary storage (hard disk/SSD) where pages not in RAM are kept</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Lazy Loading</strong></td>
+<td style="text-align:left">Loading data only when it’s actually needed, rather than upfront</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 class="code-line has-line-data" data-line-start="59" data-line-end="60"><a id="Section_6_Locality_Principles_Page_4_59"></a>Section 6: Locality Principles (Page 4)</h2>
+<table class="table table-striped table-bordered">
+<thead>
+<tr>
+<th style="text-align:left">Terminology</th>
+<th style="text-align:left">Explanation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><strong>Spatial Locality</strong></td>
+<td style="text-align:left">The tendency to access memory locations near recently accessed locations (e.g., sequential array access)</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Temporal Locality</strong></td>
+<td style="text-align:left">The tendency to access the same memory locations repeatedly within a short time period</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Contiguous Memory</strong></td>
+<td style="text-align:left">Memory blocks that are adjacent to each other in address space</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Thrashing</strong></td>
+<td style="text-align:left">When a system has excessive page faults, spending more time swapping pages than executing instructions</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 class="code-line has-line-data" data-line-start="70" data-line-end="71"><a id="Section_7_Program_Loading_Startup_Pages_5_7_70"></a>Section 7: Program Loading &amp; Startup (Pages 5, 7)</h2>
+<table class="table table-striped table-bordered">
+<thead>
+<tr>
+<th style="text-align:left">Terminology</th>
+<th style="text-align:left">Explanation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><strong>Entry Point</strong></td>
+<td style="text-align:left">The first instruction of a program where execution begins</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Startup Time</strong></td>
+<td style="text-align:left">The time from user action (e.g., double-click) to program responsiveness</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Disk Bandwidth</strong></td>
+<td style="text-align:left">The rate at which data can be read from disk (measured in MB/s)</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Lazy Initialization</strong></td>
+<td style="text-align:left">Delaying the loading/initialization of components until they’re actually needed</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 class="code-line has-line-data" data-line-start="81" data-line-end="82"><a id="Section_8_Memory_Access_Page_Fault_Handling_Pages_89_81"></a>Section 8: Memory Access &amp; Page Fault Handling (Pages 8-9)</h2>
+<table class="table table-striped table-bordered">
+<thead>
+<tr>
+<th style="text-align:left">Terminology</th>
+<th style="text-align:left">Explanation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><strong>Virtual Address</strong></td>
+<td style="text-align:left">An address used by the CPU that must be translated to a physical address</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Physical Address</strong></td>
+<td style="text-align:left">The actual address in RAM hardware</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>MMU (Memory Management Unit)</strong></td>
+<td style="text-align:left">Hardware component that translates virtual addresses to physical addresses</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Address Space</strong></td>
+<td style="text-align:left">The range of virtual addresses available to a process</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Valid Bit</strong></td>
+<td style="text-align:left">A flag in the page table indicating whether a page is currently in RAM (1) or not (0)</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Present Bit</strong></td>
+<td style="text-align:left">Indicates whether a page is currently loaded in physical memory</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Protection Bits</strong></td>
+<td style="text-align:left">Flags that control access permissions (read, write, execute) for a page</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Page Fault Handler</strong></td>
+<td style="text-align:left">The OS routine that handles page fault exceptions</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Trap / Exception</strong></td>
+<td style="text-align:left">A signal to the OS that something requires its attention (like a page fault)</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Kernel Mode</strong></td>
+<td style="text-align:left">A privileged CPU mode where the OS has full access to hardware</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>User Mode</strong></td>
+<td style="text-align:left">A restricted CPU mode where applications run with limited privileges</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Context Switch</strong></td>
+<td style="text-align:left">Saving the current process state and switching to another (or the OS)</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Interrupt Return (IRET)</strong></td>
+<td style="text-align:left">An instruction that returns from an interrupt handler, restoring the previous CPU state</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Program Counter (PC)</strong></td>
+<td style="text-align:left">Register holding the address of the next instruction to execute</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Processor Status Register</strong></td>
+<td style="text-align:left">Register containing CPU flags and mode information</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 class="code-line has-line-data" data-line-start="103" data-line-end="104"><a id="Section_9_Memory_Protection_Validation_Page_8_103"></a>Section 9: Memory Protection &amp; Validation (Page 8)</h2>
+<table class="table table-striped table-bordered">
+<thead>
+<tr>
+<th style="text-align:left">Terminology</th>
+<th style="text-align:left">Explanation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><strong>Read-Only Region</strong></td>
+<td style="text-align:left">A memory area where write operations are prohibited</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Illegal Access</strong></td>
+<td style="text-align:left">A memory access that violates protection rules (e.g., writing to read-only memory)</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Demand-Zero Page</strong></td>
+<td style="text-align:left">A newly allocated page that hasn’t been used yet — the OS provides a fresh page filled with zeros</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Mapped File</strong></td>
+<td style="text-align:left">A file whose contents are mapped into a process’s virtual address space</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 class="code-line has-line-data" data-line-start="114" data-line-end="115"><a id="Summary_Table_Core_Memory_Management_Concepts_114"></a>Summary Table: Core Memory Management Concepts</h2>
+<table class="table table-striped table-bordered">
+<thead>
+<tr>
+<th style="text-align:left">Category</th>
+<th style="text-align:left">Key Terms</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><strong>Basic Units</strong></td>
+<td style="text-align:left">Page, Frame, Virtual Address, Physical Address</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Data Structures</strong></td>
+<td style="text-align:left">Page Table, TLB</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Events</strong></td>
+<td style="text-align:left">Page Fault, Context Switch, Trap</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Techniques</strong></td>
+<td style="text-align:left">Demand Paging, Prefetching, Huge Pages, Swap Compression</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Principles</strong></td>
+<td style="text-align:left">Spatial Locality, Temporal Locality, Working Set</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>States</strong></td>
+<td style="text-align:left">Valid/Invalid, Present/Not Present, Read/Write/Execute</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Problems</strong></td>
+<td style="text-align:left">Thrashing, Page Fault Storm</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Performance</strong></td>
+<td style="text-align:left">Hit Rate, Startup Time, Disk Bandwidth</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<p class="has-line-data" data-line-start="129" data-line-end="130">Would you like me to expand on any specific section or create flashcards/study notes from these terminologies?</p>
+
+</body>
+</html>

@@ -1,0 +1,1168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Demand Paging Questions</title>
+  <style>
+  @import url("https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.9.0-alpha2/katex.min.css");
+
+  body {
+    font-family: Georgia, Cambria, serif;
+    font-size: 14px;
+    line-height: 1.7;
+    color: #373D49;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 2rem;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    font-family: "Source Sans Pro", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-weight: 600;
+    margin-top: 1.5em;
+    margin-bottom: 0.5em;
+  }
+  h1 { font-size: 2em; }
+  h2 { font-size: 1.5em; }
+  h3 { font-size: 1.25em; }
+  a { color: #35D7BB; text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  code {
+    font-family: "Ubuntu Mono", Monaco, monospace;
+    background: #F5F7FA;
+    padding: 0.2em 0.4em;
+    border-radius: 3px;
+  }
+  pre {
+    background: #F5F7FA;
+    padding: 1em;
+    border-radius: 3px;
+    overflow-x: auto;
+  }
+  .hljs {
+    display: block;
+    overflow-x: auto;
+    padding: 0;
+    color: #333;
+  }
+  pre code { background: none; padding: 0; }
+  blockquote {
+    border-left: 3px solid #A0AABF;
+    padding-left: 1em;
+    margin-left: 0;
+    font-style: italic;
+    color: #666;
+  }
+  table {
+    border-collapse: collapse;
+    width: 100%;
+  }
+  th, td {
+    border: 1px solid #E8E8E8;
+    padding: 0.5em;
+    text-align: left;
+  }
+  th {
+    background: #F5F7FA;
+    font-weight: 600;
+  }
+  #preview .table {
+    width: auto;
+  }
+  img {
+    max-width: 100%;
+    height: auto;
+  }
+  .katex-display {
+    overflow-x: auto;
+    overflow-y: hidden;
+  }
+</style>
+</head>
+<body id="preview">
+<p class="has-line-data" data-line-start="0" data-line-end="1">I’ll answer all 19 sections of questions in detail, organized by topic. This covers the complete demand paging and virtual memory tutorial.</p>
+<hr>
+<h2 class="code-line has-line-data" data-line-start="4" data-line-end="5"><a id="1_Fundamental_Understanding_Questions_4"></a>1. Fundamental Understanding Questions</h2>
+<p class="has-line-data" data-line-start="6" data-line-end="8"><strong>What is Demand Paging?</strong><br>
+Demand Paging is a memory management technique where pages of a program are loaded into RAM only when they are needed (demanded) by the CPU, rather than loading the entire program at once. The OS creates the process structure, sets up a page table marking all pages as “Not Present,” and loads only the first page containing the entry point. Additional pages are loaded on-demand as page faults occur.</p>
+<p class="has-line-data" data-line-start="9" data-line-end="11"><strong>Why was Demand Paging invented?</strong><br>
+It was invented to solve the fundamental mismatch between program sizes and available RAM. Early computers had limited RAM, and programs were growing larger. Loading everything was wasteful and slow. Demand Paging emerged as a way to run programs larger than physical memory while maintaining reasonable performance.</p>
+<p class="has-line-data" data-line-start="12" data-line-end="14"><strong>What problem does Demand Paging solve?</strong><br>
+It solves three core problems:</p>
+<ul>
+<li class="has-line-data" data-line-start="14" data-line-end="15"><strong>RAM limitation</strong>: Programs larger than physical RAM can still run</li>
+<li class="has-line-data" data-line-start="15" data-line-end="16"><strong>Wasted resources</strong>: Unused code/data doesn’t occupy RAM</li>
+<li class="has-line-data" data-line-start="16" data-line-end="18"><strong>Slow startup</strong>: Programs begin executing immediately without waiting for full disk reads</li>
+</ul>
+<p class="has-line-data" data-line-start="18" data-line-end="20"><strong>Why can’t entire programs always fit into RAM?</strong><br>
+Modern applications are massive (games: 50-100GB, databases: terabytes). RAM is expensive and physically limited. Even if RAM were large enough, loading unused portions wastes memory that could serve other processes or cache data.</p>
+<p class="has-line-data" data-line-start="21" data-line-end="23"><strong>How can a 10 GB program run on 8 GB RAM?</strong><br>
+Through virtual memory and demand paging. Only the actively used pages (working set) reside in RAM at any moment. The rest stays on disk. The OS swaps pages in and out transparently. The program “feels” like it has 10GB because the virtual address space is that large, even though physical RAM is only 8GB.</p>
+<p class="has-line-data" data-line-start="24" data-line-end="26"><strong>What is the relationship between RAM and disk?</strong><br>
+RAM is fast, expensive, volatile memory used for active data. Disk is slow, cheap, persistent storage used as backing store. In demand paging, disk extends RAM: together they form the virtual memory space. Disk holds pages not currently in RAM; RAM holds the working set.</p>
+<p class="has-line-data" data-line-start="27" data-line-end="29"><strong>Why is memory organized as a hierarchy?</strong><br>
+Because of the <strong>speed-cost trade-off</strong>: faster memory is exponentially more expensive per byte. The hierarchy (registers → cache → RAM → disk) balances performance and cost by keeping frequently accessed data in fast memory and rarely accessed data in slow, cheap memory.</p>
+<p class="has-line-data" data-line-start="30" data-line-end="32"><strong>Why is fast memory expensive?</strong><br>
+Fast memory (SRAM in caches, DRAM in RAM) requires more transistors, complex manufacturing, lower density, and higher power consumption. The physics of faster switching speeds demand premium materials and designs.</p>
+<p class="has-line-data" data-line-start="33" data-line-end="35"><strong>Why is slow memory cheap?</strong><br>
+Slow memory (HDD, SSD) uses higher-density storage technologies. Hard drives use magnetic platters; SSDs use flash memory cells that are slower but denser and cheaper to produce at scale.</p>
+<p class="has-line-data" data-line-start="36" data-line-end="38"><strong>What is the illusion of infinite memory?</strong><br>
+Virtual Memory creates the perception that the computer has unlimited RAM because programs can address a virtual address space much larger than physical RAM. The OS transparently manages the backing store (disk), making the program unaware that some “memory” is actually on disk.</p>
+<p class="has-line-data" data-line-start="39" data-line-end="41"><strong>What is Virtual Memory?</strong><br>
+A memory management abstraction that gives each process its own private address space, decoupled from physical RAM. It allows programs to use more memory than physically available by using disk as an extension, and provides isolation between processes.</p>
+<p class="has-line-data" data-line-start="42" data-line-end="44"><strong>How does Virtual Memory relate to Demand Paging?</strong><br>
+Virtual Memory is the <em>concept</em>; Demand Paging is the <em>implementation mechanism</em>. Virtual Memory defines the address space abstraction; Demand Paging is the technique that makes it practical by loading pages only when needed.</p>
+<p class="has-line-data" data-line-start="45" data-line-end="47"><strong>Why do modern operating systems require Demand Paging?</strong><br>
+Without it, multitasking would collapse. Multiple large programs couldn’t coexist. Startup times would be minutes. RAM would be exhausted instantly. The entire modern computing experience—running browsers with hundreds of tabs, large games, IDEs—depends on it.</p>
+<p class="has-line-data" data-line-start="48" data-line-end="49"><strong>What would happen without Demand Paging?</strong></p>
+<ul>
+<li class="has-line-data" data-line-start="49" data-line-end="50">Programs couldn’t exceed RAM size (hard cap)</li>
+<li class="has-line-data" data-line-start="50" data-line-end="51">Startup would require reading entire programs from disk (5-10 seconds for 500MB)</li>
+<li class="has-line-data" data-line-start="51" data-line-end="52">Multitasking would be severely limited (each program hogs full RAM)</li>
+<li class="has-line-data" data-line-start="52" data-line-end="53">RAM would be filled with unused code/data (~70% waste)</li>
+<li class="has-line-data" data-line-start="53" data-line-end="55">System would be unusable for modern workloads</li>
+</ul>
+<p class="has-line-data" data-line-start="55" data-line-end="57"><strong>Why is Demand Paging considered revolutionary?</strong><br>
+It decoupled program size from RAM size for the first time, enabling:</p>
+<ul>
+<li class="has-line-data" data-line-start="57" data-line-end="58">Programs larger than physical memory</li>
+<li class="has-line-data" data-line-start="58" data-line-end="59">Fast startup (programs appear “instantly”)</li>
+<li class="has-line-data" data-line-start="59" data-line-end="60">Efficient multitasking (many programs share RAM via partial loading)</li>
+<li class="has-line-data" data-line-start="60" data-line-end="62">The foundation of modern operating systems</li>
+</ul>
+<hr>
+<h2 class="code-line has-line-data" data-line-start="64" data-line-end="65"><a id="2_Memory_Hierarchy_Questions_64"></a>2. Memory Hierarchy Questions</h2>
+<p class="has-line-data" data-line-start="66" data-line-end="68"><strong>What is the memory hierarchy?</strong><br>
+A pyramid structure of memory technologies organized by speed, cost, and size:</p>
+<table class="table table-striped table-bordered">
+<thead>
+<tr>
+<th style="text-align:left">Level</th>
+<th style="text-align:left">Speed</th>
+<th style="text-align:left">Cost</th>
+<th style="text-align:left">Size</th>
+<th style="text-align:left">Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">Registers</td>
+<td style="text-align:left">~1ns</td>
+<td style="text-align:left">Highest</td>
+<td style="text-align:left">~1KB</td>
+<td style="text-align:left">CPU registers</td>
+</tr>
+<tr>
+<td style="text-align:left">L1 Cache</td>
+<td style="text-align:left">~2-4ns</td>
+<td style="text-align:left">Very High</td>
+<td style="text-align:left">~32-64KB</td>
+<td style="text-align:left">On-chip SRAM</td>
+</tr>
+<tr>
+<td style="text-align:left">L2/L3 Cache</td>
+<td style="text-align:left">~10-20ns</td>
+<td style="text-align:left">High</td>
+<td style="text-align:left">~1-32MB</td>
+<td style="text-align:left">CPU cache</td>
+</tr>
+<tr>
+<td style="text-align:left">RAM</td>
+<td style="text-align:left">~100ns</td>
+<td style="text-align:left">Moderate</td>
+<td style="text-align:left">8-128GB</td>
+<td style="text-align:left">DRAM</td>
+</tr>
+<tr>
+<td style="text-align:left">SSD</td>
+<td style="text-align:left">~100μs</td>
+<td style="text-align:left">Low</td>
+<td style="text-align:left">256GB-4TB</td>
+<td style="text-align:left">Flash storage</td>
+</tr>
+<tr>
+<td style="text-align:left">HDD</td>
+<td style="text-align:left">~10ms</td>
+<td style="text-align:left">Lowest</td>
+<td style="text-align:left">1-16TB</td>
+<td style="text-align:left">Magnetic disk</td>
+</tr>
+</tbody>
+</table>
+<p class="has-line-data" data-line-start="77" data-line-end="79"><strong>Why do computers use multiple layers of memory?</strong><br>
+To exploit <strong>locality of reference</strong>. Programs tend to reuse recently accessed data (temporal locality) and access nearby data (spatial locality). The hierarchy keeps hot data in fast, small memory and cold data in slow, large memory.</p>
+<p class="has-line-data" data-line-start="80" data-line-end="82"><strong>What are registers?</strong><br>
+The fastest, smallest memory inside the CPU. They hold data the CPU is actively computing on. Access is nearly instantaneous (~1 clock cycle). There are typically 16-32 general-purpose registers in modern CPUs.</p>
+<p class="has-line-data" data-line-start="83" data-line-end="85"><strong>What is RAM?</strong><br>
+Random Access Memory—volatile, byte-addressable memory where active program data and code reside. DRAM (Dynamic RAM) is used for main memory; it requires periodic refreshing and is slower than cache but much larger.</p>
+<p class="has-line-data" data-line-start="86" data-line-end="88"><strong>What is secondary storage?</strong><br>
+Non-volatile storage (HDD, SSD) that persists data without power. It’s 100,000× slower than RAM but 100× cheaper per GB. It serves as the backing store for virtual memory.</p>
+<p class="has-line-data" data-line-start="89" data-line-end="90"><strong>Why is disk slower than RAM?</strong></p>
+<ul>
+<li class="has-line-data" data-line-start="90" data-line-end="91"><strong>Physical movement</strong>: HDDs have mechanical heads that must move to the correct track (seek time: ~5-10ms) and wait for the platter to rotate (latency: ~4ms)</li>
+<li class="has-line-data" data-line-start="91" data-line-end="92"><strong>Electronic vs. mechanical</strong>: RAM is pure electronics; disks involve physics</li>
+<li class="has-line-data" data-line-start="92" data-line-end="93"><strong>Bandwidth</strong>: Even SSDs are limited by NAND flash read speeds (~500MB/s vs RAM’s ~25GB/s)</li>
+<li class="has-line-data" data-line-start="93" data-line-end="95"><strong>Latency</strong>: RAM access is ~100ns; SSD is ~100μs (1000× slower); HDD is ~10ms (100,000× slower)</li>
+</ul>
+<p class="has-line-data" data-line-start="95" data-line-end="97"><strong>Why are memory technologies organized as a pyramid?</strong><br>
+The pyramid reflects the <strong>fundamental trade-off</strong>: you can have fast, small, expensive memory OR slow, large, cheap memory—not both. The hierarchy places the most critical data at the top (fastest) and everything else at the bottom.</p>
+<p class="has-line-data" data-line-start="98" data-line-end="100"><strong>What trade-off exists between memory speed and cost?</strong><br>
+<strong>Speed ∝ 1/Cost per GB</strong>. Each 10× speed increase roughly costs 10× more per GB. This is why we can’t build computers with 1TB of register-speed memory—it would cost millions.</p>
+<p class="has-line-data" data-line-start="101" data-line-end="103"><strong>Why do we keep only active data in RAM?</strong><br>
+Because RAM is expensive and limited. Keeping inactive data in RAM wastes space that could hold other active data, reducing the number of programs that can run simultaneously and hurting cache performance.</p>
+<hr>
+<h2 class="code-line has-line-data" data-line-start="106" data-line-end="107"><a id="3_Swapping_vs_Demand_Paging_Questions_106"></a>3. Swapping vs Demand Paging Questions</h2>
+<p class="has-line-data" data-line-start="108" data-line-end="110"><strong>What is swapping?</strong><br>
+An older memory management technique where the <strong>entire process</strong> is moved between RAM and disk. When RAM is full, an entire process is swapped out to disk; when needed again, the entire process is swapped back in.</p>
+<p class="has-line-data" data-line-start="111" data-line-end="113"><strong>How did old swapping systems work?</strong><br>
+The OS would:</p>
+<ol>
+<li class="has-line-data" data-line-start="113" data-line-end="114">Pause a process when RAM was full</li>
+<li class="has-line-data" data-line-start="114" data-line-end="115">Write its <strong>entire</strong> memory image to a swap partition on disk</li>
+<li class="has-line-data" data-line-start="115" data-line-end="116">Load another complete process from disk into RAM</li>
+<li class="has-line-data" data-line-start="116" data-line-end="118">Resume execution</li>
+</ol>
+<p class="has-line-data" data-line-start="118" data-line-end="119"><strong>Why was swapping inefficient?</strong></p>
+<ul>
+<li class="has-line-data" data-line-start="119" data-line-end="120"><strong>Massive I/O</strong>: Moving entire processes (hundreds of MB) to disk is slow</li>
+<li class="has-line-data" data-line-start="120" data-line-end="121"><strong>Wasted bandwidth</strong>: Even unused parts of the program were swapped</li>
+<li class="has-line-data" data-line-start="121" data-line-end="122"><strong>Poor granularity</strong>: No way to keep active parts in RAM while moving inactive parts out</li>
+<li class="has-line-data" data-line-start="122" data-line-end="124"><strong>Thrashing risk</strong>: Heavy swapping could paralyze the system</li>
+</ul>
+<p class="has-line-data" data-line-start="124" data-line-end="125"><strong>What is the difference between swapping and Demand Paging?</strong></p>
+<table class="table table-striped table-bordered">
+<thead>
+<tr>
+<th style="text-align:left">Aspect</th>
+<th style="text-align:left">Swapping</th>
+<th style="text-align:left">Demand Paging</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">Unit of transfer</td>
+<td style="text-align:left">Entire process</td>
+<td style="text-align:left">Individual pages (4KB)</td>
+</tr>
+<tr>
+<td style="text-align:left">Granularity</td>
+<td style="text-align:left">Coarse</td>
+<td style="text-align:left">Fine</td>
+</tr>
+<tr>
+<td style="text-align:left">RAM usage</td>
+<td style="text-align:left">All-or-nothing</td>
+<td style="text-align:left">Partial, precise</td>
+</tr>
+<tr>
+<td style="text-align:left">Startup</td>
+<td style="text-align:left">Load everything first</td>
+<td style="text-align:left">Load only first page</td>
+</tr>
+<tr>
+<td style="text-align:left">Flexibility</td>
+<td style="text-align:left">Low</td>
+<td style="text-align:left">High</td>
+</tr>
+<tr>
+<td style="text-align:left">Efficiency</td>
+<td style="text-align:left">Poor</td>
+<td style="text-align:left">Excellent</td>
+</tr>
+</tbody>
+</table>
+<p class="has-line-data" data-line-start="134" data-line-end="136"><strong>Why is loading entire programs wasteful?</strong><br>
+Programs contain sections used at different times or never:</p>
+<ul>
+<li class="has-line-data" data-line-start="136" data-line-end="137">Error handling code (rarely used in normal operation)</li>
+<li class="has-line-data" data-line-start="137" data-line-end="138">Initialization code (used once at startup)</li>
+<li class="has-line-data" data-line-start="138" data-line-end="139">Features for edge cases (unused 99% of the time)</li>
+<li class="has-line-data" data-line-start="139" data-line-end="141">Debug/info sections (never in production)</li>
+</ul>
+<p class="has-line-data" data-line-start="141" data-line-end="142">A typical large program uses only <strong>~15%</strong> of its code/data in any 10-second window.</p>
+<p class="has-line-data" data-line-start="143" data-line-end="144"><strong>Why is Demand Paging better than swapping?</strong></p>
+<ul>
+<li class="has-line-data" data-line-start="144" data-line-end="145"><strong>Fine granularity</strong>: Only needed pages are loaded</li>
+<li class="has-line-data" data-line-start="145" data-line-end="146"><strong>Better RAM utilization</strong>: Multiple programs share RAM efficiently</li>
+<li class="has-line-data" data-line-start="146" data-line-end="147"><strong>Faster startup</strong>: Programs begin executing in milliseconds</li>
+<li class="has-line-data" data-line-start="147" data-line-end="149"><strong>Less I/O</strong>: Only active pages touch the disk</li>
+</ul>
+<p class="has-line-data" data-line-start="149" data-line-end="151"><strong>Why is startup faster with Demand Paging?</strong><br>
+The OS loads only the first page (~4KB) containing the entry point. The program begins executing immediately. The rest loads lazily over time. With swapping/loading-everything, the entire program must be read from disk first.</p>
+<p class="has-line-data" data-line-start="152" data-line-end="154"><strong>Why does swapping hurt multitasking?</strong><br>
+Each process requires its full memory footprint in RAM. With swapping, only a few large processes can fit. Demand paging allows dozens of processes to share RAM by each using only their active pages.</p>
+<p class="has-line-data" data-line-start="155" data-line-end="157"><strong>Why does Demand Paging improve multitasking?</strong><br>
+RAM becomes a shared pool of frames allocated dynamically to the pages actually being used. Processes don’t “own” RAM; they borrow it page-by-page. This allows many more processes to run concurrently.</p>
+<hr>
+<h2 class="code-line has-line-data" data-line-start="160" data-line-end="161"><a id="4_Page_Fundamentals_Questions_160"></a>4. Page Fundamentals Questions</h2>
+<p class="has-line-data" data-line-start="162" data-line-end="164"><strong>What is a page?</strong><br>
+A fixed-size block of virtual memory (typically 4KB), the basic unit of transfer between disk and RAM. It’s the atomic unit of memory management—the smallest amount that can be independently mapped, loaded, or evicted.</p>
+<p class="has-line-data" data-line-start="165" data-line-end="167"><strong>What is a frame?</strong><br>
+A page-sized slot in physical RAM. If pages are 4KB, frames are 4KB. A frame holds exactly one page when that page is resident in RAM.</p>
+<p class="has-line-data" data-line-start="168" data-line-end="169"><strong>What is the difference between a page and a frame?</strong></p>
+<ul>
+<li class="has-line-data" data-line-start="169" data-line-end="170"><strong>Page</strong>: Virtual concept—belongs to a process’s virtual address space</li>
+<li class="has-line-data" data-line-start="170" data-line-end="173"><strong>Frame</strong>: Physical concept—a location in actual RAM hardware<br>
+A page is “mapped to” a frame when loaded in RAM.</li>
+</ul>
+<p class="has-line-data" data-line-start="173" data-line-end="175"><strong>Why are pages fixed-size?</strong><br>
+Fixed size simplifies hardware and software:</p>
+<ul>
+<li class="has-line-data" data-line-start="175" data-line-end="176"><strong>Hardware</strong>: MMU can use simple bit-shifting to split addresses</li>
+<li class="has-line-data" data-line-start="176" data-line-end="177"><strong>OS</strong>: Easy frame allocation (any free frame fits any page)</li>
+<li class="has-line-data" data-line-start="177" data-line-end="178"><strong>Disk I/O</strong>: Predictable transfer sizes</li>
+<li class="has-line-data" data-line-start="178" data-line-end="180"><strong>Replacement</strong>: Uniform eviction decisions</li>
+</ul>
+<p class="has-line-data" data-line-start="180" data-line-end="182"><strong>Why is page size usually 4 KB?</strong><br>
+4KB balances several factors:</p>
+<ul>
+<li class="has-line-data" data-line-start="182" data-line-end="183"><strong>Small enough</strong>: Minimizes internal fragmentation (wasted space in last page)</li>
+<li class="has-line-data" data-line-start="183" data-line-end="184"><strong>Large enough</strong>: Amortizes page table overhead and disk seek costs</li>
+<li class="has-line-data" data-line-start="184" data-line-end="185"><strong>Hardware tradition</strong>: x86 architecture standardized on 4KB; compatibility matters</li>
+<li class="has-line-data" data-line-start="185" data-line-end="187"><strong>Locality</strong>: Most programs exhibit locality within 4KB regions</li>
+</ul>
+<p class="has-line-data" data-line-start="187" data-line-end="189"><strong>Why are powers of two used in memory systems?</strong><br>
+Powers of two make address translation trivial via bit manipulation:</p>
+<ul>
+<li class="has-line-data" data-line-start="189" data-line-end="190">Page number = high bits of address</li>
+<li class="has-line-data" data-line-start="190" data-line-end="193">Offset = low bits of address<br>
+No division or multiplication needed—just bit masking and shifting, which hardware performs in nanoseconds.</li>
+</ul>
+<p class="has-line-data" data-line-start="193" data-line-end="195"><strong>What is internal fragmentation?</strong><br>
+Wasted space within the last page of a segment. If a program needs 4097 bytes, it gets 2 pages (8192 bytes), wasting 4095 bytes in the second page. With 4KB pages, average internal fragmentation is 2KB per segment.</p>
+<p class="has-line-data" data-line-start="196" data-line-end="198"><strong>Why is fixed-size paging easier for hardware?</strong><br>
+The MMU can use simple arithmetic:</p>
+<pre><code class="has-line-data" data-line-start="199" data-line-end="202">Page Number = Address &gt;&gt; 12    (divide by 4096)
+Offset = Address &amp; 0xFFF       (modulo 4096)
+</code></pre>
+<p class="has-line-data" data-line-start="202" data-line-end="203">Variable sizes would require complex division, lookup tables, or software assistance.</p>
+<p class="has-line-data" data-line-start="204" data-line-end="206"><strong>How are addresses divided into page number and offset?</strong><br>
+For 32-bit addresses with 4KB (2¹²) pages:</p>
+<ul>
+<li class="has-line-data" data-line-start="206" data-line-end="207"><strong>Page Number</strong>: Upper 20 bits (bits 12-31) → indexes into page table</li>
+<li class="has-line-data" data-line-start="207" data-line-end="209"><strong>Offset</strong>: Lower 12 bits (bits 0-11) → added to frame base address</li>
+</ul>
+<p class="has-line-data" data-line-start="209" data-line-end="210">Example: <code>0x00005078</code></p>
+<ul>
+<li class="has-line-data" data-line-start="210" data-line-end="211">Binary: <code>0000 0000 0000 0000 0101 | 0000 0111 1000</code></li>
+<li class="has-line-data" data-line-start="211" data-line-end="212">Page Number: <code>0x5</code> (upper 20 bits)</li>
+<li class="has-line-data" data-line-start="212" data-line-end="214">Offset: <code>0x078</code> (lower 12 bits)</li>
+</ul>
+<p class="has-line-data" data-line-start="214" data-line-end="216"><strong>How does page alignment work?</strong><br>
+Pages must start at addresses divisible by the page size. A 4KB page starting at <code>0x0000</code> spans <code>0x0000-0x0FFF</code>. The next page starts at <code>0x1000</code>. This alignment ensures the offset fits in 12 bits and pages don’t overlap.</p>
+<hr>
+<h2 class="code-line has-line-data" data-line-start="219" data-line-end="220"><a id="5_Address_Translation_Questions_219"></a>5. Address Translation Questions</h2>
+<p class="has-line-data" data-line-start="221" data-line-end="223"><strong>What is a virtual address?</strong><br>
+An address generated by the CPU that belongs to a process’s private address space. It has no direct physical meaning—the MMU must translate it to a physical address before memory access.</p>
+<p class="has-line-data" data-line-start="224" data-line-end="226"><strong>What is a physical address?</strong><br>
+The actual address placed on the memory bus to access RAM hardware. It corresponds to a specific DRAM chip, bank, row, and column.</p>
+<p class="has-line-data" data-line-start="227" data-line-end="228"><strong>How does address translation work?</strong></p>
+<ol>
+<li class="has-line-data" data-line-start="228" data-line-end="229">CPU generates virtual address</li>
+<li class="has-line-data" data-line-start="229" data-line-end="230">MMU splits it into page number + offset</li>
+<li class="has-line-data" data-line-start="230" data-line-end="231">MMU looks up page number in page table</li>
+<li class="has-line-data" data-line-start="231" data-line-end="232">Page table yields frame number (if page is present)</li>
+<li class="has-line-data" data-line-start="232" data-line-end="233">MMU concatenates frame number + offset → physical address</li>
+<li class="has-line-data" data-line-start="233" data-line-end="235">Physical address sent to RAM</li>
+</ol>
+<p class="has-line-data" data-line-start="235" data-line-end="237"><strong>What is the MMU?</strong><br>
+Memory Management Unit—a hardware component (often integrated into the CPU) that performs virtual-to-physical address translation, enforces memory protection, and detects page faults.</p>
+<p class="has-line-data" data-line-start="238" data-line-end="239"><strong>What does the MMU do?</strong></p>
+<ul>
+<li class="has-line-data" data-line-start="239" data-line-end="240">Translates every memory access from virtual to physical</li>
+<li class="has-line-data" data-line-start="240" data-line-end="241">Checks protection bits (read/write/execute)</li>
+<li class="has-line-data" data-line-start="241" data-line-end="242">Sets page fault flag when translation fails</li>
+<li class="has-line-data" data-line-start="242" data-line-end="243">Manages the TLB (translation cache)</li>
+<li class="has-line-data" data-line-start="243" data-line-end="245">Updates reference/dirty bits</li>
+</ul>
+<p class="has-line-data" data-line-start="245" data-line-end="246"><strong>How does the MMU translate addresses?</strong></p>
+<pre><code class="has-line-data" data-line-start="247" data-line-end="249">Physical Address = (Frame_Number × Page_Size) + Offset
+</code></pre>
+<p class="has-line-data" data-line-start="249" data-line-end="250">Or equivalently: shift frame number left by page size bits, then add offset.</p>
+<p class="has-line-data" data-line-start="251" data-line-end="253"><strong>How does the MMU detect missing pages?</strong><br>
+The MMU checks the <strong>Valid/Present bit</strong> in the page table entry:</p>
+<ul>
+<li class="has-line-data" data-line-start="253" data-line-end="254"><strong>Valid = 1</strong>: Page is in RAM → proceed with translation</li>
+<li class="has-line-data" data-line-start="254" data-line-end="256"><strong>Valid = 0</strong>: Page not in RAM → trigger page fault exception</li>
+</ul>
+<p class="has-line-data" data-line-start="256" data-line-end="258"><strong>What is the role of the page table?</strong><br>
+The page table is the data structure that maps virtual page numbers to physical frame numbers (or disk locations). It’s the “directory” that makes virtual memory possible. Each process has its own page table.</p>
+<p class="has-line-data" data-line-start="259" data-line-end="260"><strong>What is stored inside a Page Table Entry (PTE)?</strong></p>
+<table class="table table-striped table-bordered">
+<thead>
+<tr>
+<th style="text-align:left">Field</th>
+<th style="text-align:left">Bits</th>
+<th style="text-align:left">Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">Frame Number</td>
+<td style="text-align:left">20</td>
+<td style="text-align:left">Physical frame address</td>
+</tr>
+<tr>
+<td style="text-align:left">Valid/Present</td>
+<td style="text-align:left">1</td>
+<td style="text-align:left">Is page in RAM?</td>
+</tr>
+<tr>
+<td style="text-align:left">Dirty/Modified</td>
+<td style="text-align:left">1</td>
+<td style="text-align:left">Has page been written?</td>
+</tr>
+<tr>
+<td style="text-align:left">Reference/Accessed</td>
+<td style="text-align:left">1</td>
+<td style="text-align:left">Has page been read/written?</td>
+</tr>
+<tr>
+<td style="text-align:left">Protection (R/W/X)</td>
+<td style="text-align:left">3</td>
+<td style="text-align:left">Read/Write/Execute permissions</td>
+</tr>
+<tr>
+<td style="text-align:left">Cacheable</td>
+<td style="text-align:left">1</td>
+<td style="text-align:left">Can be cached?</td>
+</tr>
+<tr>
+<td style="text-align:left">Global</td>
+<td style="text-align:left">1</td>
+<td style="text-align:left">Shared across processes?</td>
+</tr>
+</tbody>
+</table>
+<p class="has-line-data" data-line-start="270" data-line-end="272"><strong>What is the Valid Bit?</strong><br>
+Indicates whether the page is currently resident in physical RAM (1 = present, 0 = not present). If 0, accessing this page triggers a page fault.</p>
+<p class="has-line-data" data-line-start="273" data-line-end="275"><strong>What is the Dirty Bit?</strong><br>
+Set to 1 when the page is modified (written to). Tells the OS this page must be written back to disk before eviction (otherwise changes are lost).</p>
+<p class="has-line-data" data-line-start="276" data-line-end="278"><strong>What is the Reference Bit?</strong><br>
+Set to 1 when the page is accessed (read or written). Used by replacement algorithms (like Clock) to identify recently used pages. The OS periodically clears this bit to track usage over time.</p>
+<p class="has-line-data" data-line-start="279" data-line-end="281"><strong>What are protection bits?</strong><br>
+Flags controlling access permissions:</p>
+<ul>
+<li class="has-line-data" data-line-start="281" data-line-end="282"><strong>Read ®</strong>: Can the page be read?</li>
+<li class="has-line-data" data-line-start="282" data-line-end="283"><strong>Write (W)</strong>: Can the page be modified?</li>
+<li class="has-line-data" data-line-start="283" data-line-end="286"><strong>Execute (X)</strong>: Can code in this page be executed?<br>
+Violations trigger protection faults (e.g., segmentation fault).</li>
+</ul>
+<p class="has-line-data" data-line-start="286" data-line-end="287"><strong>What happens during a page table lookup?</strong></p>
+<ol>
+<li class="has-line-data" data-line-start="287" data-line-end="288">MMU extracts page number from virtual address</li>
+<li class="has-line-data" data-line-start="288" data-line-end="289">MMU reads PTE from page table in RAM</li>
+<li class="has-line-data" data-line-start="289" data-line-end="290">MMU checks Valid bit</li>
+<li class="has-line-data" data-line-start="290" data-line-end="291">If valid: extracts frame number, computes physical address</li>
+<li class="has-line-data" data-line-start="291" data-line-end="293">If invalid: signals page fault to CPU</li>
+</ol>
+<p class="has-line-data" data-line-start="293" data-line-end="294"><strong>How does the MMU compute physical addresses?</strong></p>
+<pre><code class="has-line-data" data-line-start="295" data-line-end="297">Physical Address = (Frame_Number &lt;&lt; 12) | Offset
+</code></pre>
+<p class="has-line-data" data-line-start="297" data-line-end="298">For 4KB pages: shift frame number left by 12 bits (multiply by 4096), then bitwise-OR with the 12-bit offset.</p>
+<hr>
+<h2 class="code-line has-line-data" data-line-start="301" data-line-end="302"><a id="6_Page_Fault_Questions_301"></a>6. Page Fault Questions</h2>
+<p class="has-line-data" data-line-start="303" data-line-end="305"><strong>What is a page fault?</strong><br>
+A hardware exception triggered when the CPU accesses a virtual page not currently resident in physical RAM. It’s the mechanism that enables demand paging—the “signal” that a needed page must be loaded from disk.</p>
+<p class="has-line-data" data-line-start="306" data-line-end="308"><strong>Is a page fault an error?</strong><br>
+No—it’s a <strong>normal, expected event</strong> in demand paging systems. Unlike segmentation faults (illegal access), page faults are part of correct operation. The OS handles them transparently.</p>
+<p class="has-line-data" data-line-start="309" data-line-end="311"><strong>What triggers a page fault?</strong><br>
+Any memory access (read, write, or execute) to a page where the page table’s Valid bit is 0 (page not in RAM).</p>
+<p class="has-line-data" data-line-start="312" data-line-end="314"><strong>What happens when a page fault occurs?</strong><br>
+The complete sequence:</p>
+<ol>
+<li class="has-line-data" data-line-start="314" data-line-end="315">CPU generates virtual address</li>
+<li class="has-line-data" data-line-start="315" data-line-end="316">MMU checks page table → Valid = 0</li>
+<li class="has-line-data" data-line-start="316" data-line-end="317">MMU raises page fault exception</li>
+<li class="has-line-data" data-line-start="317" data-line-end="318">CPU switches to kernel mode</li>
+<li class="has-line-data" data-line-start="318" data-line-end="319">CPU saves state (registers, PC, status) to stack</li>
+<li class="has-line-data" data-line-start="319" data-line-end="320">OS page fault handler runs</li>
+<li class="has-line-data" data-line-start="320" data-line-end="321">OS validates access (legal? permissions?)</li>
+<li class="has-line-data" data-line-start="321" data-line-end="322">OS locates page on disk (or allocates zero page)</li>
+<li class="has-line-data" data-line-start="322" data-line-end="323">OS finds free frame (or evicts victim page)</li>
+<li class="has-line-data" data-line-start="323" data-line-end="324">OS initiates disk read (DMA transfer to frame)</li>
+<li class="has-line-data" data-line-start="324" data-line-end="325">CPU context-switches to another process (optional)</li>
+<li class="has-line-data" data-line-start="325" data-line-end="326">Disk interrupt signals completion</li>
+<li class="has-line-data" data-line-start="326" data-line-end="327">OS updates PTE: Valid=1, Frame=assigned</li>
+<li class="has-line-data" data-line-start="327" data-line-end="328">OS restores CPU state (registers, PC)</li>
+<li class="has-line-data" data-line-start="328" data-line-end="329">CPU returns to user mode, re-executes faulting instruction</li>
+<li class="has-line-data" data-line-start="329" data-line-end="331">Instruction succeeds (page now in RAM)</li>
+</ol>
+<p class="has-line-data" data-line-start="331" data-line-end="333"><strong>What are the steps in page fault handling?</strong><br>
+See above—16 steps from fault detection to instruction restart.</p>
+<p class="has-line-data" data-line-start="334" data-line-end="336"><strong>What does the OS do during a page fault?</strong><br>
+The OS acts as the “librarian”:</p>
+<ul>
+<li class="has-line-data" data-line-start="336" data-line-end="337">Validates the access is legal (not a segfault)</li>
+<li class="has-line-data" data-line-start="337" data-line-end="338">Finds where the page lives on disk</li>
+<li class="has-line-data" data-line-start="338" data-line-end="339">Allocates a physical frame</li>
+<li class="has-line-data" data-line-start="339" data-line-end="340">Initiates disk I/O (often via DMA)</li>
+<li class="has-line-data" data-line-start="340" data-line-end="341">Updates page tables when I/O completes</li>
+<li class="has-line-data" data-line-start="341" data-line-end="343">Restarts the faulting process</li>
+</ul>
+<p class="has-line-data" data-line-start="343" data-line-end="345"><strong>Why does the CPU switch to kernel mode?</strong><br>
+Page fault handling requires privileged operations: accessing page tables, initiating disk I/O, modifying process state, and restarting instructions. These cannot be done in user mode for security and stability.</p>
+<p class="has-line-data" data-line-start="346" data-line-end="348"><strong>What is a trap?</strong><br>
+A synchronous exception caused by the currently executing instruction (like page fault, division by zero, system call). The CPU automatically transfers control to a kernel handler.</p>
+<p class="has-line-data" data-line-start="349" data-line-end="351"><strong>What is a hardware exception?</strong><br>
+An event detected by CPU hardware that requires OS intervention. Page faults are hardware exceptions because the MMU (hardware) detects the missing page and signals the CPU.</p>
+<p class="has-line-data" data-line-start="352" data-line-end="353"><strong>What state does the CPU save during a fault?</strong></p>
+<ul>
+<li class="has-line-data" data-line-start="353" data-line-end="354">Program Counter (PC): address of faulting instruction</li>
+<li class="has-line-data" data-line-start="354" data-line-end="355">Processor Status Register (PSR): flags, mode bits</li>
+<li class="has-line-data" data-line-start="355" data-line-end="356">General-purpose registers (pushed to kernel stack)</li>
+<li class="has-line-data" data-line-start="356" data-line-end="358">Stack pointer</li>
+</ul>
+<p class="has-line-data" data-line-start="358" data-line-end="360"><strong>Why is the instruction restarted after a fault?</strong><br>
+The faulting instruction never completed—it was interrupted mid-execution. After the page is loaded, the instruction must re-execute to access the now-present page and complete its operation.</p>
+<p class="has-line-data" data-line-start="361" data-line-end="363"><strong>Why does the saved PC point to the faulting instruction?</strong><br>
+So that when the OS returns via IRET, execution resumes at the exact instruction that caused the fault—not the next one. This allows the instruction to succeed on the second attempt.</p>
+<p class="has-line-data" data-line-start="364" data-line-end="366"><strong>How does execution continue after paging?</strong><br>
+After IRET, the CPU is back in user mode with the PC pointing to the faulting instruction. The MMU now finds Valid=1 in the page table, translates the address successfully, and the instruction completes normally.</p>
+<p class="has-line-data" data-line-start="367" data-line-end="368"><strong>What is the difference between a major and minor page fault?</strong></p>
+<ul>
+<li class="has-line-data" data-line-start="368" data-line-end="369"><strong>Major page fault</strong>: Page must be read from disk (slow: ~10ms)</li>
+<li class="has-line-data" data-line-start="369" data-line-end="371"><strong>Minor page fault</strong>: Page is already in RAM (e.g., shared library already loaded by another process, or zero page allocation). Much faster: no disk I/O needed.</li>
+</ul>
+<p class="has-line-data" data-line-start="371" data-line-end="373"><strong>What is an invalid page fault?</strong><br>
+A page fault for an address that is not part of the process’s legal address space (e.g., dereferencing a null pointer, accessing unmapped memory). The OS cannot satisfy this—it’s a programming error.</p>
+<p class="has-line-data" data-line-start="374" data-line-end="376"><strong>What causes a segmentation fault?</strong><br>
+An invalid memory access: writing to read-only memory, executing non-executable memory, or accessing addresses outside allocated regions. The OS kills the process with SIGSEGV.</p>
+<p class="has-line-data" data-line-start="377" data-line-end="379"><strong>How does the OS validate memory access?</strong><br>
+The OS checks:</p>
+<ol>
+<li class="has-line-data" data-line-start="379" data-line-end="380">Is the virtual address within a valid VMA (Virtual Memory Area)?</li>
+<li class="has-line-data" data-line-start="380" data-line-end="381">Are the access permissions (R/W/X) sufficient?</li>
+<li class="has-line-data" data-line-start="381" data-line-end="382">Is the page mapped to a file or swap space?</li>
+<li class="has-line-data" data-line-start="382" data-line-end="384">Is it a demand-zero page?</li>
+</ol>
+<p class="has-line-data" data-line-start="384" data-line-end="385"><strong>What is a legal vs illegal memory access?</strong></p>
+<ul>
+<li class="has-line-data" data-line-start="385" data-line-end="386"><strong>Legal</strong>: Address belongs to process, permissions match operation, page exists in backing store</li>
+<li class="has-line-data" data-line-start="386" data-line-end="388"><strong>Illegal</strong>: Address outside process space, permission violation (write to read-only), unmapped address</li>
+</ul>
+<hr>
+<h2 class="code-line has-line-data" data-line-start="390" data-line-end="391"><a id="7_Page_Replacement_Questions_390"></a>7. Page Replacement Questions</h2>
+<p class="has-line-data" data-line-start="392" data-line-end="394"><strong>What happens when RAM becomes full?</strong><br>
+When all frames are occupied and a new page is needed, the OS must <strong>evict</strong> (remove) an existing page from RAM to make space.</p>
+<p class="has-line-data" data-line-start="395" data-line-end="397"><strong>What is page replacement?</strong><br>
+The algorithm and process of selecting which resident page to remove from RAM when a new page needs to be loaded.</p>
+<p class="has-line-data" data-line-start="398" data-line-end="400"><strong>Why must pages be evicted?</strong><br>
+RAM is finite. To load a new page, an old one must go. The goal is to evict the page least likely to be needed soon.</p>
+<p class="has-line-data" data-line-start="401" data-line-end="403"><strong>What is a victim page?</strong><br>
+The page selected by the replacement algorithm to be removed from RAM.</p>
+<p class="has-line-data" data-line-start="404" data-line-end="406"><strong>How does the OS choose a victim page?</strong><br>
+Using replacement algorithms that predict future usage based on past behavior.</p>
+<p class="has-line-data" data-line-start="407" data-line-end="409"><strong>What is FIFO replacement?</strong><br>
+First-In-First-Out: evict the page that has been in RAM the longest. Simple but ignores usage patterns. Can suffer from <strong>Belady’s Anomaly</strong>: more frames can sometimes increase faults.</p>
+<p class="has-line-data" data-line-start="410" data-line-end="412"><strong>What is LRU replacement?</strong><br>
+Least Recently Used: evict the page that hasn’t been accessed for the longest time. Assumes temporal locality—if a page hasn’t been used recently, it won’t be used soon. Excellent in theory but expensive to implement perfectly.</p>
+<p class="has-line-data" data-line-start="413" data-line-end="415"><strong>What is the Optimal algorithm?</strong><br>
+OPT or MIN: evict the page that won’t be used for the longest time in the future. This is the theoretical best but <strong>impossible to implement</strong> because it requires knowledge of the future. Used as a benchmark.</p>
+<p class="has-line-data" data-line-start="416" data-line-end="418"><strong>What is the Clock algorithm?</strong><br>
+An efficient approximation of LRU using a circular buffer and a reference bit:</p>
+<ul>
+<li class="has-line-data" data-line-start="418" data-line-end="419">Pages arranged in a circle (like a clock)</li>
+<li class="has-line-data" data-line-start="419" data-line-end="420">Each page has a reference bit (set on access)</li>
+<li class="has-line-data" data-line-start="420" data-line-end="421">When seeking a victim, the hand sweeps around</li>
+<li class="has-line-data" data-line-start="421" data-line-end="422">If reference bit = 1: clear it, move on</li>
+<li class="has-line-data" data-line-start="422" data-line-end="425">If reference bit = 0: this is the victim<br>
+Combines reasonable performance with O(1) overhead.</li>
+</ul>
+<p class="has-line-data" data-line-start="425" data-line-end="427"><strong>Why is no replacement algorithm perfect?</strong><br>
+All algorithms must predict the future. Programs have complex, non-deterministic access patterns. What works well for one workload fails for another. The Optimal algorithm is unachievable; all real algorithms are approximations.</p>
+<p class="has-line-data" data-line-start="428" data-line-end="429"><strong>What trade-offs exist in replacement algorithms?</strong></p>
+<ul>
+<li class="has-line-data" data-line-start="429" data-line-end="430"><strong>Accuracy vs. overhead</strong>: Better prediction requires more bookkeeping</li>
+<li class="has-line-data" data-line-start="430" data-line-end="431"><strong>Fairness vs. performance</strong>: Should all processes be treated equally?</li>
+<li class="has-line-data" data-line-start="431" data-line-end="433"><strong>Global vs. local</strong>: Should replacement consider all pages or per-process?</li>
+</ul>
+<p class="has-line-data" data-line-start="433" data-line-end="435"><strong>Why is LRU better than FIFO?</strong><br>
+LRU exploits temporal locality—recently used pages are likely to be used again. FIFO ignores usage entirely; a frequently used page can be evicted just because it loaded early.</p>
+<p class="has-line-data" data-line-start="436" data-line-end="438"><strong>Why is Optimal impossible in practice?</strong><br>
+It requires perfect knowledge of all future memory accesses. The OS cannot predict what the program will do next. It’s a theoretical lower bound used to evaluate real algorithms.</p>
+<hr>
+<h2 class="code-line has-line-data" data-line-start="441" data-line-end="442"><a id="8_DirtyClean_Page_Questions_441"></a>8. Dirty/Clean Page Questions</h2>
+<p class="has-line-data" data-line-start="443" data-line-end="445"><strong>What is a clean page?</strong><br>
+A page that has not been modified since loading from disk. Its contents match the disk copy exactly. Can be discarded without writing back.</p>
+<p class="has-line-data" data-line-start="446" data-line-end="448"><strong>What is a dirty page?</strong><br>
+A page that has been written to (modified). Its RAM contents differ from the disk copy. Must be written back to disk before eviction to preserve changes.</p>
+<p class="has-line-data" data-line-start="449" data-line-end="451"><strong>Why must dirty pages be written back to disk?</strong><br>
+To prevent data loss. If a dirty page is discarded without saving, the modifications (user data, program state) are permanently lost.</p>
+<p class="has-line-data" data-line-start="452" data-line-end="454"><strong>Why can clean pages be discarded immediately?</strong><br>
+The disk already has an identical copy. No write is needed—just remove the page from RAM and reuse the frame.</p>
+<p class="has-line-data" data-line-start="455" data-line-end="457"><strong>How does the system know a page is dirty?</strong><br>
+The MMU sets the <strong>Dirty Bit</strong> in the PTE when a write operation occurs to that page. The OS checks this bit during replacement.</p>
+<p class="has-line-data" data-line-start="458" data-line-end="460"><strong>What happens if dirty pages are not saved?</strong><br>
+Data corruption and loss. File modifications disappear. Program state is corrupted. Database transactions may be lost. System crashes become catastrophic.</p>
+<p class="has-line-data" data-line-start="461" data-line-end="463"><strong>Why are dirty pages expensive to evict?</strong><br>
+They require a <strong>disk write</strong> before the frame can be reused. Disk writes are slow (~10ms for HDD, ~100μs for SSD). Clean pages are instant—just discard.</p>
+<p class="has-line-data" data-line-start="464" data-line-end="466"><strong>Why do systems try to minimize dirty pages?</strong><br>
+To make eviction faster. Techniques include:</p>
+<ul>
+<li class="has-line-data" data-line-start="466" data-line-end="467"><strong>Write-through caching</strong>: Write to disk immediately</li>
+<li class="has-line-data" data-line-start="467" data-line-end="468"><strong>Background writeback</strong>: Periodically flush dirty pages</li>
+<li class="has-line-data" data-line-start="468" data-line-end="470"><strong>Copy-on-Write</strong>: Delay writes until necessary</li>
+</ul>
+<hr>
+<h2 class="code-line has-line-data" data-line-start="472" data-line-end="473"><a id="9_Working_Set_Locality_Questions_472"></a>9. Working Set &amp; Locality Questions</h2>
+<p class="has-line-data" data-line-start="474" data-line-end="476"><strong>What is a working set?</strong><br>
+The set of pages a process is actively using during a specific time window. It’s the “footprint” of the program’s current activity. If the working set fits in RAM, page faults are minimal.</p>
+<p class="has-line-data" data-line-start="477" data-line-end="479"><strong>Why do programs only use part of themselves at once?</strong><br>
+Programs have phases: initialization, main loop, error handling, cleanup. Different phases need different code/data. A game doesn’t need its settings menu code during gameplay.</p>
+<p class="has-line-data" data-line-start="480" data-line-end="482"><strong>What is locality of reference?</strong><br>
+The tendency of programs to access a relatively small portion of their address space frequently, rather than spreading accesses uniformly across all memory.</p>
+<p class="has-line-data" data-line-start="483" data-line-end="485"><strong>What is temporal locality?</strong><br>
+If a memory location is accessed, it’s likely to be accessed again soon. Example: loop variables, frequently called functions.</p>
+<p class="has-line-data" data-line-start="486" data-line-end="488"><strong>What is spatial locality?</strong><br>
+If a memory location is accessed, nearby locations are likely to be accessed soon. Example: sequential array traversal, loading a texture and then using adjacent pixels.</p>
+<p class="has-line-data" data-line-start="489" data-line-end="491"><strong>Why does Demand Paging depend on locality?</strong><br>
+Because locality ensures that once a page is loaded, multiple accesses will hit in RAM before another fault occurs. Without locality, every access would fault, and the system would collapse.</p>
+<p class="has-line-data" data-line-start="492" data-line-end="494"><strong>What happens if locality does not exist?</strong><br>
+Every access would likely be to a different page, causing a page fault each time. The system would spend 100% of its time swapping—this is <strong>thrashing</strong>. Effective Access Time would equal disk access time (~10ms), making the computer unusable.</p>
+<p class="has-line-data" data-line-start="495" data-line-end="497"><strong>Why do sequential accesses perform well?</strong><br>
+They exhibit strong spatial locality. Accessing <code>array[0]</code> loads a page containing <code>array[0]</code> through <code>array[1023]</code> (for 4-byte ints). The next 1023 accesses hit in RAM.</p>
+<p class="has-line-data" data-line-start="498" data-line-end="500"><strong>Why do random accesses cause problems?</strong><br>
+They defeat both temporal and spatial locality. Each access may target a different page, causing constant page faults. The working set becomes enormous.</p>
+<p class="has-line-data" data-line-start="501" data-line-end="503"><strong>Why does array traversal work efficiently?</strong><br>
+Arrays are contiguous in memory. Traversing sequentially stays within the same page for many iterations. One page fault serves hundreds or thousands of accesses.</p>
+<p class="has-line-data" data-line-start="504" data-line-end="506"><strong>Why does loading one page help many accesses?</strong><br>
+A 4KB page holds 1024 integers (4 bytes each). Loading the page for <code>scores[0]</code> also brings in <code>scores[1]</code> through <code>scores[1023]</code>. The next 1023 accesses are hits.</p>
+<hr>
+<h2 class="code-line has-line-data" data-line-start="509" data-line-end="510"><a id="10_Thrashing_Questions_509"></a>10. Thrashing Questions</h2>
+<p class="has-line-data" data-line-start="511" data-line-end="513"><strong>What is thrashing?</strong><br>
+A state where the system spends most of its time handling page faults rather than executing useful instructions. The CPU is constantly waiting for disk I/O.</p>
+<p class="has-line-data" data-line-start="514" data-line-end="516"><strong>Why does thrashing occur?</strong><br>
+When the total working set of all running processes exceeds available RAM. The OS desperately tries to keep active pages in RAM but must constantly evict and reload pages.</p>
+<p class="has-line-data" data-line-start="517" data-line-end="518"><strong>What are the symptoms of thrashing?</strong></p>
+<ul>
+<li class="has-line-data" data-line-start="518" data-line-end="519">System becomes extremely slow (seconds to respond)</li>
+<li class="has-line-data" data-line-start="519" data-line-end="520">Disk activity at 100% (constant grinding on HDDs)</li>
+<li class="has-line-data" data-line-start="520" data-line-end="521">CPU utilization drops (CPU waiting, not computing)</li>
+<li class="has-line-data" data-line-start="521" data-line-end="522">Programs freeze or stutter</li>
+<li class="has-line-data" data-line-start="522" data-line-end="524">Mouse/keyboard input lags severely</li>
+</ul>
+<p class="has-line-data" data-line-start="524" data-line-end="526"><strong>Why does the system freeze during thrashing?</strong><br>
+Every memory access triggers a page fault. The CPU switches to kernel mode, initiates disk I/O, waits milliseconds, then resumes—only to fault again immediately. No forward progress is made.</p>
+<p class="has-line-data" data-line-start="527" data-line-end="529"><strong>Why can’t replacement algorithms fix thrashing?</strong><br>
+The problem isn’t which page to evict—it’s that there simply isn’t enough RAM for the working sets. No algorithm can fit 16GB of working set into 8GB of RAM.</p>
+<p class="has-line-data" data-line-start="530" data-line-end="531"><strong>What causes excessive page faults?</strong></p>
+<ul>
+<li class="has-line-data" data-line-start="531" data-line-end="532">Too many processes running simultaneously</li>
+<li class="has-line-data" data-line-start="532" data-line-end="533">Processes with large working sets</li>
+<li class="has-line-data" data-line-start="533" data-line-end="534">Random memory access patterns (no locality)</li>
+<li class="has-line-data" data-line-start="534" data-line-end="536">Insufficient RAM for the workload</li>
+</ul>
+<p class="has-line-data" data-line-start="536" data-line-end="538"><strong>What happens when working sets exceed RAM?</strong><br>
+The OS enters a cycle: load page A (evict B), then fault on B (evict A), then fault on A again… Pages are constantly swapped in and out with no productive work.</p>
+<p class="has-line-data" data-line-start="539" data-line-end="541"><strong>Why does disk usage become 100% during thrashing?</strong><br>
+The disk is constantly reading pages in and writing dirty pages out. The queue of I/O requests grows, and the disk head thrashes (on HDDs) or NAND channels saturate (on SSDs).</p>
+<p class="has-line-data" data-line-start="542" data-line-end="543"><strong>How can thrashing be solved?</strong></p>
+<ul>
+<li class="has-line-data" data-line-start="543" data-line-end="544"><strong>Add more RAM</strong> (hardware solution)</li>
+<li class="has-line-data" data-line-start="544" data-line-end="545"><strong>Kill or suspend processes</strong> (reduce total working set)</li>
+<li class="has-line-data" data-line-start="545" data-line-end="546"><strong>Working set model</strong>: Monitor each process’s working set and only admit processes whose working sets fit in available RAM</li>
+<li class="has-line-data" data-line-start="546" data-line-end="548"><strong>Page fault frequency (PFF) control</strong>: If fault rate too high, suspend a process</li>
+</ul>
+<hr>
+<h2 class="code-line has-line-data" data-line-start="550" data-line-end="551"><a id="11_Performance_Questions_550"></a>11. Performance Questions</h2>
+<p class="has-line-data" data-line-start="552" data-line-end="554"><strong>Why are page faults expensive?</strong><br>
+A page fault requires:</p>
+<ul>
+<li class="has-line-data" data-line-start="554" data-line-end="555">CPU mode switch (user → kernel)</li>
+<li class="has-line-data" data-line-start="555" data-line-end="556">OS handler execution</li>
+<li class="has-line-data" data-line-start="556" data-line-end="557">Disk I/O initiation (DMA setup)</li>
+<li class="has-line-data" data-line-start="557" data-line-end="558">Disk read (~10ms HDD, ~100μs SSD)</li>
+<li class="has-line-data" data-line-start="558" data-line-end="559">Disk interrupt handling</li>
+<li class="has-line-data" data-line-start="559" data-line-end="560">Page table updates</li>
+<li class="has-line-data" data-line-start="560" data-line-end="561">Mode switch back (kernel → user)</li>
+<li class="has-line-data" data-line-start="561" data-line-end="563">Instruction restart</li>
+</ul>
+<p class="has-line-data" data-line-start="563" data-line-end="565"><strong>Why is disk access slow?</strong><br>
+HDDs are mechanical: seek time (~5-10ms) + rotational latency (~4ms) + transfer time. Even SSDs, while electronic, have NAND flash latency and controller overhead.</p>
+<p class="has-line-data" data-line-start="566" data-line-end="568"><strong>Why are HDDs slower than SSDs?</strong><br>
+HDDs have moving parts (spinning platters, moving heads). SSDs are solid-state with no mechanical delays. SSD access: ~100μs; HDD access: ~10ms (100× slower).</p>
+<p class="has-line-data" data-line-start="569" data-line-end="570"><strong>Why are SSDs still slower than RAM?</strong></p>
+<ul>
+<li class="has-line-data" data-line-start="570" data-line-end="571"><strong>Interface</strong>: SSDs connect via SATA/NVMe; RAM connects directly to the memory bus</li>
+<li class="has-line-data" data-line-start="571" data-line-end="572"><strong>NAND latency</strong>: Flash memory cells take microseconds to read; DRAM takes nanoseconds</li>
+<li class="has-line-data" data-line-start="572" data-line-end="573"><strong>Controller overhead</strong>: SSDs have complex controllers for wear leveling, error correction</li>
+<li class="has-line-data" data-line-start="573" data-line-end="575"><strong>Bandwidth</strong>: RAM bandwidth is ~25-50 GB/s; SSDs are ~0.5-7 GB/s</li>
+</ul>
+<p class="has-line-data" data-line-start="575" data-line-end="577"><strong>Why is RAM much faster than disk?</strong><br>
+RAM is directly connected to the CPU via high-speed memory buses. It’s purely electronic with nanosecond-scale access. No mechanical movement, no controller translation, no protocol overhead.</p>
+<p class="has-line-data" data-line-start="578" data-line-end="580"><strong>What happens to CPU performance during page faults?</strong><br>
+The CPU stalls. It switches to the OS handler, then often idles waiting for disk I/O. During that time, no useful computation occurs on the faulting process. The CPU may context-switch to another process, but that process may also fault.</p>
+<p class="has-line-data" data-line-start="581" data-line-end="583"><strong>Why does one page fault dominate performance?</strong><br>
+Disk access (~10ms) is 100,000× slower than RAM access (~100ns). A single page fault costs as much as 100,000 RAM accesses. Even a 0.1% fault rate makes disk time dominate total execution time.</p>
+<p class="has-line-data" data-line-start="584" data-line-end="586"><strong>Why can tiny fault rates cause huge slowdowns?</strong><br>
+Because of the extreme speed differential. At 0.1% fault rate with 10ms disk:</p>
+<pre><code class="has-line-data" data-line-start="587" data-line-end="589">EAT = 0.999 × 100ns + 0.001 × 10,000,000ns = 100ns + 10,000ns = 10,100ns
+</code></pre>
+<p class="has-line-data" data-line-start="589" data-line-end="590">That’s a <strong>100× slowdown</strong> from a 0.1% fault rate!</p>
+<p class="has-line-data" data-line-start="591" data-line-end="593"><strong>Why does the CPU become idle during faults?</strong><br>
+After initiating disk I/O (which is handled by DMA), the CPU has nothing to do for the faulting process until the disk interrupt arrives. The OS may schedule another process, but if all processes are waiting for disk, the CPU sits idle.</p>
+<p class="has-line-data" data-line-start="594" data-line-end="596"><strong>Why are memory systems sensitive to page faults?</strong><br>
+The <strong>100,000× speed gap</strong> between RAM and disk means page faults are catastrophic outliers. A system with 99.9% hit rate can still be 100× slower than a system with 100% hit rate.</p>
+<hr>
+<h2 class="code-line has-line-data" data-line-start="599" data-line-end="600"><a id="12_Mathematical_Questions_599"></a>12. Mathematical Questions</h2>
+<p class="has-line-data" data-line-start="601" data-line-end="603"><strong>What is Effective Access Time (EAT)?</strong><br>
+The average time per memory access considering both hits and faults. It weights RAM access time and page fault time by their probabilities.</p>
+<p class="has-line-data" data-line-start="604" data-line-end="605"><strong>How is EAT calculated?</strong></p>
+<section><eqn><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mi>E</mi><mi>A</mi><mi>T</mi><mo>=</mo><mo stretchy="false">(</mo><mn>1</mn><mo>−</mo><mi>p</mi><mo stretchy="false">)</mo><mo>×</mo><msub><mi>T</mi><mrow><mi>R</mi><mi>A</mi><mi>M</mi></mrow></msub><mo>+</mo><mi>p</mi><mo>×</mo><msub><mi>T</mi><mrow><mi>P</mi><mi>F</mi></mrow></msub></mrow><annotation encoding="application/x-tex">EAT = (1 - p) \times T_{RAM} + p \times T_{PF}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.05764em;">E</span><span class="mord mathnormal">A</span><span class="mord mathnormal" style="margin-right:0.13889em;">T</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">(</span><span class="mord">1</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal">p</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">×</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.13889em;">T</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3283em;"><span style="top:-2.55em;margin-left:-0.1389em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight" style="margin-right:0.00773em;">R</span><span class="mord mathnormal mtight">A</span><span class="mord mathnormal mtight" style="margin-right:0.10903em;">M</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.7778em;vertical-align:-0.1944em;"></span><span class="mord mathnormal">p</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">×</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.13889em;">T</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3283em;"><span style="top:-2.55em;margin-left:-0.1389em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight" style="margin-right:0.13889em;">P</span><span class="mord mathnormal mtight" style="margin-right:0.13889em;">F</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span></span></eqn></section><p class="has-line-data" data-line-start="608" data-line-end="609">Where:</p>
+<ul>
+<li class="has-line-data" data-line-start="609" data-line-end="610"><eq><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>p</mi></mrow><annotation encoding="application/x-tex">p</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.625em;vertical-align:-0.1944em;"></span><span class="mord mathnormal">p</span></span></span></span></eq> = page fault probability (0 to 1)</li>
+<li class="has-line-data" data-line-start="610" data-line-end="611"><eq><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>T</mi><mrow><mi>R</mi><mi>A</mi><mi>M</mi></mrow></msub></mrow><annotation encoding="application/x-tex">T_{RAM}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.13889em;">T</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3283em;"><span style="top:-2.55em;margin-left:-0.1389em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight" style="margin-right:0.00773em;">R</span><span class="mord mathnormal mtight">A</span><span class="mord mathnormal mtight" style="margin-right:0.10903em;">M</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span></eq> = RAM access time (~100ns)</li>
+<li class="has-line-data" data-line-start="611" data-line-end="613"><eq><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>T</mi><mrow><mi>P</mi><mi>F</mi></mrow></msub></mrow><annotation encoding="application/x-tex">T_{PF}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.13889em;">T</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3283em;"><span style="top:-2.55em;margin-left:-0.1389em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight" style="margin-right:0.13889em;">P</span><span class="mord mathnormal mtight" style="margin-right:0.13889em;">F</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span></eq> = page fault time (~10ms = 10,000,000ns)</li>
+</ul>
+<p class="has-line-data" data-line-start="613" data-line-end="615"><strong>Why is EAT a weighted average?</strong><br>
+Because each memory access either hits in RAM (probability <eq><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>1</mn><mo>−</mo><mi>p</mi></mrow><annotation encoding="application/x-tex">1-p</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.7278em;vertical-align:-0.0833em;"></span><span class="mord">1</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.625em;vertical-align:-0.1944em;"></span><span class="mord mathnormal">p</span></span></span></span></eq>) or faults (probability <eq><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>p</mi></mrow><annotation encoding="application/x-tex">p</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.625em;vertical-align:-0.1944em;"></span><span class="mord mathnormal">p</span></span></span></span></eq>). The expected time is the sum of these scenarios weighted by their likelihoods.</p>
+<p class="has-line-data" data-line-start="616" data-line-end="618"><strong>How does page fault probability affect EAT?</strong><br>
+Even tiny <eq><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>p</mi></mrow><annotation encoding="application/x-tex">p</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.625em;vertical-align:-0.1944em;"></span><span class="mord mathnormal">p</span></span></span></span></eq> values dominate because <eq><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>T</mi><mrow><mi>P</mi><mi>F</mi></mrow></msub></mrow><annotation encoding="application/x-tex">T_{PF}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.13889em;">T</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3283em;"><span style="top:-2.55em;margin-left:-0.1389em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight" style="margin-right:0.13889em;">P</span><span class="mord mathnormal mtight" style="margin-right:0.13889em;">F</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span></eq> is so large:</p>
+<table class="table table-striped table-bordered">
+<thead>
+<tr>
+<th style="text-align:left">Fault Rate (<eq><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>p</mi></mrow><annotation encoding="application/x-tex">p</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.625em;vertical-align:-0.1944em;"></span><span class="mord mathnormal">p</span></span></span></span></eq>)</th>
+<th style="text-align:left">EAT</th>
+<th style="text-align:left">Slowdown</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">0%</td>
+<td style="text-align:left">100ns</td>
+<td style="text-align:left">1×</td>
+</tr>
+<tr>
+<td style="text-align:left">0.001%</td>
+<td style="text-align:left">200ns</td>
+<td style="text-align:left">2×</td>
+</tr>
+<tr>
+<td style="text-align:left">0.01%</td>
+<td style="text-align:left">1,100ns</td>
+<td style="text-align:left">11×</td>
+</tr>
+<tr>
+<td style="text-align:left">0.1%</td>
+<td style="text-align:left">10,100ns</td>
+<td style="text-align:left">101×</td>
+</tr>
+<tr>
+<td style="text-align:left">1%</td>
+<td style="text-align:left">100,100ns</td>
+<td style="text-align:left">1,001×</td>
+</tr>
+</tbody>
+</table>
+<p class="has-line-data" data-line-start="626" data-line-end="628"><strong>Why does a small fault rate drastically increase EAT?</strong><br>
+Because <eq><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>T</mi><mrow><mi>P</mi><mi>F</mi></mrow></msub></mrow><annotation encoding="application/x-tex">T_{PF}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.13889em;">T</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3283em;"><span style="top:-2.55em;margin-left:-0.1389em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight" style="margin-right:0.13889em;">P</span><span class="mord mathnormal mtight" style="margin-right:0.13889em;">F</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span></eq> is 100,000× <eq><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>T</mi><mrow><mi>R</mi><mi>A</mi><mi>M</mi></mrow></msub></mrow><annotation encoding="application/x-tex">T_{RAM}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.13889em;">T</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3283em;"><span style="top:-2.55em;margin-left:-0.1389em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight" style="margin-right:0.00773em;">R</span><span class="mord mathnormal mtight">A</span><span class="mord mathnormal mtight" style="margin-right:0.10903em;">M</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span></eq>. The fault term <eq><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>p</mi><mo>×</mo><msub><mi>T</mi><mrow><mi>P</mi><mi>F</mi></mrow></msub></mrow><annotation encoding="application/x-tex">p \times T_{PF}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.7778em;vertical-align:-0.1944em;"></span><span class="mord mathnormal">p</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">×</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.13889em;">T</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3283em;"><span style="top:-2.55em;margin-left:-0.1389em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight" style="margin-right:0.13889em;">P</span><span class="mord mathnormal mtight" style="margin-right:0.13889em;">F</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span></eq> overwhelms the hit term even when <eq><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>p</mi></mrow><annotation encoding="application/x-tex">p</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.625em;vertical-align:-0.1944em;"></span><span class="mord mathnormal">p</span></span></span></span></eq> is tiny.</p>
+<p class="has-line-data" data-line-start="629" data-line-end="630"><strong>How do you calculate slowdown from faults?</strong></p>
+<section><eqn><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mtext>Slowdown</mtext><mo>=</mo><mfrac><mrow><mi>E</mi><mi>A</mi><mi>T</mi></mrow><msub><mi>T</mi><mrow><mi>R</mi><mi>A</mi><mi>M</mi></mrow></msub></mfrac><mo>=</mo><mo stretchy="false">(</mo><mn>1</mn><mo>−</mo><mi>p</mi><mo stretchy="false">)</mo><mo>+</mo><mi>p</mi><mo>×</mo><mfrac><msub><mi>T</mi><mrow><mi>P</mi><mi>F</mi></mrow></msub><msub><mi>T</mi><mrow><mi>R</mi><mi>A</mi><mi>M</mi></mrow></msub></mfrac></mrow><annotation encoding="application/x-tex">\text{Slowdown} = \frac{EAT}{T_{RAM}} = (1-p) + p \times \frac{T_{PF}}{T_{RAM}}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6944em;"></span><span class="mord text"><span class="mord">Slowdown</span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:2.1963em;vertical-align:-0.836em;"></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.3603em;"><span style="top:-2.314em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord"><span class="mord mathnormal" style="margin-right:0.13889em;">T</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3283em;"><span style="top:-2.55em;margin-left:-0.1389em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight" style="margin-right:0.00773em;">R</span><span class="mord mathnormal mtight">A</span><span class="mord mathnormal mtight" style="margin-right:0.10903em;">M</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.677em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.05764em;">E</span><span class="mord mathnormal">A</span><span class="mord mathnormal" style="margin-right:0.13889em;">T</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.836em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">(</span><span class="mord">1</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal">p</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.7778em;vertical-align:-0.1944em;"></span><span class="mord mathnormal">p</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">×</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:2.1963em;vertical-align:-0.836em;"></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.3603em;"><span style="top:-2.314em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord"><span class="mord mathnormal" style="margin-right:0.13889em;">T</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3283em;"><span style="top:-2.55em;margin-left:-0.1389em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight" style="margin-right:0.00773em;">R</span><span class="mord mathnormal mtight">A</span><span class="mord mathnormal mtight" style="margin-right:0.10903em;">M</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.677em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord"><span class="mord mathnormal" style="margin-right:0.13889em;">T</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3283em;"><span style="top:-2.55em;margin-left:-0.1389em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight" style="margin-right:0.13889em;">P</span><span class="mord mathnormal mtight" style="margin-right:0.13889em;">F</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.836em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span></span></span></span></span></eqn></section><p class="has-line-data" data-line-start="633" data-line-end="635">For <eq><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>p</mi><mo>=</mo><mn>0.001</mn></mrow><annotation encoding="application/x-tex">p = 0.001</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.625em;vertical-align:-0.1944em;"></span><span class="mord mathnormal">p</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">0.001</span></span></span></span></eq> (0.1%) and <eq><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>T</mi><mrow><mi>P</mi><mi>F</mi></mrow></msub><mi mathvariant="normal">/</mi><msub><mi>T</mi><mrow><mi>R</mi><mi>A</mi><mi>M</mi></mrow></msub><mo>=</mo><mn>100</mn><mo separator="true">,</mo><mn>000</mn></mrow><annotation encoding="application/x-tex">T_{PF}/T_{RAM} = 100,000</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.13889em;">T</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3283em;"><span style="top:-2.55em;margin-left:-0.1389em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight" style="margin-right:0.13889em;">P</span><span class="mord mathnormal mtight" style="margin-right:0.13889em;">F</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mord">/</span><span class="mord"><span class="mord mathnormal" style="margin-right:0.13889em;">T</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3283em;"><span style="top:-2.55em;margin-left:-0.1389em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight" style="margin-right:0.00773em;">R</span><span class="mord mathnormal mtight">A</span><span class="mord mathnormal mtight" style="margin-right:0.10903em;">M</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.8389em;vertical-align:-0.1944em;"></span><span class="mord">100</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord">000</span></span></span></span></eq>:<br>
+<section><eqn><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mtext>Slowdown</mtext><mo>≈</mo><mn>0.999</mn><mo>+</mo><mn>0.001</mn><mo>×</mo><mn>100</mn><mo separator="true">,</mo><mn>000</mn><mo>=</mo><mn>0.999</mn><mo>+</mo><mn>100</mn><mo>=</mo><mn>100.999</mn><mo>≈</mo><mn>101</mn><mo>×</mo></mrow><annotation encoding="application/x-tex">\text{Slowdown} \approx 0.999 + 0.001 \times 100,000 = 0.999 + 100 = 100.999 \approx 101×</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6944em;"></span><span class="mord text"><span class="mord">Slowdown</span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">≈</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.7278em;vertical-align:-0.0833em;"></span><span class="mord">0.999</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.7278em;vertical-align:-0.0833em;"></span><span class="mord">0.001</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">×</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.8389em;vertical-align:-0.1944em;"></span><span class="mord">100</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord">000</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.7278em;vertical-align:-0.0833em;"></span><span class="mord">0.999</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">100</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">100.999</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">≈</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.7278em;vertical-align:-0.0833em;"></span><span class="mord">101</span><span class="mord">×</span></span></span></span></span></eqn></section></p>
+<p class="has-line-data" data-line-start="636" data-line-end="640"><strong>How do you derive the EAT formula?</strong><br>
+From expected value in probability:<br>
+<input type="checkbox" id="checkbox20" checked="true"><label for="checkbox20">= \sum x_i \cdot P(x_i)</label><br>
+Two outcomes: hit (<eq><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>T</mi><mrow><mi>R</mi><mi>A</mi><mi>M</mi></mrow></msub></mrow><annotation encoding="application/x-tex">T_{RAM}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.13889em;">T</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3283em;"><span style="top:-2.55em;margin-left:-0.1389em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight" style="margin-right:0.00773em;">R</span><span class="mord mathnormal mtight">A</span><span class="mord mathnormal mtight" style="margin-right:0.10903em;">M</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span></eq>, probability <eq><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>1</mn><mo>−</mo><mi>p</mi></mrow><annotation encoding="application/x-tex">1-p</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.7278em;vertical-align:-0.0833em;"></span><span class="mord">1</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.625em;vertical-align:-0.1944em;"></span><span class="mord mathnormal">p</span></span></span></span></eq>) and fault (<eq><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>T</mi><mrow><mi>P</mi><mi>F</mi></mrow></msub></mrow><annotation encoding="application/x-tex">T_{PF}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.13889em;">T</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3283em;"><span style="top:-2.55em;margin-left:-0.1389em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight" style="margin-right:0.13889em;">P</span><span class="mord mathnormal mtight" style="margin-right:0.13889em;">F</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span></eq>, probability <eq><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>p</mi></mrow><annotation encoding="application/x-tex">p</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.625em;vertical-align:-0.1944em;"></span><span class="mord mathnormal">p</span></span></span></span></eq>).</p>
+<p class="has-line-data" data-line-start="641" data-line-end="644"><strong>How do you compute acceptable page fault rates?</strong><br>
+Set EAT target and solve for <eq><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>p</mi></mrow><annotation encoding="application/x-tex">p</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.625em;vertical-align:-0.1944em;"></span><span class="mord mathnormal">p</span></span></span></span></eq>:<br>
+<section><eqn><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mi>p</mi><mo>&lt;</mo><mfrac><mrow><mi>E</mi><mi>A</mi><msub><mi>T</mi><mrow><mi>t</mi><mi>a</mi><mi>r</mi><mi>g</mi><mi>e</mi><mi>t</mi></mrow></msub><mo>−</mo><msub><mi>T</mi><mrow><mi>R</mi><mi>A</mi><mi>M</mi></mrow></msub></mrow><mrow><msub><mi>T</mi><mrow><mi>P</mi><mi>F</mi></mrow></msub><mo>−</mo><msub><mi>T</mi><mrow><mi>R</mi><mi>A</mi><mi>M</mi></mrow></msub></mrow></mfrac><mo>≈</mo><mfrac><mrow><mi>E</mi><mi>A</mi><msub><mi>T</mi><mrow><mi>t</mi><mi>a</mi><mi>r</mi><mi>g</mi><mi>e</mi><mi>t</mi></mrow></msub></mrow><msub><mi>T</mi><mrow><mi>P</mi><mi>F</mi></mrow></msub></mfrac></mrow><annotation encoding="application/x-tex">p &lt; \frac{EAT_{target} - T_{RAM}}{T_{PF} - T_{RAM}} \approx \frac{EAT_{target}}{T_{PF}}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.7335em;vertical-align:-0.1944em;"></span><span class="mord mathnormal">p</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">&lt;</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:2.1963em;vertical-align:-0.836em;"></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.3603em;"><span style="top:-2.314em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord"><span class="mord mathnormal" style="margin-right:0.13889em;">T</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3283em;"><span style="top:-2.55em;margin-left:-0.1389em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight" style="margin-right:0.13889em;">P</span><span class="mord mathnormal mtight" style="margin-right:0.13889em;">F</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.13889em;">T</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3283em;"><span style="top:-2.55em;margin-left:-0.1389em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight" style="margin-right:0.00773em;">R</span><span class="mord mathnormal mtight">A</span><span class="mord mathnormal mtight" style="margin-right:0.10903em;">M</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.677em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.05764em;">E</span><span class="mord mathnormal">A</span><span class="mord"><span class="mord mathnormal" style="margin-right:0.13889em;">T</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.2806em;"><span style="top:-2.55em;margin-left:-0.1389em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">t</span><span class="mord mathnormal mtight">a</span><span class="mord mathnormal mtight" style="margin-right:0.02778em;">r</span><span class="mord mathnormal mtight" style="margin-right:0.03588em;">g</span><span class="mord mathnormal mtight">e</span><span class="mord mathnormal mtight">t</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2861em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.13889em;">T</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3283em;"><span style="top:-2.55em;margin-left:-0.1389em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight" style="margin-right:0.00773em;">R</span><span class="mord mathnormal mtight">A</span><span class="mord mathnormal mtight" style="margin-right:0.10903em;">M</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.836em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">≈</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:2.1963em;vertical-align:-0.836em;"></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.3603em;"><span style="top:-2.314em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord"><span class="mord mathnormal" style="margin-right:0.13889em;">T</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3283em;"><span style="top:-2.55em;margin-left:-0.1389em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight" style="margin-right:0.13889em;">P</span><span class="mord mathnormal mtight" style="margin-right:0.13889em;">F</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.677em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.05764em;">E</span><span class="mord mathnormal">A</span><span class="mord"><span class="mord mathnormal" style="margin-right:0.13889em;">T</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.2806em;"><span style="top:-2.55em;margin-left:-0.1389em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">t</span><span class="mord mathnormal mtight">a</span><span class="mord mathnormal mtight" style="margin-right:0.02778em;">r</span><span class="mord mathnormal mtight" style="margin-right:0.03588em;">g</span><span class="mord mathnormal mtight">e</span><span class="mord mathnormal mtight">t</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2861em;"><span></span></span></span></span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.836em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span></span></span></span></span></eqn></section></p>
+<p class="has-line-data" data-line-start="645" data-line-end="647">For “no more than 2× slowdown” (<eq><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>E</mi><mi>A</mi><msub><mi>T</mi><mrow><mi>t</mi><mi>a</mi><mi>r</mi><mi>g</mi><mi>e</mi><mi>t</mi></mrow></msub><mo>=</mo><mn>200</mn><mi>n</mi><mi>s</mi></mrow><annotation encoding="application/x-tex">EAT_{target} = 200ns</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.9694em;vertical-align:-0.2861em;"></span><span class="mord mathnormal" style="margin-right:0.05764em;">E</span><span class="mord mathnormal">A</span><span class="mord"><span class="mord mathnormal" style="margin-right:0.13889em;">T</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.2806em;"><span style="top:-2.55em;margin-left:-0.1389em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">t</span><span class="mord mathnormal mtight">a</span><span class="mord mathnormal mtight" style="margin-right:0.02778em;">r</span><span class="mord mathnormal mtight" style="margin-right:0.03588em;">g</span><span class="mord mathnormal mtight">e</span><span class="mord mathnormal mtight">t</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2861em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">200</span><span class="mord mathnormal">n</span><span class="mord mathnormal">s</span></span></span></span></eq>):<br>
+<section><eqn><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mi>p</mi><mo>&lt;</mo><mfrac><mrow><mn>200</mn><mo>−</mo><mn>100</mn></mrow><mrow><mn>10</mn><mo separator="true">,</mo><mn>000</mn><mo separator="true">,</mo><mn>000</mn></mrow></mfrac><mo>=</mo><mfrac><mn>100</mn><mrow><mn>10</mn><mo separator="true">,</mo><mn>000</mn><mo separator="true">,</mo><mn>000</mn></mrow></mfrac><mo>=</mo><mn>0.00001</mn><mo>=</mo><mn>0.001</mn><mi mathvariant="normal">%</mi></mrow><annotation encoding="application/x-tex">p &lt; \frac{200 - 100}{10,000,000} = \frac{100}{10,000,000} = 0.00001 = 0.001\%</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.7335em;vertical-align:-0.1944em;"></span><span class="mord mathnormal">p</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">&lt;</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:2.2019em;vertical-align:-0.8804em;"></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.3214em;"><span style="top:-2.314em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord">10</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord">000</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord">000</span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.677em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord">200</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mord">100</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.8804em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:2.2019em;vertical-align:-0.8804em;"></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.3214em;"><span style="top:-2.314em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord">10</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord">000</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord">000</span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.677em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord">100</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.8804em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">0.00001</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.8056em;vertical-align:-0.0556em;"></span><span class="mord">0.001%</span></span></span></span></span></eqn></section></p>
+<p class="has-line-data" data-line-start="648" data-line-end="650"><strong>Why must page fault probability remain extremely low?</strong><br>
+Because the disk penalty is so severe. To keep performance reasonable, faults must be rare enough that their contribution to average time stays small. Typically <eq><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>p</mi><mo>&lt;</mo><mn>0.0001</mn></mrow><annotation encoding="application/x-tex">p &lt; 0.0001</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.7335em;vertical-align:-0.1944em;"></span><span class="mord mathnormal">p</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">&lt;</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">0.0001</span></span></span></span></eq> (0.01%) is needed.</p>
+<hr>
+<h2 class="code-line has-line-data" data-line-start="653" data-line-end="654"><a id="13_HardwareLevel_Questions_653"></a>13. Hardware-Level Questions</h2>
+<p class="has-line-data" data-line-start="655" data-line-end="656"><strong>What hardware components participate in paging?</strong></p>
+<ul>
+<li class="has-line-data" data-line-start="656" data-line-end="657"><strong>CPU</strong>: Generates virtual addresses, handles exceptions</li>
+<li class="has-line-data" data-line-start="657" data-line-end="658"><strong>MMU</strong>: Translates addresses, checks protection, detects faults</li>
+<li class="has-line-data" data-line-start="658" data-line-end="659"><strong>TLB</strong>: Caches recent translations</li>
+<li class="has-line-data" data-line-start="659" data-line-end="660"><strong>RAM</strong>: Holds page tables and resident pages</li>
+<li class="has-line-data" data-line-start="660" data-line-end="661"><strong>Disk Controller/DMA</strong>: Handles disk I/O without CPU involvement</li>
+<li class="has-line-data" data-line-start="661" data-line-end="663"><strong>Interrupt Controller</strong>: Signals disk completion</li>
+</ul>
+<p class="has-line-data" data-line-start="663" data-line-end="665"><strong>What is the role of the CPU?</strong><br>
+Generates virtual addresses during instruction execution. On fault, saves state and transfers to kernel mode. After handling, restarts the faulting instruction.</p>
+<p class="has-line-data" data-line-start="666" data-line-end="668"><strong>What is the role of the MMU?</strong><br>
+The central translator. Every memory access goes through the MMU. It performs address translation, protection checks, and fault detection in hardware.</p>
+<p class="has-line-data" data-line-start="669" data-line-end="671"><strong>What is the role of the OS kernel?</strong><br>
+The software handler for page faults. It manages page tables, decides which pages to load/evict, initiates disk I/O, and updates mappings. The kernel is the “policy” layer; hardware is the “mechanism” layer.</p>
+<p class="has-line-data" data-line-start="672" data-line-end="674"><strong>What is the Interrupt Vector Table?</strong><br>
+A data structure (set by the OS at boot) that maps exception types (including page fault) to handler addresses. When a page fault occurs, the CPU looks up the handler address in this table and jumps to it.</p>
+<p class="has-line-data" data-line-start="675" data-line-end="677"><strong>What is DMA (Direct Memory Access)?</strong><br>
+A hardware mechanism that allows devices (like disk controllers) to transfer data directly to/from RAM without CPU involvement. The CPU sets up the transfer, then the DMA controller handles it independently.</p>
+<p class="has-line-data" data-line-start="678" data-line-end="679"><strong>How does disk DMA work?</strong></p>
+<ol>
+<li class="has-line-data" data-line-start="679" data-line-end="680">OS tells DMA controller: “Read page X from disk to frame Y in RAM”</li>
+<li class="has-line-data" data-line-start="680" data-line-end="681">DMA controller coordinates disk → RAM transfer</li>
+<li class="has-line-data" data-line-start="681" data-line-end="682">CPU is free to do other work</li>
+<li class="has-line-data" data-line-start="682" data-line-end="683">DMA controller interrupts CPU when done</li>
+<li class="has-line-data" data-line-start="683" data-line-end="685">OS updates page table and resumes process</li>
+</ol>
+<p class="has-line-data" data-line-start="685" data-line-end="686"><strong>What happens during a hardware trap?</strong></p>
+<ol>
+<li class="has-line-data" data-line-start="686" data-line-end="687">CPU completes current instruction (or aborts it)</li>
+<li class="has-line-data" data-line-start="687" data-line-end="688">CPU switches to kernel mode</li>
+<li class="has-line-data" data-line-start="688" data-line-end="689">CPU saves PC, PSR, registers to kernel stack</li>
+<li class="has-line-data" data-line-start="689" data-line-end="690">CPU loads new PC from Interrupt Vector Table (handler address)</li>
+<li class="has-line-data" data-line-start="690" data-line-end="692">Execution continues in kernel handler</li>
+</ol>
+<p class="has-line-data" data-line-start="692" data-line-end="694"><strong>How does the CPU enter kernel mode?</strong><br>
+Automatically on exceptions (like page faults). The CPU sets the mode bit in the PSR, switches to the kernel stack, and jumps to the handler. This is a hardware mechanism—programs cannot fake it.</p>
+<p class="has-line-data" data-line-start="695" data-line-end="697"><strong>How does the CPU return to user mode?</strong><br>
+Via the <strong>IRET</strong> (Interrupt Return) instruction. This restores the saved PC, PSR (including user mode bit), and registers from the kernel stack, resuming the interrupted user program.</p>
+<p class="has-line-data" data-line-start="698" data-line-end="700"><strong>What is the TLB?</strong><br>
+Translation Lookaside Buffer—a small, fast hardware cache of recent virtual-to-physical translations. It sits between the CPU and page table to speed up address translation.</p>
+<p class="has-line-data" data-line-start="701" data-line-end="703"><strong>Why is the TLB necessary?</strong><br>
+Without TLB, every memory access would require two RAM accesses: one to read the page table, one to access the data. The TLB caches translations, reducing this to one RAM access (on TLB hit).</p>
+<p class="has-line-data" data-line-start="704" data-line-end="706"><strong>What is a TLB hit?</strong><br>
+The virtual page number is found in the TLB. The MMU immediately has the frame number—no page table lookup needed. Translation takes nanoseconds.</p>
+<p class="has-line-data" data-line-start="707" data-line-end="709"><strong>What is a TLB miss?</strong><br>
+The virtual page number is not in the TLB. The MMU must read the page table from RAM to find the translation, then cache it in the TLB for future use. Slower, but still no page fault if the page is resident.</p>
+<p class="has-line-data" data-line-start="710" data-line-end="712"><strong>Why would memory access require two RAM accesses without TLB?</strong><br>
+First access: read Page Table Entry from RAM to get frame number. Second access: use frame number to read/write actual data. The TLB eliminates the first access for cached translations.</p>
+<p class="has-line-data" data-line-start="713" data-line-end="715"><strong>Why must the TLB be flushed on context switches?</strong><br>
+Each process has its own page table and virtual address space. The same virtual number maps to different physical frames in different processes. If the TLB isn’t flushed, Process B could access Process A’s physical memory—a security disaster.</p>
+<hr>
+<h2 class="code-line has-line-data" data-line-start="718" data-line-end="719"><a id="14_Operating_System_Questions_718"></a>14. Operating System Questions</h2>
+<p class="has-line-data" data-line-start="720" data-line-end="722"><strong>How does the OS manage pages?</strong><br>
+Through page tables, frame allocation tracking, replacement algorithms, and disk backing store management. The OS maintains data structures for all pages across all processes.</p>
+<p class="has-line-data" data-line-start="723" data-line-end="725"><strong>How does the OS track free frames?</strong><br>
+Using a <strong>free frame list</strong> or bitmap. When a page needs loading, the OS takes a frame from this list. When a page is evicted, its frame is returned to the list.</p>
+<p class="has-line-data" data-line-start="726" data-line-end="728"><strong>How does the OS locate pages on disk?</strong><br>
+Each PTE (when Valid=0) stores a disk address or pointer to a swap slot. The OS maintains swap space maps and file offset tables for memory-mapped files.</p>
+<p class="has-line-data" data-line-start="729" data-line-end="731"><strong>What is backing store?</strong><br>
+The disk area where non-resident pages are kept. It includes swap space and memory-mapped files. It “backs” the virtual memory—providing the actual storage for pages not in RAM.</p>
+<p class="has-line-data" data-line-start="732" data-line-end="734"><strong>What is swap space?</strong><br>
+A dedicated disk partition or file used exclusively for paging. When RAM is full, clean pages are discarded and dirty pages are written to swap space. It’s slower than RAM but essential for virtual memory.</p>
+<p class="has-line-data" data-line-start="735" data-line-end="737"><strong>What is a memory-mapped file?</strong><br>
+A file on disk that is mapped directly into a process’s virtual address space. Accessing the memory reads/writes the file transparently. Used for efficient file I/O and shared libraries.</p>
+<p class="has-line-data" data-line-start="738" data-line-end="740"><strong>What is demand-zero paging?</strong><br>
+When a program requests new memory (e.g., <code>malloc</code>, stack expansion) but hasn’t written to it yet, the OS maps it to a special “zero page” (a read-only page filled with zeros). Only when the program writes does Copy-on-Write create a real writable page.</p>
+<p class="has-line-data" data-line-start="741" data-line-end="743"><strong>What is Copy-on-Write (COW)?</strong><br>
+An optimization where parent and child processes share physical pages after <code>fork()</code>. Pages are marked read-only. When either process writes, a private copy is created just for that process. Avoids unnecessary copying of unchanged pages.</p>
+<p class="has-line-data" data-line-start="744" data-line-end="746"><strong>How does the OS validate addresses?</strong><br>
+By checking Virtual Memory Areas (VMAs)—data structures describing valid address ranges for each process. An address is valid only if it falls within a VMA with appropriate permissions.</p>
+<p class="has-line-data" data-line-start="747" data-line-end="749"><strong>What are VMAs (Virtual Memory Areas)?</strong><br>
+Kernel data structures describing contiguous regions of a process’s virtual address space. Each VMA has start/end addresses, permissions (R/W/X), and backing file information. Page faults check against VMAs to validate accesses.</p>
+<p class="has-line-data" data-line-start="750" data-line-end="752"><strong>How does the kernel kill illegal processes?</strong><br>
+On invalid access (segfault), the kernel sends <strong>SIGSEGV</strong> (signal 11) to the process. The default handler terminates the process and may generate a core dump. The kernel logs the event for debugging.</p>
+<hr>
+<h2 class="code-line has-line-data" data-line-start="755" data-line-end="756"><a id="15_Startup_Efficiency_Questions_755"></a>15. Startup &amp; Efficiency Questions</h2>
+<p class="has-line-data" data-line-start="757" data-line-end="759"><strong>Why does Demand Paging improve startup speed?</strong><br>
+Only the first page (~4KB) containing the entry point is loaded. The program begins executing in milliseconds. The rest loads on-demand over time. Without it, a 500MB program would require 5+ seconds of disk reading before any execution.</p>
+<p class="has-line-data" data-line-start="760" data-line-end="762"><strong>Why do applications appear instantly?</strong><br>
+The window appears after the first few pages load (the UI framework, initial code). The OS creates the process, maps the executable, loads the entry point, and starts execution. The user sees responsiveness while 99% of the program remains on disk.</p>
+<p class="has-line-data" data-line-start="763" data-line-end="765"><strong>What pages are initially loaded?</strong><br>
+Typically just the page containing the program’s <strong>entry point</strong> (first instruction). Sometimes the OS also prefetches a few adjacent pages containing initialization code.</p>
+<p class="has-line-data" data-line-start="766" data-line-end="768"><strong>Why are most program pages unused initially?</strong><br>
+Programs have “cold” regions: settings dialogs, error handlers, help systems, plugins, background services. These aren’t needed for basic operation. They load only if the user accesses them.</p>
+<p class="has-line-data" data-line-start="769" data-line-end="771"><strong>How does lazy loading work?</strong><br>
+Pages are loaded only when accessed. The first access triggers a fault; subsequent accesses hit in RAM. This spreads disk I/O over time, avoiding upfront costs.</p>
+<p class="has-line-data" data-line-start="772" data-line-end="774"><strong>What is prefetching?</strong><br>
+The OS or hardware predicts which pages will be needed soon based on access patterns and loads them in the background before they’re requested. Example: after loading page 5, prefetch pages 6 and 7.</p>
+<p class="has-line-data" data-line-start="775" data-line-end="777"><strong>How does prefetching improve performance?</strong><br>
+It converts demand faults into hits. If the prediction is correct, the page is already in RAM when needed—no stall. Modern CPUs have hardware prefetchers that detect sequential and strided access patterns.</p>
+<p class="has-line-data" data-line-start="778" data-line-end="779"><strong>Why is loading everything inefficient?</strong></p>
+<ul>
+<li class="has-line-data" data-line-start="779" data-line-end="780"><strong>Time</strong>: Reading 100MB from disk takes seconds</li>
+<li class="has-line-data" data-line-start="780" data-line-end="781"><strong>RAM waste</strong>: Unused pages occupy frames that could serve other processes</li>
+<li class="has-line-data" data-line-start="781" data-line-end="782"><strong>I/O waste</strong>: Disk bandwidth consumed by data never accessed</li>
+<li class="has-line-data" data-line-start="782" data-line-end="784"><strong>Energy</strong>: Unnecessary disk reads drain battery</li>
+</ul>
+<p class="has-line-data" data-line-start="784" data-line-end="786"><strong>How does Demand Paging optimize RAM usage?</strong><br>
+Only active pages consume RAM. A 100MB program using 7MB of active code/data occupies only 7MB of RAM—93% savings. This allows more processes to coexist and more disk cache.</p>
+<p class="has-line-data" data-line-start="787" data-line-end="788"><strong>What are hot, warm, and cold pages/data?</strong></p>
+<ul>
+<li class="has-line-data" data-line-start="788" data-line-end="789"><strong>Hot</strong>: Frequently accessed, must stay in RAM (working set)</li>
+<li class="has-line-data" data-line-start="789" data-line-end="790"><strong>Warm</strong>: Occasionally accessed, can tolerate rare faults</li>
+<li class="has-line-data" data-line-start="790" data-line-end="792"><strong>Cold</strong>: Rarely or never accessed, can stay on disk indefinitely</li>
+</ul>
+<hr>
+<h2 class="code-line has-line-data" data-line-start="794" data-line-end="795"><a id="16_Real_System_Questions_794"></a>16. Real System Questions</h2>
+<p class="has-line-data" data-line-start="796" data-line-end="798"><strong>How does Linux use Demand Paging?</strong><br>
+Linux implements demand paging through:</p>
+<ul>
+<li class="has-line-data" data-line-start="798" data-line-end="799"><strong>Page fault handler</strong>: <code>do_page_fault()</code> in <code>arch/x86/mm/fault.c</code></li>
+<li class="has-line-data" data-line-start="799" data-line-end="800"><strong>VMA management</strong>: <code>mm_struct</code> with <code>vm_area_struct</code> list</li>
+<li class="has-line-data" data-line-start="800" data-line-end="801"><strong>Swap subsystem</strong>: Swap partitions/files with <code>swap_info_struct</code></li>
+<li class="has-line-data" data-line-start="801" data-line-end="802"><strong>OOM killer</strong>: Kills processes when RAM is exhausted</li>
+<li class="has-line-data" data-line-start="802" data-line-end="804"><strong>zswap</strong>: Compresses pages before swapping</li>
+</ul>
+<p class="has-line-data" data-line-start="804" data-line-end="806"><strong>How does Windows implement Demand Paging?</strong><br>
+Windows uses:</p>
+<ul>
+<li class="has-line-data" data-line-start="806" data-line-end="807"><strong>Working Set Model</strong>: Tracks and limits each process’s working set</li>
+<li class="has-line-data" data-line-start="807" data-line-end="808"><strong>Standby List</strong>: Pages removed from working sets but kept in RAM for quick recovery</li>
+<li class="has-line-data" data-line-start="808" data-line-end="809"><strong>Modified Page Writer</strong>: Background thread flushing dirty pages</li>
+<li class="has-line-data" data-line-start="809" data-line-end="810"><strong>SuperFetch</strong>: Prefetches likely-needed pages based on usage history</li>
+<li class="has-line-data" data-line-start="810" data-line-end="812"><strong>ReadyBoost</strong>: Uses USB flash as cache</li>
+</ul>
+<p class="has-line-data" data-line-start="812" data-line-end="814"><strong>How do Android and iOS use paging?</strong><br>
+Mobile OSes use demand paging with constraints:</p>
+<ul>
+<li class="has-line-data" data-line-start="814" data-line-end="815"><strong>No swap on early Android/iOS</strong>: Flash storage wears out; instead use <strong>LMK</strong> (Low Memory Killer)</li>
+<li class="has-line-data" data-line-start="815" data-line-end="816"><strong>Memory pressure</strong>: Kill background apps when RAM is low</li>
+<li class="has-line-data" data-line-start="816" data-line-end="817"><strong>Compressed RAM</strong>: zRAM (Android) stores compressed pages in RAM instead of disk</li>
+<li class="has-line-data" data-line-start="817" data-line-end="819"><strong>Frozen apps</strong>: iOS “freezes” background apps, keeping their pages but not scheduling them</li>
+</ul>
+<p class="has-line-data" data-line-start="819" data-line-end="821"><strong>What is swap compression?</strong><br>
+Techniques like <strong>zswap</strong> and <strong>zram</strong> that compress pages in RAM before writing to disk (or instead of disk). Compression is faster than disk I/O, and compressed pages take less RAM.</p>
+<p class="has-line-data" data-line-start="822" data-line-end="824"><strong>What are huge pages?</strong><br>
+Pages larger than standard 4KB—typically 2MB or 1GB. They reduce TLB misses for large datasets (one TLB entry covers 2MB instead of 512× 4KB entries). Used for databases, scientific computing, and virtualization.</p>
+<p class="has-line-data" data-line-start="825" data-line-end="826"><strong>Why are huge pages useful?</strong></p>
+<ul>
+<li class="has-line-data" data-line-start="826" data-line-end="827"><strong>Fewer TLB misses</strong>: Large programs need fewer TLB entries</li>
+<li class="has-line-data" data-line-start="827" data-line-end="828"><strong>Faster page table walks</strong>: Shallower hierarchies</li>
+<li class="has-line-data" data-line-start="828" data-line-end="829"><strong>Better cache utilization</strong>: Less page table memory</li>
+<li class="has-line-data" data-line-start="829" data-line-end="831"><strong>Efficient for large buffers</strong>: Databases, GPU memory mappings</li>
+</ul>
+<p class="has-line-data" data-line-start="831" data-line-end="832"><strong>What modern optimizations exist for paging?</strong></p>
+<ul>
+<li class="has-line-data" data-line-start="832" data-line-end="833"><strong>zswap/zram</strong>: Compressed swap in RAM</li>
+<li class="has-line-data" data-line-start="833" data-line-end="834"><strong>Huge pages</strong>: 2MB/1GB pages for large workloads</li>
+<li class="has-line-data" data-line-start="834" data-line-end="835"><strong>NUMA-aware allocation</strong>: Allocate pages near the accessing CPU</li>
+<li class="has-line-data" data-line-start="835" data-line-end="836"><strong>Transparent huge pages</strong>: Automatic promotion of contiguous 4KB pages to 2MB</li>
+<li class="has-line-data" data-line-start="836" data-line-end="837"><strong>Prefetching</strong>: Hardware and software predictive loading</li>
+<li class="has-line-data" data-line-start="837" data-line-end="839"><strong>Swap on SSD</strong>: Faster than HDD but still slower than RAM</li>
+</ul>
+<hr>
+<h2 class="code-line has-line-data" data-line-start="841" data-line-end="842"><a id="17_Deep_Conceptual_Questions_841"></a>17. Deep Conceptual Questions</h2>
+<p class="has-line-data" data-line-start="843" data-line-end="845"><strong>How does hardware cooperate with the OS?</strong><br>
+Hardware (MMU, CPU, DMA, disk) provides the <strong>mechanism</strong>: address translation, fault detection, data transfer. The OS provides the <strong>policy</strong>: which pages to load, which to evict, how to schedule I/O. They cooperate through defined interfaces (exceptions, interrupts, system calls).</p>
+<p class="has-line-data" data-line-start="846" data-line-end="848"><strong>Why is paging transparent to programs?</strong><br>
+Programs use virtual addresses and never see physical frames. The OS and hardware handle all translation and faulting. A program can’t tell if its memory is in RAM or disk—access time is the only hint.</p>
+<p class="has-line-data" data-line-start="849" data-line-end="851"><strong>Why does the program not know paging occurred?</strong><br>
+The OS restarts the faulting instruction after loading the page. From the program’s perspective, the instruction simply took longer. No registers are modified (except by the instruction itself). The program state is preserved.</p>
+<p class="has-line-data" data-line-start="852" data-line-end="854"><strong>Why does Demand Paging create the illusion of infinite fast memory?</strong><br>
+Programs can allocate and use virtual addresses far exceeding RAM. The OS makes this work by using disk as backing store. Programs “feel” like they have vast memory, though access to disk-backed pages is slow.</p>
+<p class="has-line-data" data-line-start="855" data-line-end="857"><strong>Why is Demand Paging fundamentally probabilistic?</strong><br>
+It bets on locality—that future accesses will likely hit pages already loaded or nearby to recently loaded pages. There’s no guarantee; it’s a statistical optimization based on observed program behavior.</p>
+<p class="has-line-data" data-line-start="858" data-line-end="860"><strong>Why does modern computing depend on predictable memory behavior?</strong><br>
+CPUs pipeline instructions, prefetch data, and cache aggressively. All these optimizations assume memory access patterns are predictable (local). Random access destroys performance at every level.</p>
+<p class="has-line-data" data-line-start="861" data-line-end="863"><strong>Why is locality one of the most important principles in computing?</strong><br>
+It enables:</p>
+<ul>
+<li class="has-line-data" data-line-start="863" data-line-end="864"><strong>Caching</strong> (CPU caches, TLB, disk cache)</li>
+<li class="has-line-data" data-line-start="864" data-line-end="865"><strong>Prefetching</strong> (hardware and software)</li>
+<li class="has-line-data" data-line-start="865" data-line-end="866"><strong>Demand paging</strong> (efficient virtual memory)</li>
+<li class="has-line-data" data-line-start="866" data-line-end="867"><strong>Database indexing</strong> (B-trees vs hash tables)</li>
+<li class="has-line-data" data-line-start="867" data-line-end="870"><strong>Compiler optimization</strong> (loop transformations)<br>
+Without locality, every optimization collapses.</li>
+</ul>
+<hr>
+<h2 class="code-line has-line-data" data-line-start="872" data-line-end="873"><a id="18_Example_ProblemSolving_Questions_872"></a>18. Example &amp; Problem-Solving Questions</h2>
+<p class="has-line-data" data-line-start="874" data-line-end="876"><strong>Trace page faults step-by-step</strong><br>
+Given: RAM holds 2 pages. Access order: A → B → C → A</p>
+<table class="table table-striped table-bordered">
+<thead>
+<tr>
+<th style="text-align:left">Step</th>
+<th style="text-align:left">Access</th>
+<th style="text-align:left">RAM Before</th>
+<th style="text-align:left">Action</th>
+<th style="text-align:left">RAM After</th>
+<th style="text-align:left">Fault?</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">1</td>
+<td style="text-align:left">A</td>
+<td style="text-align:left">[]</td>
+<td style="text-align:left">Load A</td>
+<td style="text-align:left">[A]</td>
+<td style="text-align:left">Yes</td>
+</tr>
+<tr>
+<td style="text-align:left">2</td>
+<td style="text-align:left">B</td>
+<td style="text-align:left">[A]</td>
+<td style="text-align:left">Load B</td>
+<td style="text-align:left">[A,B]</td>
+<td style="text-align:left">Yes</td>
+</tr>
+<tr>
+<td style="text-align:left">3</td>
+<td style="text-align:left">C</td>
+<td style="text-align:left">[A,B]</td>
+<td style="text-align:left">Evict A, Load C</td>
+<td style="text-align:left">[B,C]</td>
+<td style="text-align:left">Yes</td>
+</tr>
+<tr>
+<td style="text-align:left">4</td>
+<td style="text-align:left">A</td>
+<td style="text-align:left">[B,C]</td>
+<td style="text-align:left">Evict B, Load A</td>
+<td style="text-align:left">[C,A]</td>
+<td style="text-align:left">Yes</td>
+</tr>
+</tbody>
+</table>
+<p class="has-line-data" data-line-start="884" data-line-end="885">Total faults: 4/4 (0% hit rate). Working set (3) &gt; RAM (2).</p>
+<p class="has-line-data" data-line-start="886" data-line-end="887"><strong>What if RAM held 3 pages?</strong></p>
+<table class="table table-striped table-bordered">
+<thead>
+<tr>
+<th style="text-align:left">Step</th>
+<th style="text-align:left">Access</th>
+<th style="text-align:left">RAM</th>
+<th style="text-align:left">Fault?</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">1</td>
+<td style="text-align:left">A</td>
+<td style="text-align:left">[A]</td>
+<td style="text-align:left">Yes</td>
+</tr>
+<tr>
+<td style="text-align:left">2</td>
+<td style="text-align:left">B</td>
+<td style="text-align:left">[A,B]</td>
+<td style="text-align:left">Yes</td>
+</tr>
+<tr>
+<td style="text-align:left">3</td>
+<td style="text-align:left">C</td>
+<td style="text-align:left">[A,B,C]</td>
+<td style="text-align:left">Yes</td>
+</tr>
+<tr>
+<td style="text-align:left">4</td>
+<td style="text-align:left">A</td>
+<td style="text-align:left">[A,B,C]</td>
+<td style="text-align:left"><strong>No</strong></td>
+</tr>
+</tbody>
+</table>
+<p class="has-line-data" data-line-start="894" data-line-end="895">Total faults: 3/4 (25% hit rate). Working set fits in RAM.</p>
+<p class="has-line-data" data-line-start="896" data-line-end="898"><strong>Compute page numbers and offsets</strong><br>
+For address <code>0x00005078</code> with 4KB pages:</p>
+<ul>
+<li class="has-line-data" data-line-start="898" data-line-end="899">Page size = 4096 = 2¹², so offset uses 12 bits</li>
+<li class="has-line-data" data-line-start="899" data-line-end="900">Page number = <code>0x00005078 &gt;&gt; 12</code> = <code>0x5</code></li>
+<li class="has-line-data" data-line-start="900" data-line-end="902">Offset = <code>0x00005078 &amp; 0xFFF</code> = <code>0x078</code></li>
+</ul>
+<p class="has-line-data" data-line-start="902" data-line-end="904"><strong>Simulate FIFO replacement</strong><br>
+RAM: 3 frames. Access: 1, 2, 3, 4, 1, 2, 5, 1, 2, 3, 4, 5</p>
+<table class="table table-striped table-bordered">
+<thead>
+<tr>
+<th style="text-align:left">Access</th>
+<th style="text-align:left">RAM</th>
+<th style="text-align:left">Fault?</th>
+<th style="text-align:left">Victim</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">1</td>
+<td style="text-align:left">[1]</td>
+<td style="text-align:left">Yes</td>
+<td style="text-align:left">-</td>
+</tr>
+<tr>
+<td style="text-align:left">2</td>
+<td style="text-align:left">[1,2]</td>
+<td style="text-align:left">Yes</td>
+<td style="text-align:left">-</td>
+</tr>
+<tr>
+<td style="text-align:left">3</td>
+<td style="text-align:left">[1,2,3]</td>
+<td style="text-align:left">Yes</td>
+<td style="text-align:left">-</td>
+</tr>
+<tr>
+<td style="text-align:left">4</td>
+<td style="text-align:left">[2,3,4]</td>
+<td style="text-align:left">Yes</td>
+<td style="text-align:left">1</td>
+</tr>
+<tr>
+<td style="text-align:left">1</td>
+<td style="text-align:left">[3,4,1]</td>
+<td style="text-align:left">Yes</td>
+<td style="text-align:left">2</td>
+</tr>
+<tr>
+<td style="text-align:left">2</td>
+<td style="text-align:left">[4,1,2]</td>
+<td style="text-align:left">Yes</td>
+<td style="text-align:left">3</td>
+</tr>
+<tr>
+<td style="text-align:left">5</td>
+<td style="text-align:left">[1,2,5]</td>
+<td style="text-align:left">Yes</td>
+<td style="text-align:left">4</td>
+</tr>
+<tr>
+<td style="text-align:left">1</td>
+<td style="text-align:left">[1,2,5]</td>
+<td style="text-align:left">No</td>
+<td style="text-align:left">-</td>
+</tr>
+<tr>
+<td style="text-align:left">2</td>
+<td style="text-align:left">[1,2,5]</td>
+<td style="text-align:left">No</td>
+<td style="text-align:left">-</td>
+</tr>
+<tr>
+<td style="text-align:left">3</td>
+<td style="text-align:left">[2,5,3]</td>
+<td style="text-align:left">Yes</td>
+<td style="text-align:left">1</td>
+</tr>
+<tr>
+<td style="text-align:left">4</td>
+<td style="text-align:left">[5,3,4]</td>
+<td style="text-align:left">Yes</td>
+<td style="text-align:left">2</td>
+</tr>
+<tr>
+<td style="text-align:left">5</td>
+<td style="text-align:left">[5,3,4]</td>
+<td style="text-align:left">No</td>
+<td style="text-align:left">-</td>
+</tr>
+</tbody>
+</table>
+<p class="has-line-data" data-line-start="920" data-line-end="921">Total faults: 9/12</p>
+<p class="has-line-data" data-line-start="922" data-line-end="924"><strong>Solve EAT equation</strong><br>
+Given: <eq><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>T</mi><mrow><mi>R</mi><mi>A</mi><mi>M</mi></mrow></msub><mo>=</mo><mn>100</mn><mi>n</mi><mi>s</mi></mrow><annotation encoding="application/x-tex">T_{RAM} = 100ns</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.13889em;">T</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3283em;"><span style="top:-2.55em;margin-left:-0.1389em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight" style="margin-right:0.00773em;">R</span><span class="mord mathnormal mtight">A</span><span class="mord mathnormal mtight" style="margin-right:0.10903em;">M</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">100</span><span class="mord mathnormal">n</span><span class="mord mathnormal">s</span></span></span></span></eq>, <eq><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>T</mi><mrow><mi>P</mi><mi>F</mi></mrow></msub><mo>=</mo><mn>10</mn><mi>m</mi><mi>s</mi><mo>=</mo><mn>10</mn><mo separator="true">,</mo><mn>000</mn><mo separator="true">,</mo><mn>000</mn><mi>n</mi><mi>s</mi></mrow><annotation encoding="application/x-tex">T_{PF} = 10ms = 10,000,000ns</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.13889em;">T</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3283em;"><span style="top:-2.55em;margin-left:-0.1389em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight" style="margin-right:0.13889em;">P</span><span class="mord mathnormal mtight" style="margin-right:0.13889em;">F</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">10</span><span class="mord mathnormal">m</span><span class="mord mathnormal">s</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.8389em;vertical-align:-0.1944em;"></span><span class="mord">10</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord">000</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord">000</span><span class="mord mathnormal">n</span><span class="mord mathnormal">s</span></span></span></span></eq>, target EAT ≤ 200ns:</p>
+<section><eqn><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mn>200</mn><mo>≥</mo><mo stretchy="false">(</mo><mn>1</mn><mo>−</mo><mi>p</mi><mo stretchy="false">)</mo><mo stretchy="false">(</mo><mn>100</mn><mo stretchy="false">)</mo><mo>+</mo><mi>p</mi><mo stretchy="false">(</mo><mn>10</mn><mo separator="true">,</mo><mn>000</mn><mo separator="true">,</mo><mn>000</mn><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">200 \geq (1-p)(100) + p(10,000,000)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.7804em;vertical-align:-0.136em;"></span><span class="mord">200</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">≥</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">(</span><span class="mord">1</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal">p</span><span class="mclose">)</span><span class="mopen">(</span><span class="mord">100</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal">p</span><span class="mopen">(</span><span class="mord">10</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord">000</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord">000</span><span class="mclose">)</span></span></span></span></span></eqn></section><section><eqn><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mn>200</mn><mo>≥</mo><mn>100</mn><mo>−</mo><mn>100</mn><mi>p</mi><mo>+</mo><mn>10</mn><mo separator="true">,</mo><mn>000</mn><mo separator="true">,</mo><mn>000</mn><mi>p</mi></mrow><annotation encoding="application/x-tex">200 \geq 100 - 100p + 10,000,000p</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.7804em;vertical-align:-0.136em;"></span><span class="mord">200</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">≥</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.7278em;vertical-align:-0.0833em;"></span><span class="mord">100</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.8389em;vertical-align:-0.1944em;"></span><span class="mord">100</span><span class="mord mathnormal">p</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.8389em;vertical-align:-0.1944em;"></span><span class="mord">10</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord">000</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord">000</span><span class="mord mathnormal">p</span></span></span></span></span></eqn></section><section><eqn><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mn>100</mn><mo>≥</mo><mn>9</mn><mo separator="true">,</mo><mn>999</mn><mo separator="true">,</mo><mn>900</mn><mi>p</mi></mrow><annotation encoding="application/x-tex">100 \geq 9,999,900p</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.7804em;vertical-align:-0.136em;"></span><span class="mord">100</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">≥</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.8389em;vertical-align:-0.1944em;"></span><span class="mord">9</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord">999</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord">900</span><span class="mord mathnormal">p</span></span></span></span></span></eqn></section><section><eqn><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mi>p</mi><mo>≤</mo><mfrac><mn>100</mn><mrow><mn>9</mn><mo separator="true">,</mo><mn>999</mn><mo separator="true">,</mo><mn>900</mn></mrow></mfrac><mo>≈</mo><mn>0.00001</mn><mo>=</mo><mn>0.001</mn><mi mathvariant="normal">%</mi></mrow><annotation encoding="application/x-tex">p \leq \frac{100}{9,999,900} \approx 0.00001 = 0.001\%</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8304em;vertical-align:-0.1944em;"></span><span class="mord mathnormal">p</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">≤</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:2.2019em;vertical-align:-0.8804em;"></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.3214em;"><span style="top:-2.314em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord">9</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord">999</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord">900</span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.677em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord">100</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.8804em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">≈</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">0.00001</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.8056em;vertical-align:-0.0556em;"></span><span class="mord">0.001%</span></span></span></span></span></eqn></section><p class="has-line-data" data-line-start="930" data-line-end="931">Maximum acceptable fault rate: <strong>0.001%</strong> (1 fault per 100,000 accesses).</p>
+<p class="has-line-data" data-line-start="932" data-line-end="935"><strong>Compute acceptable fault rates</strong><br>
+For “no worse than 2× slowdown” (EAT ≤ 200ns):<br>
+<section><eqn><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mi>p</mi><mo>≤</mo><mfrac><mrow><mn>200</mn><mo>−</mo><mn>100</mn></mrow><mrow><mn>10</mn><mo separator="true">,</mo><mn>000</mn><mo separator="true">,</mo><mn>000</mn><mo>−</mo><mn>100</mn></mrow></mfrac><mo>≈</mo><mn>0.00001</mn></mrow><annotation encoding="application/x-tex">p \leq \frac{200 - 100}{10,000,000 - 100} \approx 0.00001</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8304em;vertical-align:-0.1944em;"></span><span class="mord mathnormal">p</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">≤</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:2.2019em;vertical-align:-0.8804em;"></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.3214em;"><span style="top:-2.314em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord">10</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord">000</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord">000</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mord">100</span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.677em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord">200</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mord">100</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.8804em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">≈</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">0.00001</span></span></span></span></span></eqn></section></p>
+<p class="has-line-data" data-line-start="936" data-line-end="938">For “no worse than 1.1× slowdown” (EAT ≤ 110ns):<br>
+<section><eqn><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mi>p</mi><mo>≤</mo><mfrac><mrow><mn>110</mn><mo>−</mo><mn>100</mn></mrow><mrow><mn>10</mn><mo separator="true">,</mo><mn>000</mn><mo separator="true">,</mo><mn>000</mn><mo>−</mo><mn>100</mn></mrow></mfrac><mo>≈</mo><mn>0.000001</mn><mo>=</mo><mn>0.0001</mn><mi mathvariant="normal">%</mi></mrow><annotation encoding="application/x-tex">p \leq \frac{110 - 100}{10,000,000 - 100} \approx 0.000001 = 0.0001\%</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8304em;vertical-align:-0.1944em;"></span><span class="mord mathnormal">p</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">≤</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:2.2019em;vertical-align:-0.8804em;"></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.3214em;"><span style="top:-2.314em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord">10</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord">000</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord">000</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mord">100</span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.677em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord">110</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mord">100</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.8804em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">≈</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">0.000001</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.8056em;vertical-align:-0.0556em;"></span><span class="mord">0.0001%</span></span></span></span></span></eqn></section></p>
+<hr>
+<h2 class="code-line has-line-data" data-line-start="941" data-line-end="942"><a id="19_ResearchLevel_Systems_Thinking_Questions_941"></a>19. Research-Level / Systems Thinking Questions</h2>
+<p class="has-line-data" data-line-start="943" data-line-end="945"><strong>Why does modern multitasking depend on Demand Paging?</strong><br>
+Without it, each program would need its full size in RAM. Running 20 Chrome tabs (each 100MB) would require 2GB just for Chrome, plus OS, plus other apps. Only demand paging allows 50+ processes to share 8-16GB RAM by each using only active pages.</p>
+<p class="has-line-data" data-line-start="946" data-line-end="948"><strong>Why is Demand Paging a cooperation between hardware and software?</strong><br>
+Hardware (MMU) provides fast translation and fault detection—this must be in hardware for speed. Software (OS) provides intelligent decisions about which pages to load/evict—this requires complex policy that changes and must be flexible. Neither alone suffices.</p>
+<p class="has-line-data" data-line-start="949" data-line-end="950"><strong>What physical limitations make paging necessary?</strong></p>
+<ul>
+<li class="has-line-data" data-line-start="950" data-line-end="951"><strong>RAM cost</strong>: Fast DRAM is ~$5/GB; disk is ~$0.02/GB</li>
+<li class="has-line-data" data-line-start="951" data-line-end="952"><strong>RAM density</strong>: Physical slots and power limit RAM capacity</li>
+<li class="has-line-data" data-line-start="952" data-line-end="953"><strong>Speed gap</strong>: No single technology provides both speed and capacity</li>
+<li class="has-line-data" data-line-start="953" data-line-end="955"><strong>Power</strong>: Fast memory consumes more power (critical for mobile)</li>
+</ul>
+<p class="has-line-data" data-line-start="955" data-line-end="957"><strong>Why do modern systems rely on statistical program behavior?</strong><br>
+Because exact prediction is impossible. Systems use probability: “most programs exhibit locality,” “most pages in working set stay in working set,” “sequential access likely continues.” These aren’t guarantees but strong trends that optimize average case.</p>
+<p class="has-line-data" data-line-start="958" data-line-end="960"><strong>Why are page faults catastrophic for performance?</strong><br>
+The 100,000× speed gap means one fault equals 100,000 RAM accesses in time. A 1% fault rate makes the system 1000× slower. Faults are “outliers” that dominate average performance despite being rare.</p>
+<p class="has-line-data" data-line-start="961" data-line-end="963"><strong>Why is memory management fundamentally about prediction and locality?</strong><br>
+The OS must predict which pages will be needed (to prefetch) and which won’t (to evict). Locality makes prediction possible. Without locality, prediction is random guessing, and paging fails. The entire edifice of virtual memory rests on the empirical fact that programs exhibit locality.</p>
+<hr>
+<p class="has-line-data" data-line-start="966" data-line-end="967">This covers all 19 sections comprehensively. Let me know if you’d like me to expand on any specific topic, create visual diagrams, or generate practice problems with solutions!</p>
+
+</body>
+</html>
